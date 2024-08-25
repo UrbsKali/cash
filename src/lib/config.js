@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { dev } from '$app/environment';
 
-let basePath = '/cash'
+let basePath = ''
 
 
 if (dev) {
