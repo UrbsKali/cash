@@ -5,6 +5,7 @@
 	export let type_accord = 'un';
 	export let action = 'Ajouter';
 	export let fields = [];
+	export let id = 'CrudModal';
 
 	export let onSubmit = async () => {
 		console.log('Submit');
@@ -24,7 +25,7 @@
 </script>
 
 <div
-	id="CrudModal"
+	id={id}
 	tabindex="-1"
 	aria-hidden="true"
 	class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full backdrop-blur-sm"
@@ -44,7 +45,7 @@
 				<button
 					type="button"
 					class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-					data-modal-toggle="CrudModal"
+					data-modal-toggle={id}
 				>
 					<svg
 						aria-hidden="true"
@@ -87,6 +88,28 @@
 										>
 									{/each}
 								</select>
+							{:else if field.type === 'number'}
+								<input
+									type="number"
+									name={field.id || field.name.toLowerCase()}
+									id={field.id || field.name.toLowerCase()}
+									class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+									placeholder={field.placeholder || field.name.toLowerCase()}
+									required={field.required}
+									value={field.value || ''}
+									min={field.min || 0}
+									max={field.max || 2000}
+									step={field.step || 1}
+								/>
+							{:else if field.type === 'textarea'}
+								<textarea
+									name={field.id || field.name.toLowerCase()}
+									id={field.id || field.name.toLowerCase()}
+									class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+									placeholder={field.placeholder || field.name.toLowerCase()}
+									required={field.required}
+									value={field.value || ''}
+								></textarea>
 							{:else}
 								<input
 									type={field.type}

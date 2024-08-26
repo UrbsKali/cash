@@ -5,6 +5,7 @@
 	import UserBadge from '$lib/components/UserBadge.svelte';
 	import SideBar from '$lib/components/SideBar.svelte';
 	import { config, currentOrigin, parseURI } from '$lib/config';
+	import CrudForm from '../../lib/components/CrudForm.svelte';
 
 	let current_user = {};
 	let current_role = '';
@@ -14,11 +15,11 @@
 			title: 'Accueil',
 			uri: '/admin',
 			icon: 'home-outline',
-			allowed_roles: ['admin', 'bureau', 'cdp', "membre"]
+			allowed_roles: ['admin', 'bureau', 'cdp', 'membre']
 		},
 		{
 			title: 'Gestion des projets',
-			icon: 'cube-outline',
+			icon: 'apps-outline',
 			allowed_roles: ['admin', 'bureau', 'cdp'],
 			sub: [
 				{
@@ -42,7 +43,7 @@
 		{
 			title: 'Commandes',
 			uri: '/admin/orders',
-			icon: 'cash-outline',
+			icon: 'card-outline',
 			allowed_roles: ['admin', 'bureau', 'cdp']
 		},
 		{
@@ -54,8 +55,59 @@
 		{
 			title: 'Gestion de la trésorerie',
 			uri: '/admin/wip',
-			icon: 'pie-chart-outline',
+			icon: 'bar-chart-outline',
 			allowed_roles: ['admin', 'bureau']
+		},
+		{
+			title: 'Factures',
+			uri: '/admin/wip',
+			icon: 'attach-outline',
+			allowed_roles: ['admin', 'bureau']
+		},
+		{
+			title: 'Devis',
+			uri: '/admin/wip',
+			icon: 'briefcase-outline',
+			allowed_roles: ['admin', 'bureau']
+		},
+	];
+
+	let fields = [
+		{
+			name: 'Objet',
+			type: 'text',
+			value: '',
+			wide: false
+		},
+		{
+			name: 'Prix',
+			type: 'number',
+			value: '',
+			placeholder: '15.5',
+			wide: false,
+			min: 0,
+			step: 0.01
+		},
+		{
+			name: 'Quantité',
+			type: 'number',
+			value: '',
+			placeholder: '1',
+			wide: false,
+			min: 0,
+			step: 1
+		},
+		{
+			name: 'Lien',
+			type: 'text',
+			value: '',
+			wide: true
+		},
+		{
+			name: 'Infos',
+			type: 'textarea',
+			value: '',
+			wide: true
 		}
 	];
 
@@ -160,7 +212,30 @@
 					>
 				</a>
 			</div>
+
 			<div class="flex items-center lg:order-2">
+				<button
+					type="button"
+					class="flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800 mr-2"
+					id="CrudModalButton"
+					data-modal-target="OtherCrudModal"
+					data-modal-toggle="OtherCrudModal"
+				>
+					<svg
+						class="h-3.5 w-3.5 mr-2"
+						fill="currentColor"
+						viewbox="0 0 20 20"
+						xmlns="http://www.w3.org/2000/svg"
+						aria-hidden="true"
+					>
+						<path
+							clip-rule="evenodd"
+							fill-rule="evenodd"
+							d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+						/>
+					</svg>
+					Faire une commande
+				</button>
 				<UserBadge />
 			</div>
 		</div>
@@ -172,4 +247,5 @@
 	<main class="p-4 md:ml-64 min-h-screen pt-20">
 		<slot />
 	</main>
+	<CrudForm id="OtherCrudModal" {fields} type='commande' type_accord='une'/>
 </div>
