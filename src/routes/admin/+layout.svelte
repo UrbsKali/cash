@@ -72,44 +72,7 @@
 		},
 	];
 
-	let fields = [
-		{
-			name: 'Objet',
-			type: 'text',
-			value: '',
-			wide: false
-		},
-		{
-			name: 'Prix',
-			type: 'number',
-			value: '',
-			placeholder: '15.5',
-			wide: false,
-			min: 0,
-			step: 0.01
-		},
-		{
-			name: 'Quantité',
-			type: 'number',
-			value: '',
-			placeholder: '1',
-			wide: false,
-			min: 0,
-			step: 1
-		},
-		{
-			name: 'Lien',
-			type: 'text',
-			value: '',
-			wide: true
-		},
-		{
-			name: 'Infos',
-			type: 'textarea',
-			value: '',
-			wide: true
-		}
-	];
+	
 
 	let __menu = [];
 	menu = parseURI(menu);
@@ -139,23 +102,10 @@
 			? window.location.pathname.slice(0, -1)
 			: window.location.pathname;
 
-		if (!menu.find((el) => el.uri == uri)?.allowed_roles.includes(current_role)) {
-			// check if the uri is inside a sub menu
-			let found = false;
-			menu.forEach((el) => {
-				if (!el.sub) return;
-				if (el.sub.find((el) => el.uri == uri)) {
-					found = true;
-				}
-			});
-			if (!found) window.location.href = `${currentOrigin()}/`;
-			// else refer to allowed roles of the parent
-			else {
-				let parent = menu.find((el) => el.sub?.find((el) => el.uri == uri));
-				if (!parent.allowed_roles.includes(current_role)) {
-					window.location.href = `${currentOrigin()}/`;
-				}
-			}
+		// get the allowed roles for the current uri
+		const allowed_roles = searchAllowedRoles(menu, uri);
+		if (!allowed_roles.includes(current_role)) {
+			window.location.href = `${currentOrigin()}/`;
 		}
 
 		menu.forEach((el) => {
@@ -163,6 +113,28 @@
 			__menu = [...__menu, el];
 		});
 	});
+
+	function searchAllowedRoles(menu, uri) {
+		let roles = [];
+		menu.forEach((el) => {
+			if (el.uri == uri) {
+				roles = el.allowed_roles;
+			}
+			if (el.sub) {
+				el.sub.forEach((el) => {
+					if (el.uri == uri) {
+						roles = el.allowed_roles;
+					}
+				});
+			}
+
+			// if the params uri is a children of the current uri, save the roles
+			if (el.uri == uri.split('/').slice(0, -1).join('/')) {
+				roles = el.allowed_roles;
+			}
+		});
+		return roles;
+	}
 </script>
 
 <div class="antialiased bg-gray-50 dark:bg-gray-900">
@@ -214,12 +186,10 @@
 			</div>
 
 			<div class="flex items-center lg:order-2">
-				<button
+				<a
 					type="button"
 					class="flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800 mr-2"
-					id="CrudModalButton"
-					data-modal-target="OtherCrudModal"
-					data-modal-toggle="OtherCrudModal"
+					href="/admin/orders/new"
 				>
 					<svg
 						class="h-3.5 w-3.5 mr-2"
@@ -235,7 +205,7 @@
 						/>
 					</svg>
 					Faire une commande
-				</button>
+				</a>
 				<UserBadge />
 			</div>
 		</div>
@@ -247,5 +217,4 @@
 	<main class="p-4 md:ml-64 min-h-screen pt-20">
 		<slot />
 	</main>
-	<CrudForm id="OtherCrudModal" {fields} type='commande' type_accord='une'/>
 </div>

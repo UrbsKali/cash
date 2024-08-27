@@ -65,12 +65,12 @@
 	});
 </script>
 
-<div class=" w-full flex justify-between items-center">
+<div class=" w-full flex justify-between items-center px-8 lg:px-16">
 	<h2 class="mb-4 text-4xl tracking-tight font-bold text-gray-900 dark:text-white">
 		Bonjour {user?.name}
 	</h2>
 </div>
-<div class="w-full pt-2 pb-2">
+<div class="w-full py-2  px-8 lg:px-16">
 	<p class="text-gray-700 dark:text-gray-300">
 		Voici la liste de vos commandes. Vous pouvez en ajouter, modifier ou supprimer.
 	</p>

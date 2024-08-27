@@ -3,15 +3,36 @@
 	import { onMount, afterUpdate } from 'svelte';
 	import { initFlowbite } from 'flowbite';
 	import { config } from '$lib/config';
+	import { navigating } from '$app/stores';
+
 
 	export let menu = [{ title: 'fill me', icon: 'timer', uri: '/admin' }];
+	let current_route = '';
 
 	onMount(() => {
-		initFlowbite();
+		loadSidebar();
 	});
 	afterUpdate(() => {
-		initFlowbite();
+		loadSidebar();
 	});
+
+
+	navigating.subscribe((value) => {
+		loadSidebar();
+	});
+
+	function loadSidebar() {
+		current_route = config.basePath + window.location.pathname.slice(0, -1);
+		menu = menu.map((item) => {
+			if (item.uri === current_route) {
+				item.active = true;
+			} else {
+				item.active = false;
+			}
+			return item;
+		});
+		initFlowbite();
+	}
 </script>
 
 <section>
@@ -64,7 +85,9 @@
 						<li>
 							<a
 								href={item.uri}
-								class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+								class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group {item.active
+									? 'bg-gray-100 dark:bg-gray-700'
+									: ''}"
 							>
 								<ion-icon name={item.icon} class=" text-2xl"></ion-icon>
 
