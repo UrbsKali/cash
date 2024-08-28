@@ -1,6 +1,7 @@
 <script>
 	import Table from '$lib/components/Table.svelte';
 	import { onMount } from 'svelte';
+	import { supabase } from '$lib/supabaseClient';
 
 	let headers = ['Objet', 'Date', 'Projet', 'Status', 'Actions']
 	let items = []
@@ -8,7 +9,13 @@
 	onMount(async () => {
 		const { data, error } = await supabase
 			.from('orders')
-			.select('id, user_id, project_id, status')
+			.select('id, creationDate, projectId, status, lastUpdate, tags, priority')
+			.order('creationDate', { ascending: false });
+		if (error) {
+			console.error(error);
+			return;
+		}
+		items = data;
 	})
 
 </script>

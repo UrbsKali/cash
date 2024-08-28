@@ -3,21 +3,35 @@
 	import { onMount, afterUpdate } from 'svelte';
 	import { initFlowbite } from 'flowbite';
 	import CrudForm from './CrudForm.svelte';
+	import ReadModal from './ReadModal.svelte';
 	import { supabase } from '$lib/supabaseClient';
 
 	export let headers = ['Nom', 'Email', 'Rôle', 'Actions'];
-	export let items = [['urbain', 'eeeee@gmail.com', 'Sudo']];
+	export let total_items = 0;
 	export let actions = [
 		{ type: 'delete', title: 'Supprimer', icon: 'trash', handler: (e) => {} }
 		//{ type: 'edit', title: 'Editer', icon: 'edit', handler: (e) => {} }
+		//{ type: 'view', title: 'Voir plus', icon: 'eyes', handler: (e) => {} }
 	];
 	export let type = 'utilisateur';
 	export let type_accord = 'un';
-
+	
 	// CrudForm props and methods
 	export let fields = [];
-	export let onSubmit = null
-	export let onEdit = null
+	export let onSubmit = null;
+	export let onEdit = null;
+	export let loadPage = null;
+	
+	let items = [];
+	let current_page = 1;
+	let page = [];
+
+	$: {
+		page = [];
+		for (let i = 1; i <= total_items / items.length; i++) {
+			page.push(i);
+		}
+	}
 
 	let selectedHandler = (e) => {
 		console.log(e);
@@ -30,7 +44,8 @@
 		});
 	}
 
-	onMount(() => {
+	onMount(async () => {
+		items = await loadPage(0);
 		initFlowbite();
 	});
 	afterUpdate(() => {
@@ -38,9 +53,9 @@
 	});
 </script>
 
-<section class="bg-gray-50 dark:bg-gray-900 p-3 sm:p-5">
-	<div class="mx-auto max-w-screen-xl px-4 lg:px-12">
-		<div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
+<section class="bg-gray-50 dark:bg-gray-900 sm:p-5">
+	<div class="mx-auto max-w-screen-xl sm:px-4 lg:px-12">
+		<div class="bg-white dark:bg-gray-800 relative shadow-md rounded-lg ">
 			<div
 				class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4"
 			>
@@ -76,37 +91,37 @@
 				<div
 					class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0"
 				>
-				{#if onSubmit != null}
-					<button
-						type="button"
-						class="flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
-						id="CrudModalButton"
-						data-modal-target="CrudModal"
-						data-modal-toggle="CrudModal"
-						on:click={(e) => {
-							selectedAction = 'Ajouter';
-							selectedHandler = onSubmit;
-							const modal = FlowbiteInstances.getInstance('Modal', 'CrudModal');
-							modal.show();
-						}}
-					>
-						<svg
-							class="h-3.5 w-3.5 mr-2"
-							fill="currentColor"
-							viewbox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg"
-							aria-hidden="true"
+					{#if onSubmit != null}
+						<button
+							type="button"
+							class="flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+							id="CrudModalButton"
+							data-modal-target="CrudModal"
+							data-modal-toggle="CrudModal"
+							on:click={(e) => {
+								selectedAction = 'Ajouter';
+								selectedHandler = onSubmit;
+								const modal = FlowbiteInstances.getInstance('Modal', 'CrudModal');
+								modal.show();
+							}}
 						>
-							<path
-								clip-rule="evenodd"
-								fill-rule="evenodd"
-								d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-							/>
-						</svg>
-						Ajouter {type_accord}
-						{type}
-					</button>
-				{/if}
+							<svg
+								class="h-3.5 w-3.5 mr-2"
+								fill="currentColor"
+								viewbox="0 0 20 20"
+								xmlns="http://www.w3.org/2000/svg"
+								aria-hidden="true"
+							>
+								<path
+									clip-rule="evenodd"
+									fill-rule="evenodd"
+									d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+								/>
+							</svg>
+							Ajouter {type_accord}
+							{type}
+						</button>
+					{/if}
 					<div class="flex items-center space-x-3 w-full md:w-auto">
 						<button
 							id="filterDropdownButton"
@@ -169,7 +184,8 @@
 									/>
 									<label
 										for="fitbit"
-										class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">Travelers</label
+										class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
+										>Travelers</label
 									>
 								</li>
 							</ul>
@@ -201,8 +217,15 @@
 									{#if key.value === item[0].value && headers[0] === 'Nom'}
 										<th
 											scope="row"
-											class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-											data-utils={key.data || ''}>{key.value}</th
+											class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center"
+											data-utils={key.data || ''}
+										>
+											{#if key.avatar}
+												<div class="flex items-center space-x-2 mr-2">
+													<img src={key.avatar} class="rounded-full w-8 h-8" alt="user face" />
+												</div>
+											{/if}
+											{key.value}</th
 										>
 									{:else if key.value === item[item.length - 1].value && headers[headers.length - 1] === 'Actions' && item.length > 2}
 										<td class="px-4 py-3 flex items-center justify-end">
@@ -226,7 +249,7 @@
 											</button>
 											<div
 												id="{i}-dropdown"
-												class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
+												class="hidden z-20  w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
 											>
 												<ul
 													class="py-1 text-sm text-gray-700 dark:text-gray-200"
@@ -268,9 +291,9 @@
 			>
 				<span class="text-sm font-normal text-gray-500 dark:text-gray-400">
 					Showing
-					<span class="font-semibold text-gray-900 dark:text-white">1-10</span>
+					<span class="font-semibold text-gray-900 dark:text-white">{items.length}</span>
 					of
-					<span class="font-semibold text-gray-900 dark:text-white">1000</span>
+					<span class="font-semibold text-gray-900 dark:text-white">{total_items}</span>
 				</span>
 				<ul class="inline-flex items-stretch -space-x-px">
 					<li>
@@ -294,42 +317,25 @@
 							</svg>
 						</a>
 					</li>
-					<li>
-						<a
-							href="#"
-							class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-							>1</a
-						>
-					</li>
-					<li>
-						<a
-							href="#"
-							class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-							>2</a
-						>
-					</li>
-					<li>
-						<a
-							href="#"
-							aria-current="page"
-							class="flex items-center justify-center text-sm z-10 py-2 px-3 leading-tight text-primary-600 bg-primary-50 border border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-							>3</a
-						>
-					</li>
-					<li>
-						<a
-							href="#"
-							class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-							>...</a
-						>
-					</li>
-					<li>
-						<a
-							href="#"
-							class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-							>100</a
-						>
-					</li>
+					{#each page as p}
+						<li>
+							{#if p == current_page}
+								<a
+									href="#"
+									aria-current="page"
+									class="flex items-center justify-center text-sm z-10 py-2 px-3 leading-tight text-primary-600 bg-primary-50 border border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
+									>{p}</a
+								>
+							{:else}
+								<a
+									href="#"
+									class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+									>{p}</a
+								>
+							{/if}
+						</li>
+					{/each}
+
 					<li>
 						<a
 							href="#"
@@ -356,6 +362,7 @@
 		</div>
 	</div>
 	<CrudForm {type} {fields} {type_accord} action={selectedAction} onSubmit={selectedHandler} />
+	<ReadModal />
 </section>
 
 <style></style>

@@ -25,6 +25,7 @@ export async function loadUserdata() {
         user.email = session.user.email || user.email;
         user.name = data.username || user.email.split('@')[0];
         user.avatar = data.avatar_url || user.avatar;
+        user.id = session.user.id;
         userdata.set(user);
     }
 }
