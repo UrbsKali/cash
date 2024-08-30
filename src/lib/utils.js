@@ -15,7 +15,7 @@ export async function loadUserdata() {
         // fetch user data
         const { data, error } = await supabase
             .from('profiles')
-            .select('username,avatar_url')
+            .select('username,avatar_url,project')
             .eq('id', session.user.id)
             .single();
         if (error) {
@@ -26,6 +26,7 @@ export async function loadUserdata() {
         user.name = data.username || user.email.split('@')[0];
         user.avatar = data.avatar_url || user.avatar;
         user.id = session.user.id;
+        user.projectId = data.project || user.project;
         userdata.set(user);
     }
 }

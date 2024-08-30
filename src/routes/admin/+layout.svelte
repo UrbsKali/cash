@@ -71,6 +71,15 @@
 		},
 	];
 
+	let custom_uri = [
+		{
+			title: 'Nouvelle commande',
+			uri: '/admin/orders/new',
+			icon: 'add-outline',
+			allowed_roles: ['admin', 'bureau', 'cdp', 'membre']
+		}
+	]
+
 	
 
 	let __menu = [];
@@ -102,7 +111,7 @@
 			: window.location.pathname;
 
 		// get the allowed roles for the current uri
-		const allowed_roles = searchAllowedRoles(menu, uri);
+		const allowed_roles = searchAllowedRoles([...menu, ...custom_uri], uri);
 		if (!allowed_roles.includes(current_role)) {
 			window.location.href = `${currentOrigin()}/`;
 		}

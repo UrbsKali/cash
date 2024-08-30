@@ -15,21 +15,23 @@
 	];
 	export let type = 'utilisateur';
 	export let type_accord = 'un';
-	
+
 	// CrudForm props and methods
 	export let fields = [];
 	export let onSubmit = null;
 	export let onEdit = null;
 	export let loadPage = null;
-	
+
 	let items = [];
 	let current_page = 1;
 	let page = [];
 
 	$: {
 		page = [];
-		for (let i = 1; i <= total_items / items.length; i++) {
-			page.push(i);
+		if (items.length > 0) {
+			for (let i = 1; i <= total_items / items.length; i++) {
+				page.push(i);
+			}
 		}
 	}
 
@@ -55,7 +57,7 @@
 
 <section class="bg-gray-50 dark:bg-gray-900 sm:p-5">
 	<div class="mx-auto max-w-screen-xl sm:px-4 lg:px-12">
-		<div class="bg-white dark:bg-gray-800 relative shadow-md rounded-lg ">
+		<div class="bg-white dark:bg-gray-800 relative shadow-md rounded-lg">
 			<div
 				class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4"
 			>
@@ -249,7 +251,7 @@
 											</button>
 											<div
 												id="{i}-dropdown"
-												class="hidden z-20  w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
+												class="hidden z-20 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
 											>
 												<ul
 													class="py-1 text-sm text-gray-700 dark:text-gray-200"
