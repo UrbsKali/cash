@@ -15,7 +15,7 @@ export async function loadUserdata() {
         // fetch user data
         const { data, error } = await supabase
             .from('profiles')
-            .select('username,avatar_url,project')
+            .select('username,avatar_url,project,role')
             .eq('id', session.user.id)
             .single();
         if (error) {
@@ -27,6 +27,21 @@ export async function loadUserdata() {
         user.avatar = data.avatar_url || user.avatar;
         user.id = session.user.id;
         user.projectId = data.project || user.project;
+        user.role = data.role || user.role;
         userdata.set(user);
     }
 }
+
+export const statusText = {
+    pendingCDP: 'En attente de validation par le chef de projet',
+    pendingTreso: 'En attente de validation par le trésorier',
+    approvedCDP: 'Validé par le chef de projet',
+    approvedTreso: 'Validé par le trésorier',
+    refusedCDP: 'Refusé par le chef de projet',
+    refusedTreso: 'Refusé par le trésorier',
+    processingOrder: 'Commande en cours de traitement',
+    ordered: 'Commande passée',
+    received: 'Commande reçue',
+    canceled: 'Commande annulée',
+    completed: 'Commande complétée'
+};

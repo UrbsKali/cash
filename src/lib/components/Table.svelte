@@ -5,14 +5,10 @@
 	import CrudForm from './CrudForm.svelte';
 	import ReadModal from './ReadModal.svelte';
 	import { supabase } from '$lib/supabaseClient';
-
+	export let actions = [];
 	export let headers = ['Nom', 'Email', 'Rôle', 'Actions'];
 	export let total_items = 0;
-	export let actions = [
-		{ type: 'delete', title: 'Supprimer', icon: 'trash', handler: (e) => {} }
-		//{ type: 'edit', title: 'Editer', icon: 'edit', handler: (e) => {} }
-		//{ type: 'view', title: 'Voir plus', icon: 'eyes', handler: (e) => {} }
-	];
+
 	export let type = 'utilisateur';
 	export let type_accord = 'un';
 
@@ -236,6 +232,9 @@
 												data-dropdown-toggle="{i}-dropdown"
 												class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
 												type="button"
+												on:click={(e) => {
+													actions.find((el) => el.type == 'view').handler(e);
+												}}
 											>
 												<svg
 													class="w-5 h-5"
@@ -249,34 +248,6 @@
 													/>
 												</svg>
 											</button>
-											<div
-												id="{i}-dropdown"
-												class="hidden z-20 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
-											>
-												<ul
-													class="py-1 text-sm text-gray-700 dark:text-gray-200"
-													aria-labelledby="{i}-dropdown-button"
-												>
-													{#each actions as item}
-														<div class="py-1">
-															<a
-																href="#"
-																on:click={async (e) => {
-																	if (item.type === 'delete') {
-																		selectedAction = 'Supprimer';
-																	} else if (item.type === 'edit') {
-																		selectedAction = 'Editer';
-																		selectedHandler = onEdit;
-																	}
-																	await item.handler(e);
-																}}
-																class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-																>{item.title}</a
-															>
-														</div>
-													{/each}
-												</ul>
-											</div>
 										</td>
 									{:else}
 										<td class="px-4 py-3" data-utils={key.data || ''}>{key.value}</td>

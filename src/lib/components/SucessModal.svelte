@@ -1,5 +1,8 @@
 <script>
 	import { currentOrigin } from '$lib/config';
+	import { get_current_component } from 'svelte/internal';
+	const current_component = get_current_component();
+
 
 	export let title = 'On est bon!';
 	export let message = 'La commande a été passée avec succès.';
@@ -7,6 +10,7 @@
 	export let open = false;
 	export let onClose = () => {
 		open = false;
+		current_component.$destroy();
 		window.location.href = `${currentOrigin()}/admin`;
 	};
 </script>

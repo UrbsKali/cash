@@ -41,10 +41,7 @@
 		});
 
 		const order = {
-			quantities: object.items.map((i) => i.quantity),
 			comment: object.comment,
-			tags: object.tags.trim(),
-			priority: object.priority === 'on',
 			projectId: projectId
 		};
 
@@ -60,7 +57,8 @@
 				name: i.name,
 				link: i.lien,
 				price: i.price,
-				order_id: orders[0].id
+				order_id: orders[0].id,
+				quantity: i.quantity
 			};
 		});
 		{
@@ -207,24 +205,7 @@
 					placeholder="Commentaire"
 				></textarea>
 			</div>
-			<div>
-				<label for="tags">Tags</label>
-				<input
-					type="text"
-					name="tags"
-					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-					placeholder="Tag1, Tag2, Tag3"
-				/>
-			</div>
-			<div class="flex items-center w-28">
-				<label for="priority">Prioritaire</label>
-				<input
-					type="checkbox"
-					name="priority"
-					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-					placeholder="Tag1, Tag2, Tag3"
-				/>
-			</div>
+
 			<div class="col-span-2">
 				<button
 					type="submit"
