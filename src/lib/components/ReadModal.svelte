@@ -135,7 +135,6 @@
 																.select()
 																.single();
 
-															console.log(data);
 															if (error || !data) {
 																console.error(error);
 																return;

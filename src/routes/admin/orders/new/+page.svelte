@@ -17,13 +17,11 @@
 		projects.forEach((project) => {
 			projectTitle[project.id] = project.name;
 		});
-		console.log(projectTitle);
 	}
 
 	userdata.subscribe((value) => {
 		projectId = value?.projectId;
 		if (projectId?.length > 0) {
-			console.log('updating project title');
 			updateProjectTitle();
 		}
 	});
@@ -37,7 +35,6 @@
 		}
 
 		const form = e.target.form;
-		console.log(form);
 		const data = new FormData(form);
 		const object = {};
 		data.forEach((value, key) => {
@@ -45,7 +42,6 @@
 		});
 
 		let itemsArr = Array.from(document.querySelectorAll('.objects'));
-		console.log(itemsArr);
 
 		object.items = itemsArr.map((i) => {
 			const item = {};
