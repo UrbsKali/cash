@@ -3,22 +3,22 @@
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabaseClient';
 
-	let headers = ['Nom', 'Rôle', 'Projet', 'Actions'];
+	let headers = ['Nom', 'Rôle', 'Projets', 'Actions'];
 	let total_items = 0;
 
 	async function loadPage(page, step = 20) {
 		let items = [];
 		const { data, error } = await supabase
 			.from('profiles')
-			.select('id, username, role, project(*), avatar_url')
+			.select('id, username, role, avatar_url, member_of(project(id, name))')
 			.range(page * step, (page + 1) * step);
 
 		data.forEach((el) => {
-			
+			const project = el.member_of.map((el) => el.project.name).join(', ');
 			items.push([
 				{ value: el.username, data: el.id, avatar: el.avatar_url },
 				{ value: el.role },
-				{ value: el.project?.name || 'Aucun', data: el.project?.id }
+				{ value: project }
 			]);
 		});
 		return items;

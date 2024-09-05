@@ -3,13 +3,29 @@
 	import { userdata } from '$lib/store';
 	import SucessModal from '../../../../lib/components/SucessModal.svelte';
 
-
 	let items = [0];
 	let current = 0;
 	let projectId = -1;
+	let projectTitle = {};
+
+	async function updateProjectTitle() {
+		const { data: projects, error } = await supabase.from('projects').select().in('id', projectId);
+		if (error) {
+			console.error(error);
+			return;
+		}
+		projects.forEach((project) => {
+			projectTitle[project.id] = project.name;
+		});
+		console.log(projectTitle);
+	}
 
 	userdata.subscribe((value) => {
 		projectId = value?.projectId;
+		if (projectId?.length > 0) {
+			console.log('updating project title');
+			updateProjectTitle();
+		}
 	});
 
 	async function onSubmit(e) {
@@ -42,7 +58,7 @@
 
 		const order = {
 			comment: object.comment,
-			projectId: projectId
+			projectId: projectId.length > 1 ? object.project : projectId[0]
 		};
 
 		const { data: orders, error } = await supabase.from('orders').insert([order]).select();
@@ -76,8 +92,6 @@
 				open: true
 			}
 		});
-
-
 	}
 </script>
 
@@ -205,6 +219,20 @@
 					placeholder="Commentaire"
 				></textarea>
 			</div>
+			{#if projectId?.length > 1}
+				<div class="col-span-2">
+					<label for="project">Sélection du projet</label>
+					<select
+						name="project"
+						id="project"
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+					>
+						{#each Object.entries(projectTitle) as [key, value]}
+							<option value={key}>{value}</option>
+						{/each}
+					</select>
+				</div>
+			{/if}
 
 			<div class="col-span-2">
 				<button

@@ -79,14 +79,12 @@
 								title: 'Supprimer',
 								type: 'delete',
 								handler: async (e) => {
-									console.log('delete ' + id);
 									const {data, error} = await supabase.from('orders').delete().eq('id', id).select().single();
 									if (error) {
 										console.error(error);
 										return;
 									}
 									if (data) {
-										console.log('deleted');
 										window.location.reload();
 									}
 								}
