@@ -153,7 +153,7 @@
 				.select(
 					'id, creationDate, projectId(id, name), status, lastUpdate, items(*), requestedBy(*)'
 				)
-				.eq('projectId', user.projectId)
+				.eq('projectId', user.projectId[0])
 				.range(page * step, (page + 1) * step));
 		}
 		if (error) {
@@ -189,7 +189,7 @@
 			({ count, error } = await supabase
 				.from('orders')
 				.select('*', { count: 'estimated', head: true })
-				.eq('projectId', user.projectId));
+				.eq('projectId', user.projectId[0]));
 		}
 		if (error) {
 			console.error(error);
