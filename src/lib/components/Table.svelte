@@ -7,6 +7,28 @@
 	import { supabase } from '$lib/supabaseClient';
 	export let actions = [];
 	export let headers = ['Nom', 'Email', 'Rôle', 'Actions'];
+	export let filters = [
+		{
+			category: 'Projet',
+			value: 'projectId',
+			options: [
+				{ name: 'CDR', value: '1', active: true },
+				{ name: 'Travelers', value: '2', active: true },
+				{ name: 'Exodus', value: '3', active: true }
+			]
+		},
+		{
+			category: 'Status',
+			value: 'projectId',
+			options: [
+				{ name: 'En attente', value: 'pending' },
+				{ name: 'Validé par le CDP', value: 'approvedCDP', active: true },
+				{ name: 'A commander', value: 'approvedTreso' },
+				{ name: 'Terminé', value: 'completed' },
+				{ name: 'Refusé', value: 'canceled","refusedTreso","refusedCDP' }
+			]
+		}
+	];
 	export let total_items = 0;
 
 	export let type = 'utilisateur';
@@ -159,34 +181,36 @@
 							id="filterDropdown"
 							class="z-10 hidden w-48 p-3 bg-white rounded-lg shadow dark:bg-gray-700"
 						>
-							<h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">WIIIIP</h6>
-							<ul class="space-y-2 text-sm" aria-labelledby="filterDropdownButton">
-								<li class="flex items-center">
-									<input
-										id="apple"
-										type="checkbox"
-										value=""
-										class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-									/>
-									<label
-										for="apple"
-										class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">CDR</label
-									>
-								</li>
-								<li class="flex items-center">
-									<input
-										id="fitbit"
-										type="checkbox"
-										value=""
-										class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-									/>
-									<label
-										for="fitbit"
-										class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-										>Travelers</label
-									>
-								</li>
-							</ul>
+							{#each filters as filter, i}
+								{#if i > 0}
+									<hr class="my-3 border-gray-200 dark:border-gray-600" />
+								{/if}
+								<h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">{filter.category}</h6>
+								<ul class="space-y-2 text-sm" aria-labelledby="filterDropdownButton">
+									{#each filter.options as option}
+										<li class="flex items-center">
+											<input
+												id="{option.name}"
+												type="checkbox"
+												value="{option.value}"
+												checked="{option.active}"
+												class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+												on:change={(e) => {
+													e.preventDefault();
+													option.active = e.target.checked;
+													console.log(filters);
+												}}
+												/>
+											<label
+												for="{option.name}"
+												class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
+												>{option.name}</label
+											>
+										</li>
+									{/each}
+								</ul>
+							{/each}
+							
 						</div>
 					</div>
 				</div>

@@ -130,7 +130,7 @@
 		}
 	];
 
-	async function loadPage(page, step = 20) {
+	async function loadPage(page, step = 20, filter = 'status:in:("approvedCDP")') {
 		// wait for user data to be loaded before fetching orders
 
 		if (!user) {
@@ -139,23 +139,22 @@
 
 		let items = [];
 
-		let data, error;
-		if (user.role == 'bureau' || user.role == 'admin') {
-			({ data, error } = await supabase
-				.from('orders')
-				.select(
-					'id, creationDate, projectId(id, name), status, lastUpdate, items(*), requestedBy(*)'
-				)
-				.range(page * step, (page + 1) * step));
-		} else {
-			({ data, error } = await supabase
-				.from('orders')
-				.select(
-					'id, creationDate, projectId(id, name), status, lastUpdate, items(*), requestedBy(*)'
-				)
-				.eq('projectId', user.projectId[0])
-				.range(page * step, (page + 1) * step));
+		let query = supabase
+			.from('orders')
+			.select('id, creationDate, projectId(id, name), status, lastUpdate, items(*), requestedBy(*)')
+
+		if (user.role == 'cdp' ) {;
+			query = query.eq('projectId', user.projectId[0]);
 		}
+
+		if (filter) {
+			filter = filter.split('$');
+			for (let i = 0; i < filter.length; i++) {
+				query = query.filter(...filter[i].split(':'));
+			}
+		}
+
+		const { data, error } = await query.range(page * step, (page + 1) * step - 1);
 		if (error) {
 			console.error(error);
 			return;
