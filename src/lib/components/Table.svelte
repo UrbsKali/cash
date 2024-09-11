@@ -1,10 +1,12 @@
 <script>
 	// @ts-nocheck
 	import { onMount, afterUpdate } from 'svelte';
+	import { writable } from 'svelte/store';
 	import { initFlowbite } from 'flowbite';
+	import { supabase } from '$lib/supabaseClient';
 	import CrudForm from './CrudForm.svelte';
 	import ReadModal from './ReadModal.svelte';
-	import { supabase } from '$lib/supabaseClient';
+	
 	export let actions = [];
 	export let headers = ['Nom', 'Email', 'Rôle', 'Actions'];
 	export let filters = [
@@ -19,9 +21,9 @@
 		},
 		{
 			category: 'Status',
-			value: 'projectId',
+			value: 'status',
 			options: [
-				{ name: 'En attente', value: 'pending' },
+				{ name: 'En attente', value: 'pendingCDP","pendingTreso' },
 				{ name: 'Validé par le CDP', value: 'approvedCDP', active: true },
 				{ name: 'A commander', value: 'approvedTreso' },
 				{ name: 'Terminé', value: 'completed' },
@@ -29,6 +31,9 @@
 			]
 		}
 	];
+
+	const filtersStore = writable(filters);
+
 	export let total_items = 0;
 
 	export let type = 'utilisateur';
@@ -41,7 +46,7 @@
 	export let loadPage = null;
 
 	let items = [];
-	let current_page = 1;
+	let current_page = 0;
 	let page = [];
 
 	$: {
@@ -64,8 +69,35 @@
 		});
 	}
 
+
+
+	function getFiltersString(filters) {
+		let filtersString = '';
+		// remove el from array if active is false
+		// copy array
+		let tmp = JSON.parse(JSON.stringify(filters));
+		tmp.forEach((el) => {
+			el.options = el.options.filter((option) => option.active);
+		});
+		// create string
+		tmp.forEach((el) => {
+			if (el.options.length > 0) {
+				filtersString += `${el.value}:in:("${el.options.map((option) => option.value).join('","')}")&`;
+			}
+		});
+
+		return filtersString.slice(0, -1);
+	}
+
+	filtersStore.subscribe(async (value) => {
+		current_page = 0;
+		const filtersString = getFiltersString(value);
+		items = await loadPage(0, 20, filtersString);
+	});
+
+	
 	onMount(async () => {
-		items = await loadPage(0);
+		items = await loadPage(0, 20, getFiltersString(filters));
 		initFlowbite();
 	});
 	afterUpdate(() => {
@@ -74,10 +106,10 @@
 </script>
 
 <section class="bg-gray-50 dark:bg-gray-900 sm:p-5">
-	<div class="mx-auto max-w-screen-xl sm:px-4 lg:px-12">
-		<div class="bg-white dark:bg-gray-800 relative shadow-md rounded-lg">
+	<div class="max-w-screen-xl mx-auto sm:px-4 lg:px-12">
+		<div class="relative bg-white rounded-lg shadow-md dark:bg-gray-800">
 			<div
-				class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4"
+				class="flex flex-col items-center justify-between p-4 space-y-3 md:flex-row md:space-y-0 md:space-x-4"
 			>
 				<div class="w-full md:w-1/2">
 					<form class="flex items-center">
@@ -101,7 +133,7 @@
 							<input
 								type="text"
 								id="simple-search"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+								class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 								placeholder="Search"
 								required=""
 							/>
@@ -109,12 +141,12 @@
 					</form>
 				</div>
 				<div
-					class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0"
+					class="flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3"
 				>
 					{#if onSubmit != null}
 						<button
 							type="button"
-							class="flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+							class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
 							id="CrudModalButton"
 							data-modal-target="CrudModal"
 							data-modal-toggle="CrudModal"
@@ -142,17 +174,17 @@
 							{type}
 						</button>
 					{/if}
-					<div class="flex items-center space-x-3 w-full md:w-auto">
+					<div class="flex items-center w-full space-x-3 md:w-auto">
 						<button
 							id="filterDropdownButton"
 							data-dropdown-toggle="filterDropdown"
-							class="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+							class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg md:w-auto focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
 							type="button"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								aria-hidden="true"
-								class="h-4 w-4 mr-2 text-gray-400"
+								class="w-4 h-4 mr-2 text-gray-400"
 								viewbox="0 0 20 20"
 								fill="currentColor"
 							>
@@ -185,24 +217,26 @@
 								{#if i > 0}
 									<hr class="my-3 border-gray-200 dark:border-gray-600" />
 								{/if}
-								<h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">{filter.category}</h6>
+								<h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">
+									{filter.category}
+								</h6>
 								<ul class="space-y-2 text-sm" aria-labelledby="filterDropdownButton">
 									{#each filter.options as option}
 										<li class="flex items-center">
 											<input
-												id="{option.name}"
+												id={option.name}
 												type="checkbox"
-												value="{option.value}"
-												checked="{option.active}"
+												value={option.value}
+												checked={option.active}
 												class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
 												on:change={(e) => {
 													e.preventDefault();
 													option.active = e.target.checked;
-													console.log(filters);
+													filtersStore.set(filters);
 												}}
-												/>
+											/>
 											<label
-												for="{option.name}"
+												for={option.name}
 												class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
 												>{option.name}</label
 											>
@@ -210,7 +244,6 @@
 									{/each}
 								</ul>
 							{/each}
-							
 						</div>
 					</div>
 				</div>
@@ -239,18 +272,18 @@
 									{#if key.value === item[0].value && headers[0] === 'Nom'}
 										<th
 											scope="row"
-											class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center"
+											class="flex items-center px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
 											data-utils={key.data || ''}
 										>
 											{#if key.avatar}
-												<div class="flex items-center space-x-2 mr-2">
-													<img src={key.avatar} class="rounded-full w-8 h-8" alt="user face" />
+												<div class="flex items-center mr-2 space-x-2">
+													<img src={key.avatar} class="w-8 h-8 rounded-full" alt="user face" />
 												</div>
 											{/if}
 											{key.value}</th
 										>
 									{:else if key.value === item[item.length - 1].value && headers[headers.length - 1] === 'Actions' && item.length > 2}
-										<td class="px-4 py-3 flex items-center justify-end">
+										<td class="flex items-center justify-end px-4 py-3">
 											<button
 												id="{i}-dropdown-button"
 												data-dropdown-toggle="{i}-dropdown"
@@ -283,7 +316,7 @@
 				</table>
 			</div>
 			<nav
-				class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4"
+				class="flex flex-col items-start justify-between p-4 space-y-3 md:flex-row md:items-center md:space-y-0"
 				aria-label="Table navigation"
 			>
 				<span class="text-sm font-normal text-gray-500 dark:text-gray-400">
@@ -320,13 +353,13 @@
 								<a
 									href="#"
 									aria-current="page"
-									class="flex items-center justify-center text-sm z-10 py-2 px-3 leading-tight text-primary-600 bg-primary-50 border border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
+									class="z-10 flex items-center justify-center px-3 py-2 text-sm leading-tight border text-primary-600 bg-primary-50 border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
 									>{p}</a
 								>
 							{:else}
 								<a
 									href="#"
-									class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+									class="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
 									>{p}</a
 								>
 							{/if}

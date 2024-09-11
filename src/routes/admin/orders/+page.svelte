@@ -130,6 +130,13 @@
 		}
 	];
 
+	/**
+	 * Load the page of orders
+	 * @param {number} page - The page number
+	 * @param {number} step - The number of items per page
+	 * @param {string} filter - The filter to apply to the query
+	 * @returns {Array} - The items to display
+	 */
 	async function loadPage(page, step = 20, filter = 'status:in:("approvedCDP")') {
 		// wait for user data to be loaded before fetching orders
 
@@ -148,7 +155,7 @@
 		}
 
 		if (filter) {
-			filter = filter.split('$');
+			filter = filter.split('&');
 			for (let i = 0; i < filter.length; i++) {
 				query = query.filter(...filter[i].split(':'));
 			}
@@ -198,7 +205,7 @@
 	});
 </script>
 
-<h2 class="mb-4 text-4xl tracking-tight font-bold text-gray-900 dark:text-white">Commandes</h2>
+<h2 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 dark:text-white">Commandes</h2>
 <Table {headers} {total_items} {actions} {loadPage} type="commande" type_accord="une" />
 
 <style></style>
