@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabaseClient';
 	import { config } from '$lib/config';
+	import SucessModal from './SucessModal.svelte';
 
 	const AuthType = {
 		login: 'Login',
@@ -83,11 +84,51 @@
 		}
 	};
 
+	const handleRegister = async () => {
+		try {
+			loading = true;
+
+			const { data, error } = await supabase.auth.signUp({
+				email: email,
+				password: password
+			});
+			if (error) throw error;
+			if (data) {
+				// show success message
+
+				new SucessModal({
+					target: document.body,
+					props: {
+						values: {
+							title: 'Inscription réussie',
+							body: 'Un email de confirmation vous a été envoyé. Veuillez vérifier votre boîte de réception.'
+						},
+						open: true,
+						onclose: () => {
+							open = false;
+							current_component.$destroy();
+							window.location.href = `${currentOrigin()}/login`;
+						},
+						id: 'successModal'
+					}
+				});
+			}
+		} catch (error) {
+			if (error instanceof Error) {
+				alert(error.message);
+			}
+		} finally {
+			loading = false;
+		}
+	};
+
 	const handleAuth = async () => {
 		if (auth_type === AuthType.login) {
 			await handleLogin();
 		} else if (auth_type === AuthType.reset) {
 			await handleReset();
+		} else if (auth_type === AuthType.register) {
+			await handleRegister();
 		}
 	};
 
@@ -108,7 +149,7 @@
 	<div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
 		<!-- svelte-ignore a11y-missing-attribute -->
 		<a class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-			<img class="h-20  mr-2" src="/white_logo.webp" alt="logo" />
+			<img class="h-20 mr-2" src="/white_logo.webp" alt="logo" />
 		</a>
 		<div
 			class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"

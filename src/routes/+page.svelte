@@ -7,7 +7,7 @@
 
 	onMount(() => {
 		url = window.location.origin + config.basePath + '/admin';
-
+		window.location.href = url;
 	});
 </script>
 
