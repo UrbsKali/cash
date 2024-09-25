@@ -101,7 +101,7 @@
 					props: {
 						values: {
 							title: 'Inscription réussie',
-							body: 'Un email de confirmation vous a été envoyé. Veuillez vérifier votre boîte de réception.'
+							message: 'Un email de confirmation vous a été envoyé. Veuillez vérifier votre boîte de réception.'
 						},
 						open: true,
 						onclose: () => {
