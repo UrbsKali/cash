@@ -99,10 +99,9 @@
 				new SucessModal({
 					target: document.body,
 					props: {
-						values: {
-							title: 'Inscription réussie',
-							message: 'Un email de confirmation vous a été envoyé. Veuillez vérifier votre boîte de réception.'
-						},
+						title: 'Inscription réussie',
+						message:
+							'Un email de confirmation vous a été envoyé. Veuillez vérifier votre boîte de réception.',
 						open: true,
 						onclose: () => {
 							open = false;
