@@ -24,10 +24,12 @@
 	<meta name="twitter:creator" content="@DaVinciBot" />
 	<meta name="twitter:title" content="DaVinciBot" />
 	<meta name="twitter:description" content="DaVinciBot. L'association de robotique étudiante." />
-	<meta name="twitter:image" content="/colored_logo.webp" />
+	<meta name="twitter:image" content="/dvb_og_img.png" />
 	<meta name="twitter:image:alt" content="DaVinciBot" />
 	<meta name="twitter:url" content="https://davincibot.fr" />
 	<meta name="twitter:domain" content="davincibot.fr" />
+	<meta name="twitter:card" content="summary_large_image">
+
 
 	<!-- meta favicon -->
 	<link rel="icon" type="image/png" href="/favicon.png" />
