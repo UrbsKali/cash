@@ -8,10 +8,11 @@
 	<meta name="keywords" content="DaVinciBot, association, robot, robotique, étudiant, esilv" />
 	<meta name="author" content="DaVinciBot" />
 	<meta name="robots" content="index, follow" />
+	
 	<!-- meta og -->
 	<meta property="og:title" content="DaVinciBot" />
 	<meta property="og:description" content="DaVinciBot. L'association de robotique étudiante." />
-	<meta property="og:image" content="/colored_logo.webp" />
+	<meta property="og:image" content="/dvb_og_img.png" />
 	<meta property="og:url" content="https://davincibot.fr" />
 	<meta property="og:type" content="website" />
 	<meta property="og:site_name" content="DaVinciBot" />
