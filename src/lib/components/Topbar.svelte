@@ -12,7 +12,7 @@
           </div>
         </a>
       </div>
-      <div class="flex gap-x-12">
+      <div class="flex hidden gap-x-12 sm:block">
         
   
         <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Nos Projets</a>

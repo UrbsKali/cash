@@ -145,12 +145,12 @@
 	}
 </script>
 
-<div class="antialiased bg-gray-50 dark:bg-gray-900">
+<div class="min-h-screen overflow-hidden antialiased bg-gray-50 dark:bg-gray-900 min-w-screen" >
 	<nav
-		class="bg-white border-b border-gray-200 px-4 py-2.5 dark:bg-gray-800 dark:border-gray-700 fixed left-0 right-0 top-0 z-50"
+		class="bg-white border-b border-gray-200 px-4 py-2.5 dark:bg-gray-800 dark:border-gray-700 fixed left-0 right-0 top-0 z-50 w-screen"
 	>
-		<div class="flex flex-wrap justify-between items-center">
-			<div class="flex justify-start items-center">
+		<div class="flex flex-wrap items-center justify-between">
+			<div class="flex items-center justify-start">
 				<button
 					data-drawer-target="drawer-navigation"
 					data-drawer-toggle="drawer-navigation"
@@ -186,8 +186,8 @@
 					<span class="sr-only">Toggle sidebar</span>
 				</button>
 				<a href="/admin" class="flex items-center justify-between mr-4">
-					<img src="/white_logo_notext.webp" class="mr-3 h-8" alt="Davincibot Logo" />
-					<span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
+					<img src="/white_logo_notext.webp" class="h-8 mr-3" alt="Davincibot Logo" />
+					<span class="self-center hidden text-2xl font-semibold whitespace-nowrap dark:text-white sm:block"
 						>DaVinciBot</span
 					>
 				</a>
@@ -196,7 +196,7 @@
 			<div class="flex items-center lg:order-2">
 				<a
 					type="button"
-					class="flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm p-2 sm:px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800 mr-2"
+					class="flex items-center justify-center p-2 py-2 mr-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:px-4 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
 					href="/admin/orders/new"
 				>
 					<svg
@@ -222,7 +222,10 @@
 	<!-- Sidebar -->
 	<SideBar menu={__menu} />
 
-	<main class="p-4 md:ml-64 min-h-screen pt-20">
+	<main class="min-h-screen p-4 pt-20 md:ml-64">
 		<slot />
 	</main>
 </div>
+
+<style>
+</style>
