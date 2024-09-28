@@ -6,70 +6,69 @@
 	import { supabase } from '$lib/supabaseClient';
 	import CrudForm from './CrudForm.svelte';
 	import ReadModal from './ReadModal.svelte';
-	
+
 	export let actions = [];
 	export let headers = ['Nom', 'Email', 'Rôle', 'Actions'];
-	export let filters = [
-		{
-			category: 'Projet',
-			value: 'projectId',
-			options: [
-				{ name: 'CDR', value: '1', active: true },
-				{ name: 'Travelers', value: '2', active: true },
-				{ name: 'Exodus', value: '3', active: true }
-			]
-		},
-		{
-			category: 'Status',
-			value: 'status',
-			options: [
-				{ name: 'En attente', value: 'pendingCDP","pendingTreso' },
-				{ name: 'Validé par le CDP', value: 'approvedCDP', active: true },
-				{ name: 'A commander', value: 'approvedTreso' },
-				{ name: 'Terminé', value: 'completed' },
-				{ name: 'Refusé', value: 'canceled","refusedTreso","refusedCDP' }
-			]
-		}
-	];
-
-	const filtersStore = writable(filters);
-
-	export let total_items = 0;
+	export let filters = [];
+	export let dbInfo = {}; // { table: 'users', key: 'id, email, role'}
 
 	export let type = 'utilisateur';
 	export let type_accord = 'un';
+	export let parseItems = null;
 
 	// CrudForm props and methods
 	export let fields = [];
 	export let onSubmit = null;
 	export let onEdit = null;
-	export let loadPage = null;
 
-	let items = [];
-	let current_page = 0;
-	let page = [];
+	const filtersStore = writable(filters);
+	/**
+	 * Load the page of items
+	 * @param {number} page - The page number
+	 * @param {string} filter - The filter to apply to the query (optional, default '')
+	 * @param {number} step - The number of items per page (optional, default 20)
+	 * @returns {none} - Sets the items variable
+	 */
+	async function loadPage(page, filter = '', step = 20) {
+		let items = [];
 
-	$: {
+		let query = supabase.from(dbInfo.table).select(dbInfo.key, { count: 'estimated', head: false });
+
+		if (filter) {
+			filter = filter.split('&');
+			for (let i = 0; i < filter.length; i++) {
+				query = query.filter(...filter[i].split(':'));
+			}
+		}
+
+		const { data, error, count } = await query.range(page * step, (page + 1) * step - 1);
+		if (error) {
+			console.error(error);
+			return;
+		}
+		total_items = count;
+		console.log(data);
+		items = parseItems ? parseItems(data) : data;
+		console.log(items);
+
 		page = [];
 		if (items.length > 0) {
 			for (let i = 1; i <= total_items / items.length; i++) {
 				page.push(i);
 			}
 		}
+		return items;
 	}
+
+	let items = [];
+	let current_page = 0;
+	let total_items = 0;
+	let page = [];
 
 	let selectedHandler = (e) => {
 		console.log(e);
 	};
 	let selectedAction = 'Ajouter';
-
-	$: if (headers[headers.length - 1] == 'Actions') {
-		items.forEach((item) => {
-			if (item[item.length - 1] != 'Actions') item.push('Actions');
-		});
-	}
-
-
 
 	function getFiltersString(filters) {
 		let filtersString = '';
@@ -85,20 +84,24 @@
 				filtersString += `${el.value}:in:("${el.options.map((option) => option.value).join('","')}")&`;
 			}
 		});
-
 		return filtersString.slice(0, -1);
 	}
 
+	let mounted = false;
+
 	filtersStore.subscribe(async (value) => {
+		if (!mounted) return;
 		current_page = 0;
 		const filtersString = getFiltersString(value);
-		items = await loadPage(0, 20, filtersString);
+		items = await loadPage(0, filtersString);
 	});
 
-	
 	onMount(async () => {
-		items = await loadPage(0, 20, getFiltersString(filters));
+		console.log(items);
+		items = await loadPage(0, getFiltersString(filters));
+		console.log(items);
 		initFlowbite();
+		mounted = true;
 	});
 	afterUpdate(() => {
 		initFlowbite();
@@ -214,35 +217,37 @@
 							class="z-10 hidden w-48 p-3 bg-white rounded-lg shadow dark:bg-gray-700"
 						>
 							{#each filters as filter, i}
-								{#if i > 0}
-									<hr class="my-3 border-gray-200 dark:border-gray-600" />
+								{#if filter.category != 'hidden'}
+									{#if i > 0}
+										<hr class="my-3 border-gray-200 dark:border-gray-600" />
+									{/if}
+									<h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">
+										{filter.category}
+									</h6>
+									<ul class="space-y-2 text-sm" aria-labelledby="filterDropdownButton">
+										{#each filter.options as option}
+											<li class="flex items-center">
+												<input
+													id={option.name}
+													type="checkbox"
+													value={option.value}
+													checked={option.active}
+													class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+													on:change={(e) => {
+														e.preventDefault();
+														option.active = e.target.checked;
+														filtersStore.set(filters);
+													}}
+												/>
+												<label
+													for={option.name}
+													class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
+													>{option.name}</label
+												>
+											</li>
+										{/each}
+									</ul>
 								{/if}
-								<h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">
-									{filter.category}
-								</h6>
-								<ul class="space-y-2 text-sm" aria-labelledby="filterDropdownButton">
-									{#each filter.options as option}
-										<li class="flex items-center">
-											<input
-												id={option.name}
-												type="checkbox"
-												value={option.value}
-												checked={option.active}
-												class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-												on:change={(e) => {
-													e.preventDefault();
-													option.active = e.target.checked;
-													filtersStore.set(filters);
-												}}
-											/>
-											<label
-												for={option.name}
-												class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-												>{option.name}</label
-											>
-										</li>
-									{/each}
-								</ul>
 							{/each}
 						</div>
 					</div>
@@ -282,36 +287,36 @@
 											{/if}
 											{key.value}</th
 										>
-									{:else if key.value === item[item.length - 1].value && headers[headers.length - 1] === 'Actions' && item.length > 2}
-										<td class="flex items-center justify-end px-4 py-3">
-											<button
-												id="{i}-dropdown-button"
-												data-dropdown-toggle="{i}-dropdown"
-												class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
-												type="button"
-												on:click={(e) => {
-													actions.find((el) => el.type == 'view').handler(e);
-												}}
-											>
-												<svg
-													class="w-5 h-5"
-													aria-hidden="true"
-													fill="currentColor"
-													viewbox="0 0 20 20"
-													xmlns="http://www.w3.org/2000/svg"
-												>
-													<path
-														d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"
-													/>
-												</svg>
-											</button>
-										</td>
 									{:else}
 										<td class="px-4 py-3" data-utils={key.data || ''}>{key.value}</td>
 									{/if}
 								{/each}
-							</tr>
-						{/each}
+								{#if actions.length > 0}
+									<td class="flex items-center justify-end px-4 py-3">
+										<button
+											id="{i}-dropdown-button"
+											data-dropdown-toggle="{i}-dropdown"
+											class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
+											type="button"
+											on:click={(e) => {
+												actions.find((el) => el.type == 'view').handler(e);
+											}}
+										>
+											<svg
+												class="w-5 h-5"
+												aria-hidden="true"
+												fill="currentColor"
+												viewbox="0 0 20 20"
+												xmlns="http://www.w3.org/2000/svg"
+											>
+												<path
+													d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"
+												/>
+											</svg>
+										</button>
+									</td>
+								{/if}
+							</tr>{/each}
 					</tbody>
 				</table>
 			</div>

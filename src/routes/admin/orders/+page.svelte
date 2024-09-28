@@ -15,7 +15,37 @@
 	});
 
 	let headers = ['Objet', 'Date', 'Dernière MàJ', 'Prix', 'Projet', 'Membre', 'Status', 'Actions'];
-	let total_items = 0;
+	let dbInfo = {
+		table: 'orders',
+		key: 'id, creationDate, projectId(id, name), status, lastUpdate, items(*), requestedBy(*)'
+	};
+
+	let filters = [
+		{
+			category: 'Projet',
+			value: 'projectId',
+			options: [
+				{ name: 'CDR', value: '1', active: true },
+				{ name: 'Travelers', value: '2', active: true },
+				{ name: 'Exodus', value: '3', active: true },
+				{ name: 'Pôle Event', value: '6', active: true },
+				{ name: 'Pôle Com', value: '4', active: true },
+				{ name: 'Pôle Formation', value: '5', active: true },
+				{ name: 'Bureau', value: '6', active: true }
+			]
+		},
+		{
+			category: 'Status',
+			value: 'status',
+			options: [
+				{ name: 'En attente', value: 'pendingCDP","pendingTreso' },
+				{ name: 'Validé par le CDP', value: 'approvedCDP', active: true },
+				{ name: 'A commander', value: 'approvedTreso' },
+				{ name: 'Terminé', value: 'completed' },
+				{ name: 'Refusé', value: 'canceled","refusedTreso","refusedCDP' }
+			]
+		}
+	];
 
 	let actions = [
 		{
@@ -129,43 +159,8 @@
 			}
 		}
 	];
-
-	/**
-	 * Load the page of orders
-	 * @param {number} page - The page number
-	 * @param {number} step - The number of items per page
-	 * @param {string} filter - The filter to apply to the query
-	 * @returns {Array} - The items to display
-	 */
-	async function loadPage(page, step = 20, filter = 'status:in:("approvedCDP")') {
-		// wait for user data to be loaded before fetching orders
-
-		if (!user) {
-			await loadUserdata();
-		}
-
+	function parseItems(data) {
 		let items = [];
-
-		let query = supabase
-			.from('orders')
-			.select('id, creationDate, projectId(id, name), status, lastUpdate, items(*), requestedBy(*)')
-
-		if (user.role == 'cdp' ) {;
-			query = query.eq('projectId', user.projectId[0]);
-		}
-
-		if (filter) {
-			filter = filter.split('&');
-			for (let i = 0; i < filter.length; i++) {
-				query = query.filter(...filter[i].split(':'));
-			}
-		}
-
-		const { data, error } = await query.range(page * step, (page + 1) * step - 1);
-		if (error) {
-			console.error(error);
-			return;
-		}
 		data.forEach((el) => {
 			const price = el.items.reduce((acc, item, i) => acc + item.price * item.quantity, 0);
 			const name = el.items.map((item) => item.name).join(', ');
@@ -186,26 +181,21 @@
 		if (!user) {
 			await loadUserdata();
 		}
-		let count, error;
-		if (user.role == 'bureau' || user.role == 'admin') {
-			({ count, error } = await supabase
-				.from('orders')
-				.select('*', { count: 'estimated', head: true }));
-		} else {
-			({ count, error } = await supabase
-				.from('orders')
-				.select('*', { count: 'estimated', head: true })
-				.eq('projectId', user.projectId[0]));
+		if (user.role == 'cdp') {
+			filters = filters.splice(1, 1);
+			filters = [
+				...filters,
+				{
+					category: 'hidden',
+					value: 'projectId',
+					options: [{ name: 'CDP project', value: user.projectId[0], active: true }]
+				}
+			];
 		}
-		if (error) {
-			console.error(error);
-			return;
-		}
-		total_items = count;
 	});
 </script>
 
 <h2 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 dark:text-white">Commandes</h2>
-<Table {headers} {total_items} {actions} {loadPage} type="commande" type_accord="une" />
+<Table {headers} {actions} {dbInfo} {filters} {parseItems} type="commande" type_accord="une" />
 
 <style></style>

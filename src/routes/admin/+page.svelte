@@ -8,10 +8,8 @@
 	import ReadModal from '../../lib/components/ReadModal.svelte';
 	import { statusText } from '$lib/utils';
 
-
 	let skip = false;
 	let user;
-	let total_items = 0;
 
 	userdata.subscribe((value) => {
 		if (value) {
@@ -20,7 +18,28 @@
 		}
 	});
 
-	let headers = ['Objets', 'Date de création','Dernière mise à jour', 'Prix', 'Status', 'Actions'];
+	let headers = ['Objets', 'Date de création', 'Dernière mise à jour', 'Prix', 'Status', 'Actions'];
+
+	let filters = [
+		{
+			category: 'Status',
+			value: 'status',
+			options: [
+				{ name: 'En attente', value: 'pendingCDP","pendingTreso', active: true },
+				{ name: 'Validé par le CDP', value: 'approvedCDP' },
+				{ name: 'Commandé', value: 'approvedTreso' },
+				{ name: 'Terminé', value: 'completed' },
+				{ name: 'Refusé', value: 'canceled","refusedTreso","refusedCDP' }
+			]
+		},
+		{
+			category: 'hidden',
+			value: 'requestedBy',
+			options: [
+				{ name: 'current_user', value: user?.id, active: true },
+			]
+		}
+	];
 
 	let actions = [
 		{
@@ -32,9 +51,7 @@
 
 				const { data, error } = await supabase
 					.from('orders')
-					.select(
-						'id, creationDate, projectId, status, lastUpdate, items(*), comment'
-					)
+					.select('id, creationDate, projectId, status, lastUpdate, items(*), comment')
 					.eq('id', id)
 					.single();
 
@@ -47,7 +64,12 @@
 
 				let items = [];
 				data.items.forEach((item, i) => {
-					items.push({ name: item.name, quantity: item.quantity, price: `${item.price} €`, id: item.id });
+					items.push({
+						name: item.name,
+						quantity: item.quantity,
+						price: `${item.price} €`,
+						id: item.id
+					});
 				});
 
 				new ReadModal({
@@ -79,7 +101,12 @@
 								title: 'Supprimer',
 								type: 'delete',
 								handler: async (e) => {
-									const {data, error} = await supabase.from('orders').delete().eq('id', id).select().single();
+									const { data, error } = await supabase
+										.from('orders')
+										.delete()
+										.eq('id', id)
+										.select()
+										.single();
 									if (error) {
 										console.error(error);
 										return;
@@ -97,23 +124,13 @@
 		}
 	];
 
-	async function loadPage(page, step = 20) {
-		// wait for user data to be loaded before fetching orders
-		if (!user) {
-			await loadUserdata();
-		}
+	let dbInfo = {
+		table: 'orders',
+		key: 'id, creationDate, projectId, status, lastUpdate, items(*)'
+	};
+
+	function parseItems(data) {
 		let items = [];
-		const { data, error } = await supabase
-			.from('orders')
-			.select(
-				'id, creationDate, projectId, status, lastUpdate, items(*)'
-			)
-			.eq('requestedBy', user.id)
-			.range(page * step, (page + 1) * step);
-		if (error) {
-			console.error(error);
-			return;
-		}
 		data.forEach((el) => {
 			const price = el.items.reduce((acc, item, i) => acc + item.price * item.quantity, 0);
 			const name = el.items.map((item) => item.name).join(', ');
@@ -132,20 +149,11 @@
 		if (skip) return;
 		await loadUserdata();
 		initFlowbite();
-		const { count, error } = await supabase
-			.from('orders')
-			.select('*', { count: 'estimated', head: true })
-			.eq('requestedBy', user.id);
-		if (error) {
-			console.error(error);
-			return;
-		}
-		total_items = count;
 	});
 </script>
 
-<div class=" w-full flex justify-between items-center sm:px-8 lg:px-16">
-	<h2 class="mb-4 text-4xl tracking-tight font-bold text-gray-900 dark:text-white">
+<div class="flex items-center justify-between w-full sm:px-8 lg:px-16">
+	<h2 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
 		Bonjour {user?.name ?? 'utilisateur'}
 	</h2>
 </div>
@@ -155,5 +163,5 @@
 	</p>
 </div>
 <div>
-	<Table {headers} {total_items} {loadPage} {actions} type="commande" type_accord="une" />
+	<Table {headers} {dbInfo} {parseItems} {actions} {filters} type="commande" type_accord="une" />
 </div>
