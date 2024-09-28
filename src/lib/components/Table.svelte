@@ -47,9 +47,7 @@
 			return;
 		}
 		total_items = count;
-		console.log(data);
 		items = parseItems ? parseItems(data) : data;
-		console.log(items);
 
 		page = [];
 		if (items.length > 0) {
@@ -97,9 +95,7 @@
 	});
 
 	onMount(async () => {
-		console.log(items);
 		items = await loadPage(0, getFiltersString(filters));
-		console.log(items);
 		initFlowbite();
 		mounted = true;
 	});

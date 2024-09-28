@@ -28,6 +28,7 @@
 	let loading = false;
 	let email = '';
 	let password = '';
+	let username = '';
 
 	onMount(async () => {
 		redirect_uri = parseRedirectURI(redirect_uri);
@@ -88,20 +89,19 @@
 		try {
 			loading = true;
 
-			const { data, error } = await supabase.auth.signUp({
-				email: email,
+			const { data, error } = await supabase.auth.updateUser({
+				username: username,
 				password: password
 			});
 			if (error) throw error;
 			if (data) {
 				// show success message
-
 				new SucessModal({
 					target: document.body,
 					props: {
 						title: 'Inscription réussie',
 						message:
-							'Un email de confirmation vous a été envoyé. Veuillez vérifier votre boîte de réception.',
+							'Vous avez bien été inscrit. Vous allez être redirigé vers la page de connexion.',
 						open: true,
 						onclose: () => {
 							open = false;
@@ -157,9 +157,26 @@
 				<h1
 					class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
 				>
-					Panneau d'administration - {auth_type}
+					DaVinciBot - {auth_type}
 				</h1>
 				<form class="space-y-4 md:space-y-6" on:submit|preventDefault={handleAuth}>
+
+					{#if auth_type === AuthType.register}
+					<div>
+						<label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+							>Votre prénom</label
+						>
+						<input
+							type="text"
+							name="username"
+							id="username"
+							class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 disabled:opacity-50"
+							placeholder="Urbain"
+							bind:value={username}
+						/>
+					</div>
+					{/if}
+
 					<div>
 						<label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
 							>Votre email</label
