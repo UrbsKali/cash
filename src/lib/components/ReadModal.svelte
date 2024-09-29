@@ -2,7 +2,6 @@
 	import { get_current_component } from 'svelte/internal';
 	import { supabase } from '$lib/supabaseClient';
 	import { statusText } from '$lib/utils';
-	import { A } from 'flowbite-svelte';
 	const current_component = get_current_component();
 
 	export let values = {
@@ -66,13 +65,13 @@
 	on:click={__onClose}
 	data-toggle="true"
 >
-	<div class="relative p-4 w-full h-full m-auto flex">
+	<div class="relative flex w-full h-full p-4 m-auto">
 		<!-- Modal content -->
-		<div class="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5 m-auto min-w-96">
+		<div class="relative p-4 m-auto bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5 min-w-96">
 			<!-- Modal header -->
 			<div class="flex justify-between mb-4 rounded-t sm:mb-5">
-				<div class="text-lg text-gray-900 md:text-xl dark:text-white flex w-full">
-					<h3 class="font-semibold mr-2">{values.header.title} -</h3>
+				<div class="flex w-full text-lg text-gray-900 md:text-xl dark:text-white">
+					<h3 class="mr-2 font-semibold">{values.header.title} -</h3>
 					<p class="font-bold">{values.header.price} €</p>
 				</div>
 				<div>
@@ -104,7 +103,7 @@
 				{#each values.body as { label, value }}
 					{#if typeof value === 'object'}
 						<dt class="mb-2 font-semibold leading-none text-gray-900 dark:text-white">{label}</dt>
-						<dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 ml-2">
+						<dd class="mb-4 ml-2 font-light text-gray-500 sm:mb-5 dark:text-gray-400">
 							<table class="w-full border-separate">
 								<thead class="font-bold">
 									<td>Nom</td>
@@ -171,7 +170,7 @@
 					{/if}
 				{/each}
 			</dl>
-			<div class="flex justify-between items-center">
+			<div class="flex items-center justify-between">
 				{#each actions as { title, type, handler }}
 					{#if type == 'edit'}
 						<button
@@ -181,7 +180,7 @@
 						>
 							<svg
 								aria-hidden="true"
-								class="mr-1 -ml-1 w-5 h-5"
+								class="w-5 h-5 mr-1 -ml-1"
 								fill="currentColor"
 								viewBox="0 0 20 20"
 								xmlns="http://www.w3.org/2000/svg"

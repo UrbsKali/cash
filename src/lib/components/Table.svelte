@@ -18,8 +18,7 @@
 
 	// CrudForm props and methods
 	export let fields = [];
-	export let onSubmit = null;
-	export let onEdit = null;
+	export let addNew = null;
 
 	const filtersStore = writable(filters);
 	/**
@@ -63,9 +62,6 @@
 	let total_items = 0;
 	let page = [];
 
-	let selectedHandler = (e) => {
-		console.log(e);
-	};
 	let selectedAction = 'Ajouter';
 
 	function getFiltersString(filters) {
@@ -142,19 +138,12 @@
 				<div
 					class="flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3"
 				>
-					{#if onSubmit != null}
+					{#if addNew != null}
 						<button
 							type="button"
 							class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
 							id="CrudModalButton"
-							data-modal-target="CrudModal"
-							data-modal-toggle="CrudModal"
-							on:click={(e) => {
-								selectedAction = 'Ajouter';
-								selectedHandler = onSubmit;
-								const modal = FlowbiteInstances.getInstance('Modal', 'CrudModal');
-								modal.show();
-							}}
+							on:click={addNew}
 						>
 							<svg
 								class="h-3.5 w-3.5 mr-2"
@@ -392,8 +381,6 @@
 			</nav>
 		</div>
 	</div>
-	<CrudForm {type} {fields} {type_accord} action={selectedAction} onSubmit={selectedHandler} />
-	<ReadModal />
 </section>
 
 <style></style>
