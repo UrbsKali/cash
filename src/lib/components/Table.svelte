@@ -2,7 +2,6 @@
 	// @ts-nocheck
 	import { onMount, afterUpdate } from 'svelte';
 	import { writable } from 'svelte/store';
-	import { initFlowbite } from 'flowbite';
 	import { supabase } from '$lib/supabaseClient';
 	import CrudForm from './CrudForm.svelte';
 	import ReadModal from './ReadModal.svelte';
@@ -67,8 +66,6 @@
 	let total_items = 0;
 	let page = [];
 
-	let selectedAction = 'Ajouter';
-
 	function getFiltersString(filters) {
 		let filtersString = '';
 		// remove el from array if active is false
@@ -87,6 +84,7 @@
 	}
 
 	let mounted = false;
+	let filter_state = false;
 
 	filtersStore.subscribe(async (value) => {
 		const filtersString = getFiltersString(value);
@@ -97,12 +95,35 @@
 
 	onMount(async () => {
 		items = await loadPage(0, getFiltersString(filters));
-		initFlowbite();
 		mounted = true;
+		const dropdown = document.getElementById('filterDropdown');
+
+		// set position of the popup just below the button
+		const rect = document.getElementById('filterDropdownButton').getBoundingClientRect();
+		dropdown.style.top = 'calc(' + rect.bottom + 'px + 0.5rem)';
+		if (window.innerWidth < 768){
+			dropdown.style.left = rect.left + 'px';
+			dropdown.style.width = rect.width + 'px';
+
+		} else {
+			dropdown.style.left = 'calc(' + rect.left + 'px - 1.5rem)';
+		}
+		// detach the el
+		document.body.appendChild(dropdown);
 	});
-	afterUpdate(() => {
-		initFlowbite();
-	});
+
+	onresize = () => {
+		console.log('resize');
+		const dropdown = document.getElementById('filterDropdown');
+		const rect = document.getElementById('filterDropdownButton').getBoundingClientRect();
+		dropdown.style.top = 'calc(' + rect.bottom + 'px + 0.5rem)';
+		if (window.innerWidth < 768){
+			dropdown.style.left = rect.left + 'px';
+			dropdown.style.width = rect.width + 'px';
+		} else {
+			dropdown.style.left = 'calc(' + rect.left + 'px - 1.5rem)';
+		}
+	};
 </script>
 
 <section class="bg-gray-50 dark:bg-gray-900 sm:p-5">
@@ -147,7 +168,7 @@
 						<button
 							type="button"
 							class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
-							id="CrudModalButton"
+							id="addNewButton"
 							on:click={addNew}
 						>
 							<svg
@@ -170,9 +191,11 @@
 					<div class="flex items-center w-full space-x-3 md:w-auto">
 						<button
 							id="filterDropdownButton"
-							data-dropdown-toggle="filterDropdown"
 							class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg md:w-auto focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
 							type="button"
+							on:click={() => {
+								filter_state = !filter_state;
+							}}
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -204,7 +227,9 @@
 						</button>
 						<div
 							id="filterDropdown"
-							class="z-10 hidden w-48 p-3 bg-white rounded-lg shadow dark:bg-gray-700"
+							class="absolute z-10 {filter_state
+								? ''
+								: 'hidden'} md:w-48 p-3 bg-white rounded-lg shadow dark:bg-gray-700 w-72 "
 						>
 							{#each filters as filter, i}
 								{#if filter.category != 'hidden'}
