@@ -21,6 +21,11 @@
 	export let addNew = null;
 
 	const filtersStore = writable(filters);
+
+	$: {
+		filtersStore.set(filters);
+	}
+
 	/**
 	 * Load the page of items
 	 * @param {number} page - The page number
@@ -84,10 +89,10 @@
 	let mounted = false;
 
 	filtersStore.subscribe(async (value) => {
-		if (!mounted) return;
-		current_page = 0;
 		const filtersString = getFiltersString(value);
+		if (!mounted) return;
 		items = await loadPage(0, filtersString);
+		current_page = 0;
 	});
 
 	onMount(async () => {

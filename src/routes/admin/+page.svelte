@@ -35,11 +35,13 @@
 		{
 			category: 'hidden',
 			value: 'requestedBy',
-			options: [
-				{ name: 'current_user', value: user?.id, active: true },
-			]
+			options: [{ name: 'current_user', value: user?.id, active: true }]
 		}
 	];
+
+	$: {
+		filters[1].options[0].value = user?.id;
+	}
 
 	let actions = [
 		{
