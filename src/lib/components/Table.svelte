@@ -96,33 +96,30 @@
 	onMount(async () => {
 		items = await loadPage(0, getFiltersString(filters));
 		mounted = true;
+
 		const dropdown = document.getElementById('filterDropdown');
 
-		// set position of the popup just below the button
-		const rect = document.getElementById('filterDropdownButton').getBoundingClientRect();
-		dropdown.style.top = 'calc(' + rect.bottom + 'px + 0.5rem)';
-		if (window.innerWidth < 768){
-			dropdown.style.left = rect.left + 'px';
-			dropdown.style.width = rect.width + 'px';
+		setupDropdown();
 
-		} else {
-			dropdown.style.left = 'calc(' + rect.left + 'px - 1.5rem)';
-		}
 		// detach the el
 		document.body.appendChild(dropdown);
 	});
 
-	onresize = () => {
-		console.log('resize');
+	function setupDropdown() {
+		// set position of the popup just below the button
 		const dropdown = document.getElementById('filterDropdown');
 		const rect = document.getElementById('filterDropdownButton').getBoundingClientRect();
 		dropdown.style.top = 'calc(' + rect.bottom + 'px + 0.5rem)';
-		if (window.innerWidth < 768){
+		if (window.innerWidth < 768) {
 			dropdown.style.left = rect.left + 'px';
 			dropdown.style.width = rect.width + 'px';
 		} else {
 			dropdown.style.left = 'calc(' + rect.left + 'px - 1.5rem)';
 		}
+	}
+
+	onresize = () => {
+		setupDropdown();
 	};
 </script>
 
@@ -229,7 +226,7 @@
 							id="filterDropdown"
 							class="absolute z-10 {filter_state
 								? ''
-								: 'hidden'} md:w-48 p-3 bg-white rounded-lg shadow dark:bg-gray-700 w-72 "
+								: 'hidden'} md:w-48 p-3 bg-white rounded-lg shadow dark:bg-gray-700 w-72"
 						>
 							{#each filters as filter, i}
 								{#if filter.category != 'hidden'}

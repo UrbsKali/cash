@@ -36,3 +36,7 @@ bun run build
 You can preview the production build with `bun run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+
+## micro docs (will be moved)
+
+- Year starts on 1st september (eg : CDR 2025 correspond to 1st september 2024 to 31th August 2025)

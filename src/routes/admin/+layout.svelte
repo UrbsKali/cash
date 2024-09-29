@@ -23,19 +23,15 @@
 			sub: [
 				{
 					title: 'Coupe de France',
-					uri: '/admin/wip'
+					uri: '/admin/projects/1'
 				},
 				{
 					title: 'Exaudus',
-					uri: '/admin/wip'
-				},
-				{
-					title: 'Mate Rov',
-					uri: '/admin/wip'
+					uri: '/admin/projects/3'
 				},
 				{
 					title: 'Travelers',
-					uri: '/admin/wip'
+					uri: '/admin/projects/2'
 				}
 			]
 		},
