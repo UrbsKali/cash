@@ -27,6 +27,7 @@
 	page.subscribe((value) => {
 		if (value) {
 			slug = value.params.id;
+			loadPage().catch(console.error);
 		}
 	});
 
@@ -47,6 +48,10 @@
 	}
 
 	onMount(async () => {
+		await loadPage();
+	});
+
+	async function loadPage() {
 		project = await fetchProject();
 		const { data, error } = await supabase.rpc('get_project_cost', {
 			projectid: slug,
@@ -57,7 +62,7 @@
 			return;
 		}
 		project.budget.cost = data;
-	});
+	}
 </script>
 
 <div class="flex items-center justify-between w-full sm:px-8 lg:px-16">
@@ -67,7 +72,7 @@
 	</h2>
 </div>
 <div class="flex flex-col items-center justify-center w-full gap-2 sm:w-80">
-    <div class="flex items-center justify-around w-full">
+	<div class="flex items-center justify-around w-full">
 		<h3 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Budget</h3>
 		<div class="flex items-center space-x-2">
 			<span class="text-xl font-bold tracking-tight text-gray-900 dark:text-white"
