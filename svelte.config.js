@@ -6,7 +6,12 @@ const config = {
 		// adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.
 		// If your environment is not supported, or you settled on a specific environment, switch out the adapter.
 		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
-		adapter: adapter()
+		adapter: adapter(),
+		prerender: {
+			// use relative URLs similar to an anchor tag <a href="/test/1"></a>
+			// do not include group layout folders in the path such as /(group)/test/1
+			entries: ['/admin/projects/1', '/admin/projects/2', '/admin/projects/3']
+		}
 	}
 };
 
