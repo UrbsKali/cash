@@ -14,9 +14,8 @@
 	export let type = 'utilisateur';
 	export let type_accord = 'un';
 	export let parseItems = null;
+	export let size = 10;
 
-	// CrudForm props and methods
-	export let fields = [];
 	export let addNew = null;
 
 	const filtersStore = writable(filters);
@@ -25,14 +24,19 @@
 		filtersStore.set(filters);
 	}
 
+	let items = [];
+	let current_page = 0;
+	let total_items = 0;
+	let page = [];
+
 	/**
 	 * Load the page of items
 	 * @param {number} page - The page number
 	 * @param {string} filter - The filter to apply to the query (optional, default '')
-	 * @param {number} step - The number of items per page (optional, default 20)
+	 * @param {number} step - The number of items per page (optional, default 5 items)
 	 * @returns {none} - Sets the items variable
 	 */
-	async function loadPage(page, filter = '', step = 20) {
+	async function loadPage(page, filter = '', step = size) {
 		let items = [];
 
 		let query = supabase.from(dbInfo.table).select(dbInfo.key, { count: 'estimated', head: false });
@@ -54,17 +58,13 @@
 
 		page = [];
 		if (items.length > 0) {
-			for (let i = 1; i <= total_items / items.length; i++) {
-				page.push(i);
+			for (let i = 0; i <= total_items / step; i++) {
+				page = [...page, i + 1];
 			}
 		}
+		console.log(page);
 		return items;
 	}
-
-	let items = [];
-	let current_page = 0;
-	let total_items = 0;
-	let page = [];
 
 	function getFiltersString(filters) {
 		let filtersString = '';
@@ -347,6 +347,12 @@
 						<a
 							href="#"
 							class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+							on:click={async (e) => {
+								e.preventDefault();
+								current_page--;
+								if (current_page < 0) current_page = 0;
+								items = await loadPage(current_page, getFiltersString(filters));
+							}}
 						>
 							<span class="sr-only">Previous</span>
 							<svg
@@ -366,7 +372,7 @@
 					</li>
 					{#each page as p}
 						<li>
-							{#if p == current_page}
+							{#if p == current_page + 1}
 								<a
 									href="#"
 									aria-current="page"
@@ -387,6 +393,12 @@
 						<a
 							href="#"
 							class="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+							on:click={async (e) => {
+								e.preventDefault();
+								current_page++;
+								if (current_page >= total_items / size) current_page = total_items / size - 1;
+								items = await loadPage(current_page, getFiltersString(filters));
+							}}
 						>
 							<span class="sr-only">Next</span>
 							<svg
