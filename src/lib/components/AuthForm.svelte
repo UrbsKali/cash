@@ -7,7 +7,7 @@
 	const AuthType = {
 		login: 'Login',
 		register: 'Inscription',
-		reset: 'Mot de passe oublié'
+		reset: 'Changement du mot de passe'
 	};
 
 	export let redirect_uri = config.basePath + '/';

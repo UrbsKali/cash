@@ -8,7 +8,22 @@ const config = {
 		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
 		adapter: adapter(),
 		prerender: {
-			entries: ['/admin/projects/1', '/admin/projects/2', '/admin/projects/3', '/', '/admin', '/sign-up', '/login', '/password-reset', '/admin/orders', '/admin/orders/new', '/admin/users/', '/admin/wip', '/debug']
+			entries: [
+				'/',
+				'/admin',
+				'/sign-up',
+				'/login',
+				'/password-reset',
+				'/debug',
+				'/admin/projects/1',
+				'/admin/projects/2',
+				'/admin/projects/3',
+				'/admin/orders',
+				'/admin/orders/new',
+				'/admin/users/',
+				'/admin/wip',
+				'/admin/profile',
+			]
 		}
 	}
 };

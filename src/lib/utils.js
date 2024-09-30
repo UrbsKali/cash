@@ -15,7 +15,7 @@ export async function loadUserdata() {
         // fetch user data
         const { data, error } = await supabase
             .from('profiles')
-            .select('username,avatar_url,role, member_of(project(id))')
+            .select('username,avatar_url,role, member_of(project(id, name))')
             .eq('id', session.user.id)
             .single();
         if (error) {
@@ -27,6 +27,7 @@ export async function loadUserdata() {
         user.avatar = data.avatar_url || user.avatar;
         user.id = session.user.id;
         user.projectId = [ ...data.member_of.map(p => p.project.id) ];
+        user.projectName = [ ...data.member_of.map(p => p.project.name) ];
         user.role = data.role || user.role;
         userdata.set(user);
     }

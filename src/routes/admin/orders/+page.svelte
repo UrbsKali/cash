@@ -31,7 +31,7 @@
 				{ name: 'Pôle Event', value: '6', active: true },
 				{ name: 'Pôle Com', value: '4', active: true },
 				{ name: 'Pôle Formation', value: '5', active: true },
-				{ name: 'Bureau', value: '6', active: true }
+				{ name: 'Bureau', value: '8', active: true }
 			]
 		},
 		{

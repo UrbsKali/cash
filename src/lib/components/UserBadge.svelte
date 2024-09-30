@@ -7,8 +7,8 @@
 	import { userdata } from '$lib/store';
 
 	export let user = {
-		name: 'Mascode',
-		email: 'mascode@oblivion-esport.fr',
+		name: 'Urbain',
+		email: 'davincibot@devinci.fr',
 		avatar: 'https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/michael-gough.png'
 	};
 
@@ -46,26 +46,26 @@
 </button>
 <!-- Dropdown menu -->
 <div
-	class="hidden z-50 my-4 w-56 text-base list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600 rounded-xl"
+	class="z-50 hidden w-56 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600 rounded-xl"
 	id="dropdown"
 >
-	<div class="py-3 px-4">
+	<div class="px-4 py-3">
 		<span class="block text-sm font-semibold text-gray-900 dark:text-white">{user.name}</span>
 		<span class="block text-sm text-gray-900 truncate dark:text-white">{user.email}</span>
 	</div>
 	<ul class="py-1 text-gray-700 dark:text-gray-300" aria-labelledby="dropdown">
 		<li>
 			<a
-				href="#"
-				class="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white"
+				href="/admin/profile"
+				class="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
 				>Profil</a
 			>
 		</li>
 		<li>
 			<a
 				href="#"
-				class="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white"
-				>Paramètres</a
+				class="block px-4 py-2 text-sm hover:bg-gray-600 dark:hover:bg-gray-700 dark:text-gray-400 dark:hover:text-gray-400"
+				>Work in progress..</a
 			>
 		</li>
 	</ul>
@@ -73,7 +73,7 @@
 		<li>
 			<a
 				href="#"
-				class="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+				class="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
 				on:click={LogOut}>Déconnexion</a
 			>
 		</li>
