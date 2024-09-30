@@ -8,9 +8,7 @@ const config = {
 		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
 		adapter: adapter(),
 		prerender: {
-			// use relative URLs similar to an anchor tag <a href="/test/1"></a>
-			// do not include group layout folders in the path such as /(group)/test/1
-			entries: ['/admin/projects/1', '/admin/projects/2', '/admin/projects/3']
+			entries: ['/admin/projects/1', '/admin/projects/2', '/admin/projects/3', '/', '/admin', '/sign-up', '/login', '/password-reset', '/admin/orders', '/admin/orders/new', '/admin/users/', '/admin/wip', '/admin/debug']
 		}
 	}
 };
