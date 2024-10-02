@@ -57,6 +57,19 @@
 			projectId: projectId.length > 1 ? object.project : projectId[0]
 		};
 
+		if (object.items.length === 0) {
+			alert('Vous devez ajouter au moins un objet.');
+			return;
+		}
+		// check if one of the items is empty
+		for (let i = 0; i < object.items.length; i++) {
+			if (object.items[i].name === '' || object.items[i].lien === '' || object.items[i].price === '' || object.items[i].quantity === '' || object.items[i].price == '0' || object.items[i].quantity == '0') {
+				alert('Vous devez remplir tous les champs pour chaque objet.');
+				return;
+			}
+		}
+
+
 		const { data: orders, error } = await supabase.from('orders').insert([order]).select();
 		if (error) {
 			console.error(error);
@@ -91,19 +104,19 @@
 	}
 </script>
 
-<h2 class="mb-4 text-4xl tracking-tight font-bold text-gray-900 dark:text-white">
+<h2 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
 	Nouvelle Commande
 </h2>
 <div class="sm:ml-10">
-	<h3 class="sm:mb-2 text-2xl tracking-tight font-bold text-gray-900 dark:text-white">Objets</h3>
+	<h3 class="text-2xl font-bold tracking-tight text-gray-900 sm:mb-2 dark:text-white">Objets</h3>
 	<form>
 		<div class="sm:pl-5">
 			{#each items as i}
-				<div class="flex flex-col sm:flex-row items-center">
-					<div class="my-5 w-20 sm:mr-5">
+				<div class="flex flex-col items-center sm:flex-row">
+					<div class="w-20 my-5 sm:mr-5">
 						<a
 							type="button"
-							class="flex items-center justify-center text-white hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:hover:bg-primary-600 hover:border-transparent transition-all focus:outline-none dark:focus:ring-primary-800 border-dashed border-2 border-gray-100"
+							class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white transition-all border-2 border-gray-100 border-dashed rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 dark:hover:bg-primary-600 hover:border-transparent focus:outline-none dark:focus:ring-primary-800"
 							href=""
 							on:click={(e) => {
 								e.preventDefault();
@@ -113,7 +126,7 @@
 							-
 						</a>
 					</div>
-					<form class="grid objects md:grid-flow-col gap-5 grid-flow-row w-full">
+					<form class="grid w-full grid-flow-row gap-5 objects md:grid-flow-col">
 						<div>
 							<label for="name">Nom</label>
 							<input
@@ -180,7 +193,7 @@
 			<div class="my-5">
 				<a
 					type="button"
-					class="flex items-center justify-center text-white hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:hover:bg-primary-600 hover:border-transparent transition-all focus:outline-none dark:focus:ring-primary-800 border-dashed border-2 border-gray-100"
+					class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white transition-all border-2 border-gray-100 border-dashed rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 dark:hover:bg-primary-600 hover:border-transparent focus:outline-none dark:focus:ring-primary-800"
 					href=""
 					on:click={(e) => {
 						e.preventDefault();
@@ -204,8 +217,8 @@
 				</a>
 			</div>
 		</div>
-		<h3 class=" mb-2 text-2xl tracking-tight font-bold text-gray-900 dark:text-white">Détails</h3>
-		<div class="grid details gap-5 ml-5">
+		<h3 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Détails</h3>
+		<div class="grid gap-5 ml-5 details">
 			<div class="col-span-2">
 				<label for="comment">Commentaire</label>
 				<textarea
@@ -233,7 +246,7 @@
 			<div class="col-span-2">
 				<button
 					type="submit"
-					class="bg-primary-500 text-white hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:hover:bg-primary-600 hover:border-transparent transition-all focus:outline-none dark:focus:ring-primary-800"
+					class="px-4 py-2 text-sm font-medium text-white transition-all rounded-lg bg-primary-500 hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 dark:hover:bg-primary-600 hover:border-transparent focus:outline-none dark:focus:ring-primary-800"
 					on:click={onSubmit}>Envoyer</button
 				>
 			</div>
