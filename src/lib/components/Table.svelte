@@ -34,6 +34,15 @@
 	let total_items = 0;
 	let page = [];
 
+	$: {
+		page = [];
+		if (items.length > 0) {
+			for (let i = 0; i <= total_items / size; i++) {
+				page = [...page, i + 1];
+			}
+		}
+	}
+
 	/**
 	 * Load the page of items
 	 * @param {number} page - The page number
@@ -61,13 +70,6 @@
 		total_items = count;
 		items = parseItems ? parseItems(data) : data;
 
-		page = [];
-		if (items.length > 0) {
-			for (let i = 0; i <= total_items / step; i++) {
-				page = [...page, i + 1];
-			}
-		}
-		console.log(page);
 		return items;
 	}
 
@@ -102,9 +104,7 @@
 		let tmp = loadSettings(hash);
 		if (tmp.length > 0) {
 			filters = tmp;
-			console.log('filters : ' + filters );
 		}
-		console.log('loading page w/ filter')
 		items = await loadPage(0, getFiltersString(filters));
 		mounted = true;
 
@@ -393,7 +393,11 @@
 								<a
 									href="#"
 									class="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-									>{p}</a
+									on:click={async (e) => {
+										e.preventDefault();
+										current_page = p - 1;
+										items = await loadPage(current_page, getFiltersString(filters));
+									}}>{p}</a
 								>
 							{/if}
 						</li>
