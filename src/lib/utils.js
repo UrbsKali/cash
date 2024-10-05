@@ -26,8 +26,8 @@ export async function loadUserdata() {
         user.name = data.username || user.email.split('@')[0];
         user.avatar = data.avatar_url || user.avatar;
         user.id = session.user.id;
-        user.projectId = [ ...data.member_of.map(p => p.project.id) ];
-        user.projectName = [ ...data.member_of.map(p => p.project.name) ];
+        user.projectId = [...data.member_of.map(p => p.project.id)];
+        user.projectName = [...data.member_of.map(p => p.project.name)];
         user.role = data.role || user.role;
         userdata.set(user);
     }
@@ -46,3 +46,34 @@ export const statusText = {
     canceled: 'Commande annulée',
     completed: 'Commande complétée'
 };
+
+export function loadSettings(key) {
+    let settings_;
+    try {
+        settings_ = JSON.parse(window.localStorage.getItem(`settings_${key}`)) || [];
+    } catch (e) {
+        console.error("echec lors de la récupération des données, la fonction est problement executé depuis le serveur")
+        return;
+    }
+    return settings_
+}
+
+export function saveSettings(key, settings) {
+    try {
+        localStorage.setItem(`settings_${key}`, JSON.stringify(settings));
+    } catch (e) {
+        console.error("echec lors de l'enregistrement, la fonction est problement executé depuis le serveur")
+        return;
+    }
+}
+
+export function hashCode(obj) {
+    let str = JSON.stringify(obj);
+    let hash = 0;
+    for (let i = 0, len = str.length; i < len; i++) {
+        let chr = str.charCodeAt(i);
+        hash = (hash << 5) - hash + chr;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+}

@@ -2,6 +2,7 @@
 	// @ts-nocheck
 	import { onMount, afterUpdate } from 'svelte';
 	import { writable } from 'svelte/store';
+	import { hashCode, saveSettings, loadSettings } from '$lib/utils';
 	import { supabase } from '$lib/supabaseClient';
 	import CrudForm from './CrudForm.svelte';
 	import ReadModal from './ReadModal.svelte';
@@ -18,10 +19,14 @@
 
 	export let addNew = null;
 
+	let hash = hashCode(dbInfo);
+	let can_update_settings = false;
+
 	const filtersStore = writable(filters);
 
 	$: {
 		filtersStore.set(filters);
+		if (can_update_settings) saveSettings(hash, filters);
 	}
 
 	let items = [];
@@ -87,21 +92,24 @@
 	let filter_state = false;
 
 	filtersStore.subscribe(async (value) => {
-		const filtersString = getFiltersString(value);
 		if (!mounted) return;
+		const filtersString = getFiltersString(value);
 		items = await loadPage(0, filtersString);
 		current_page = 0;
 	});
 
 	onMount(async () => {
+		let tmp = loadSettings(hash);
+		if (tmp.length > 0) {
+			filters = tmp;
+			console.log('filters : ' + filters );
+		}
+		console.log('loading page w/ filter')
 		items = await loadPage(0, getFiltersString(filters));
 		mounted = true;
 
 		const dropdown = document.getElementById('filterDropdown');
-
 		setupDropdown();
-
-		// detach the el
 		document.body.appendChild(dropdown);
 	});
 
@@ -247,6 +255,8 @@
 													class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
 													on:change={(e) => {
 														e.preventDefault();
+														can_update_settings = true;
+														console.log('can update localstorage');
 														option.active = e.target.checked;
 														filtersStore.set(filters);
 													}}
