@@ -42,6 +42,12 @@
 			console.error(error);
 			window.location.href = config.basePath + '/login';
 		}
+
+		if (error && auth_type == AuthType.register){
+			console.error(error)
+			alert("Votre lien d'invitation a expiré, veuillez contacter Urbain Lantrès pour avoir un autre lien");
+		}
+
 		email = user?.email || '';
 	});
 
