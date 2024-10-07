@@ -2,8 +2,7 @@
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabaseClient';
 	import { config } from '$lib/config';
-	import { loadUserdata } from '$lib/utils';
-	import { initFlowbite } from 'flowbite';
+	import { loadUserdata, hideOnClickOutside } from '$lib/utils';
 	import { userdata } from '$lib/store';
 
 	export let user = {
@@ -21,8 +20,23 @@
 		}
 	});
 
+	function setupDropdown() {
+		// set position of the popup just below the button
+		const dropdown = document.querySelector('#dropdown');
+		const rect = document.querySelector('#user-menu-button').getBoundingClientRect();
+		dropdown.style.top = 'calc(' + rect.bottom + 'px - 0.25rem)';
+		dropdown.style.left = 'calc(' + rect.left + 'px - 12.05rem)';
+	}
+
+	onresize = () => {
+		setupDropdown();
+	};	
+
 	onMount(async () => {
-		initFlowbite();
+		const dropdown = document.querySelector('#dropdown');
+		setupDropdown();
+		document.body.appendChild(dropdown);
+
 		if (skip) return;
 		await loadUserdata();
 	});
@@ -39,14 +53,19 @@
 	class="flex mx-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
 	id="user-menu-button"
 	aria-expanded="false"
-	data-dropdown-toggle="dropdown"
+	on:click={(e) => {
+		const dropdown = document.querySelector('#dropdown');
+		dropdown.classList.toggle('hidden');
+		e.stopPropagation();
+		hideOnClickOutside(dropdown);
+	}}
 >
 	<span class="sr-only">Open user menu</span>
 	<img class="w-8 h-8 rounded-full" src={user.avatar} alt="user photo" />
 </button>
 <!-- Dropdown menu -->
 <div
-	class="z-50 hidden w-56 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600 rounded-xl"
+	class="absolute z-50 hidden w-56 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600 rounded-xl"
 	id="dropdown"
 >
 	<div class="px-4 py-3">
