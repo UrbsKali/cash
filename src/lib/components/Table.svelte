@@ -1,8 +1,8 @@
 <script>
 	// @ts-nocheck
-	import { onMount, afterUpdate } from 'svelte';
+	import { onMount, afterUpdate, onDestroy } from 'svelte';
 	import { writable } from 'svelte/store';
-	import { hashCode, saveSettings, loadSettings } from '$lib/utils';
+	import { hashCode, saveSettings, loadSettings, hideOnClickOutside } from '$lib/utils';
 	import { supabase } from '$lib/supabaseClient';
 	import CrudForm from './CrudForm.svelte';
 	import ReadModal from './ReadModal.svelte';
@@ -108,14 +108,14 @@
 		items = await loadPage(0, getFiltersString(filters));
 		mounted = true;
 
-		const dropdown = document.getElementById('filterDropdown');
+		const dropdown = document.querySelector('#filterDropdown-' + hash);
 		setupDropdown();
 		document.body.appendChild(dropdown);
 	});
 
 	function setupDropdown() {
 		// set position of the popup just below the button
-		const dropdown = document.getElementById('filterDropdown');
+		const dropdown = document.querySelector('#filterDropdown-' + hash);
 		const rect = document.getElementById('filterDropdownButton').getBoundingClientRect();
 		dropdown.style.top = 'calc(' + rect.bottom + 'px + 0.5rem)';
 		if (window.innerWidth < 768) {
@@ -129,6 +129,12 @@
 	onresize = () => {
 		setupDropdown();
 	};
+
+	onDestroy(()=>{
+		const dropdown = document.querySelector('#filterDropdown-' + hash);
+		dropdown.remove()
+	})
+
 </script>
 
 <section class="bg-gray-50 dark:bg-gray-900 sm:p-5">
@@ -198,8 +204,11 @@
 							id="filterDropdownButton"
 							class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg md:w-auto focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
 							type="button"
-							on:click={() => {
-								filter_state = !filter_state;
+							on:click={(e) => {
+								const el = document.querySelector('#filterDropdown-' + hash);
+								el.classList.toggle("hidden");
+								e.stopPropagation();
+								hideOnClickOutside(el);
 							}}
 						>
 							<svg
@@ -231,10 +240,8 @@
 							</svg>
 						</button>
 						<div
-							id="filterDropdown"
-							class="absolute z-10 {filter_state
-								? ''
-								: 'hidden'} md:w-48 p-3 bg-white rounded-lg shadow dark:bg-gray-700 w-72"
+							id="filterDropdown-{hash}"
+							class="absolute z-10 hidden p-3 bg-white rounded-lg shadow md:w-48 dark:bg-gray-700 w-72"
 						>
 							{#each filters as filter, i}
 								{#if filter.category != 'hidden'}
