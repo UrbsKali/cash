@@ -15,7 +15,7 @@
 	export let type = 'utilisateur';
 	export let type_accord = 'un';
 	export let parseItems = null;
-	export let size = 10;
+	export let size = 5;
 
 	export let addNew = null;
 
@@ -130,11 +130,10 @@
 		setupDropdown();
 	};
 
-	onDestroy(()=>{
+	onDestroy(() => {
 		const dropdown = document.querySelector('#filterDropdown-' + hash);
-		dropdown.remove()
-	})
-
+		dropdown.remove();
+	});
 </script>
 
 <section class="bg-gray-50 dark:bg-gray-900 sm:p-5">
@@ -206,7 +205,7 @@
 							type="button"
 							on:click={(e) => {
 								const el = document.querySelector('#filterDropdown-' + hash);
-								el.classList.toggle("hidden");
+								el.classList.toggle('hidden');
 								e.stopPropagation();
 								hideOnClickOutside(el);
 							}}
@@ -387,28 +386,67 @@
 							</svg>
 						</a>
 					</li>
-					{#each page as p}
-						<li>
+					{#if page.length < 5}
+						{#each page as p}
 							{#if p == current_page + 1}
-								<a
-									href="#"
-									aria-current="page"
-									class="z-10 flex items-center justify-center px-3 py-2 text-sm leading-tight border text-primary-600 bg-primary-50 border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-									>{p}</a
-								>
+								<li>
+									<a
+										href="#"
+										aria-current="page"
+										class="z-10 flex items-center justify-center px-3 py-2 text-sm leading-tight border text-primary-600 bg-primary-50 border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
+										>{p}</a
+									>
+								</li>
 							{:else}
+								<li>
+									<a
+										href="#"
+										class="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+										on:click={async (e) => {
+											e.preventDefault();
+											current_page = p - 1;
+											items = await loadPage(current_page, getFiltersString(filters));
+										}}>{p}</a
+									>
+								</li>
+							{/if}
+						{/each}
+					{:else}
+						{#if current_page != 0}
+							<li>
 								<a
 									href="#"
 									class="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
 									on:click={async (e) => {
 										e.preventDefault();
-										current_page = p - 1;
+										current_page = 0;
 										items = await loadPage(current_page, getFiltersString(filters));
-									}}>{p}</a
+									}}>{1}</a
 								>
-							{/if}
+							</li>
+						{/if}
+						<li>
+							<a
+								href="#"
+								aria-current="page"
+								class="z-10 flex items-center justify-center px-3 py-2 text-sm leading-tight border text-primary-600 bg-primary-50 border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
+								>{current_page + 1}</a
+							>
 						</li>
-					{/each}
+						{#if current_page != page.length - 1}
+							<li>
+								<a
+									href="#"
+									class="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+									on:click={async (e) => {
+										e.preventDefault();
+										current_page = page.length - 1;
+										items = await loadPage(current_page, getFiltersString(filters));
+									}}>{page.length}</a
+								>
+							</li>
+						{/if}
+					{/if}
 
 					<li>
 						<a
