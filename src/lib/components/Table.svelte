@@ -15,7 +15,7 @@
 	export let type = 'utilisateur';
 	export let type_accord = 'un';
 	export let parseItems = null;
-	export let size = 5;
+	export let size = 10;
 
 	export let addNew = null;
 
