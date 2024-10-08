@@ -1,7 +1,8 @@
 <script>
 	import { get_current_component } from 'svelte/internal';
 	import { supabase } from '$lib/supabaseClient';
-	import { statusText } from '$lib/utils';
+	import { statusText, hideOnClickOutside } from '$lib/utils';
+	import { onMount } from 'svelte';
 	const current_component = get_current_component();
 
 	export let values = {
@@ -42,14 +43,16 @@
 	export let onClose = (e) => {};
 
 	let __onClose = (e) => {
-		if (!(e.target === e.currentTarget || e.target.dataset.toggle == 'true')) {
-			return;
-		}
 		open = false;
 		// remove componant from tree
 		current_component.$destroy();
 		onClose(e);
 	};
+
+	onMount(()=>{
+		const popup = document.querySelector(`#popup`);
+		hideOnClickOutside(popup, __onClose);
+	})
 
 	values.body.find((el) => el.label == 'Status').value =
 		statusText[values.body.find((el) => el.label == 'Status').type];
@@ -62,12 +65,11 @@
 	class="{open
 		? ''
 		: 'hidden'} overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-full backdrop-blur-sm"
-	on:click={__onClose}
 	data-toggle="true"
 >
 	<div class="relative flex w-full h-full p-4 m-auto">
 		<!-- Modal content -->
-		<div class="relative p-4 m-auto bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5 min-w-96">
+		<div class="relative p-4 m-auto bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5 min-w-96" id="popup">
 			<!-- Modal header -->
 			<div class="flex justify-between mb-4 rounded-t sm:mb-5">
 				<div class="flex w-full text-lg text-gray-900 md:text-xl dark:text-white">

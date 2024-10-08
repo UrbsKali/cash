@@ -78,10 +78,12 @@ export function hashCode(obj) {
     return hash;
 }
 
-export function hideOnClickOutside(element) {
+export function hideOnClickOutside(element, destroyHandler = (el) => {
+    el.classList.toggle("hidden")
+}) {
     const outsideClickListener = event => {
         if (!element.contains(event.target) && isVisible(element)) { // or use: event.target.closest(selector) === null
-            element.classList.toggle("hidden")
+            destroyHandler(element);
             removeClickListener();
         }
     }
@@ -92,4 +94,4 @@ export function hideOnClickOutside(element) {
 
     document.addEventListener('click', outsideClickListener);
 }
-const isVisible = elem => !!elem && !!( elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length ); // source (2018-03-11): https://github.com/jquery/jquery/blob/master/src/css/hiddenVisibleSelectors.js 
+const isVisible = elem => !!elem && !!(elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length); // source (2018-03-11): https://github.com/jquery/jquery/blob/master/src/css/hiddenVisibleSelectors.js 

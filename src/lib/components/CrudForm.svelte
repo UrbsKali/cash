@@ -35,7 +35,7 @@
 >
 	<div class="relative flex w-full h-full p-4 m-auto">
 		<!-- Modal content -->
-		<div class="relative p-4 m-auto bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5 min-w-96">
+		<div class="relative p-4 m-auto bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5 min-w-96" id="CrudPopup">
 			<!-- Modal header -->
 			<div class="flex justify-between mb-4 rounded-t sm:mb-5">
 				<h3 class="text-lg font-semibold text-gray-900 dark:text-white">

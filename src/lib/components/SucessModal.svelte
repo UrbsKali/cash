@@ -1,18 +1,31 @@
 <script>
 	import { currentOrigin } from '$lib/config';
 	import { get_current_component } from 'svelte/internal';
-	const current_component = get_current_component();
+	import { hideOnClickOutside } from '$lib/utils';
+	import { onMount } from 'svelte';
 
+
+	const current_component = get_current_component();
 
 	export let title = 'On est bon!';
 	export let message = 'La commande a été passée avec succès.';
 	export let id = 'successModal';
 	export let open = false;
-	export let onClose = () => {
-		open = false;
-		current_component.$destroy();
+	export let onClose = (e) => {
 		window.location.href = `${currentOrigin()}/admin`;
 	};
+
+	let __onClose = (e) => {
+		open = false;
+		// remove componant from tree
+		current_component.$destroy();
+		onClose(e);
+	};
+
+	onMount(() => {
+		const popup = document.querySelector(`#SucessPopup`);
+		hideOnClickOutside(popup, __onClose);
+	});
 </script>
 
 <div
@@ -23,14 +36,16 @@
 		? ''
 		: 'hidden'} overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-full backdrop-blur-sm"
 >
-	<div class="relative p-4 w-full max-w-md h-full m-auto flex">
+	<div class="relative flex w-full h-full max-w-md p-4 m-auto">
 		<!-- Modal content -->
-		<div class="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5 m-auto">
+		<div
+			class="relative p-4 m-auto text-center bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5"
+			id="SucessPopup"
+		>
 			<button
 				type="button"
 				class="text-gray-400 absolute top-2.5 right-2.5 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-				data-modal-toggle={id}
-				on:click={onClose}
+				on:click={__onClose}
 			>
 				<svg
 					aria-hidden="true"
@@ -65,10 +80,9 @@
 			</div>
 			<p class="mb-4 text-lg font-semibold text-gray-900 dark:text-white">{message}</p>
 			<button
-				data-modal-toggle={id}
 				type="button"
-				class="py-2 px-3 text-sm font-medium text-center text-white rounded-lg bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:focus:ring-primary-900"
-				on:click={onClose}
+				class="px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:focus:ring-primary-900"
+				on:click={__onClose}
 			>
 				Suivant
 			</button>
