@@ -1,5 +1,6 @@
 import { userdata } from '$lib/store';
 import { supabase } from '$lib/supabaseClient';
+import md5 from 'crypto-js/md5';
 
 export async function loadUserdata() {
     let user = {};
@@ -21,6 +22,9 @@ export async function loadUserdata() {
         if (error) {
             console.error(error);
             return;
+        }
+        if (data.avatar_url == "") {
+            data.avatar_url = "https://gravatar.com/avatar/" + md5(session.user.email) + "?d=identicon";
         }
         user.email = session.user.email || user.email;
         user.name = data.username || user.email.split('@')[0];
