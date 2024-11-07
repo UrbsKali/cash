@@ -1,7 +1,9 @@
 <script>
 	import { supabase } from '$lib/supabaseClient';
 	import { userdata } from '$lib/store';
-	import SucessModal from '$lib/components/modals/InfoModal.svelte';
+	import { goto } from '$app/navigation';
+
+	import InfoModal from '$lib/components/modals/InfoModal.svelte';
 
 	let items = [0];
 	let current = 0;
@@ -93,12 +95,14 @@
 				return;
 			}
 		}
-		// load SucessModal
-		new SucessModal({
+		new InfoModal({
 			target: document.body,
 			props: {
-				message: 'La commande a été passée avec succès.',
-				open: true
+				message: 'La commande a été proposé avec succès.',
+				type: 'success',
+				onClose: () => {
+					goto('/admin/');
+				}
 			}
 		});
 	}

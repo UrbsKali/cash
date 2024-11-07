@@ -80,6 +80,8 @@
 					});
 				});
 
+				console.log(items);
+
 				new ReadModal({
 					target: document.body,
 					props: {

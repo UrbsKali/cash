@@ -4,6 +4,8 @@
 	import { onMount } from 'svelte';
 	const current_component = get_current_component();
 
+	import { supabase } from '$lib/supabaseClient';
+
 	export let values = {
 		header: {
 			title: 'SKT vs T1',
@@ -11,8 +13,19 @@
 		},
 		body: [
 			{
-				label: 'Match',
-				value: 'SKT vs T1, Trankil word cup'
+				label: 'Objets',
+				value: [
+					{
+						name: 'Vis',
+						quantity: 10,
+						price: 10
+					},
+					{
+						name: 'Ecrou',
+						quantity: 10,
+						price: 10
+					}
+				]
 			},
 			{
 				label: 'Date',
@@ -94,9 +107,72 @@
 			<dl>
 				{#each values.body as { label, value }}
 					<dt class="mb-2 font-semibold leading-none text-white">{label}</dt>
-					<dd class="mb-4 font-light text-gray-400 transition-colors sm:mb-5 hover:text-gray-300">
-						{value}
-					</dd>
+					{#if typeof value === 'object'}
+							<dd class="mb-4 ml-2 font-light text-gray-500 sm:mb-5 dark:text-gray-400">
+								<table class="w-full border-separate">
+									<thead class="font-bold">
+										<td>Nom</td>
+										<td>Quantité</td>
+										<td>Prix</td>
+										{#if values.body.find((el) => el.label == 'Status').type == 'pendingCDP'}
+											<td class="w-2.5"></td>
+										{/if}
+									</thead>
+									<tbody>
+										{#each value as item}
+											<tr data-utils={item.id}>
+												<td class="p-2"><a href={item.link} target="_blank">{item.name}</a></td>
+												<td>{item.quantity}</td>
+												<td>{item.price}</td>
+												{#if values.body.find((el) => el.label == 'Status').type == 'pendingCDP'}
+													<td>
+														<button
+															type="button"
+															class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900"
+															on:click={async () => {
+																// remove item from database
+																const { data, error } = await supabase
+																	.from('items')
+																	.delete()
+																	.match({ id: item.id })
+																	.select()
+																	.single();
+
+																if (error || !data) {
+																	console.error(error);
+																	return;
+																}
+
+																// remove item from list
+																const tr = document.querySelector(`tr[data-utils="${item.id}"]`);
+																tr.remove();
+															}}
+														>
+															<svg
+																aria-hidden="true"
+																class="w-5 h-5 -mx-2.5"
+																fill="currentColor"
+																viewBox="0 0 20 20"
+																xmlns="http://www.w3.org/2000/svg"
+																><path
+																	fill-rule="evenodd"
+																	d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+																	clip-rule="evenodd"
+																></path></svg
+															>
+														</button>
+													</td>
+												{/if}
+											</tr>
+										{/each}
+									</tbody>
+								</table>
+							</dd>
+					{:else}
+						<dd class="mb-4 font-light text-gray-400 transition-colors sm:mb-5 hover:text-gray-300">
+							{value}
+						</dd>
+					{/if}
 				{/each}
 			</dl>
 			<div class="flex items-center justify-between">
