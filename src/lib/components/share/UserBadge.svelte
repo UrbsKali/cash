@@ -78,22 +78,8 @@
 	<ul class="py-1 text-gray-300" aria-labelledby="dropdown">
 		<li>
 			<a
-				href="/user/"
+				href="/admin/profile"
 				class="block px-4 py-2 text-sm hover:bg-gray-700 hover:text-white bg-opacity-80">Profil</a
-			>
-		</li>
-		<li>
-			<a
-				href="/user/notifications"
-				class="block px-4 py-2 text-sm hover:bg-gray-700 hover:text-white bg-opacity-80"
-				>Notifications</a
-			>
-		</li>
-		<li>
-			<a
-				href="/user/settings"
-				class="block px-4 py-2 text-sm hover:bg-gray-700 hover:text-white bg-opacity-80"
-				>Paramètres</a
 			>
 		</li>
 	</ul>

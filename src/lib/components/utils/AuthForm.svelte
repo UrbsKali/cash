@@ -1,7 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabaseClient';
-	import { config } from '$lib/config';
 	
 	import SucessModal from '../modals/InfoModal.svelte';
 
@@ -11,7 +10,7 @@
 		reset: 'Changement du mot de passe'
 	};
 
-	export let redirect_uri = config.basePath + '/';
+	export let redirect_uri =  '/';
 	/**
 	 * {'login' | 'register' | 'reset'}
 	 */
@@ -41,7 +40,7 @@
 		}
 		if (error && auth_type === AuthType.reset) {
 			console.error(error);
-			window.location.href = config.basePath + '/login';
+			window.location.href = '/login';
 		}
 
 		if (error && auth_type == AuthType.register){
@@ -142,9 +141,9 @@
 		if (redirect) {
 			return redirect;
 		} else if (redirect_uri == '/') {
-			return window.location.origin + config.basePath;
+			return window.location.origin ;
 		} else {
-			return config.basePath + redirect_uri;
+			return  redirect_uri;
 		}
 	}
 </script>
