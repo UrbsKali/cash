@@ -1,7 +1,7 @@
 <script>
 	import { supabase } from '$lib/supabaseClient';
 	import { userdata } from '$lib/store';
-	import SucessModal from '../../../../lib/components/SucessModal.svelte';
+	import SucessModal from '$lib/components/modals/InfoModal.svelte';
 
 	let items = [0];
 	let current = 0;

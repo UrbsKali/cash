@@ -1,26 +1,18 @@
 <script>
-	// @ts-nocheck
-	import { onMount, afterUpdate } from 'svelte';
-	import { config } from '$lib/config';
 	import { navigating } from '$app/stores';
 
 	export let menu = [{ title: 'fill me', icon: 'timer', uri: '/admin' }];
-	let current_route = '';
+	export let open = false;
 	let buttons_state = {};
 
-	onMount(() => {
-		loadSidebar();
-	});
-	afterUpdate(() => {
-		loadSidebar();
-	});
-
 	navigating.subscribe((value) => {
-		loadSidebar();
+		if (value) {
+			loadSidebar(value.to.route.id);
+		}
 	});
 
-	function loadSidebar() {
-		current_route = config.basePath + window.location.pathname.slice(0, -1);
+	function loadSidebar(path) {
+		const current_route = path;
 		menu = menu.map((item) => {
 			if (item.uri === current_route) {
 				item.active = true;
@@ -34,7 +26,9 @@
 
 <section>
 	<aside
-		class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full bg-white border-r border-gray-200 pt-14 md:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
+		class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform {!open
+			? '-translate-x-full'
+			: 'translate-x-0'} bg-white border-r border-gray-200 pt-14 md:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
 		aria-label="Sidenav"
 		id="drawer-navigation"
 	>
@@ -86,8 +80,8 @@
 						<li>
 							<a
 								href={item.uri}
-								class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group {item.active
-									? 'bg-gray-100 dark:bg-gray-700'
+								class="flex items-center p-2 text-base font-medium rounded-lg text-white hover:bg-gray-700 group {item.active
+									? 'bg-gray-700'
 									: ''}"
 							>
 								<ion-icon name={item.icon} class="text-2xl"></ion-icon>
@@ -100,7 +94,7 @@
 			</ul>
 		</div>
 		<div
-			class="absolute bottom-0 left-0 z-20 justify-center hidden w-full p-4 space-x-4 bg-white lg:flex dark:bg-gray-800"
+			class="absolute bottom-0 left-0 z-20 justify-center hidden w-full p-4 space-x-4 bg-gray-800 lg:flex"
 		></div>
 	</aside>
 	<script

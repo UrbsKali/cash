@@ -1,7 +1,5 @@
 <script>
-	import Topbar from "../lib/components/Topbar.svelte";
-
-
+	import Topbar from "$lib/components/share/Topbar.svelte";
 </script>
 
 

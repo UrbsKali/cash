@@ -1,5 +1,4 @@
 <script>
-	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabaseClient';
 	import { userdata } from '$lib/store';
 

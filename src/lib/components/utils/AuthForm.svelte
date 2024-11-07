@@ -2,7 +2,8 @@
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabaseClient';
 	import { config } from '$lib/config';
-	import SucessModal from './SucessModal.svelte';
+	
+	import SucessModal from '../modals/InfoModal.svelte';
 
 	const AuthType = {
 		login: 'Login',

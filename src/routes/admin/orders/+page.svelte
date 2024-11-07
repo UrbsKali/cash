@@ -1,10 +1,11 @@
 <script>
-	import Table from '$lib/components/Table.svelte';
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabaseClient';
 	import { statusText, loadUserdata } from '$lib/utils';
-	import ReadModal from '$lib/components/ReadModal.svelte';
 	import { userdata } from '$lib/store';
+
+	import ReadModal from '$lib/components/modals/ReadModal.svelte';
+	import Table from '$lib/components/admin/Table.svelte';
 
 	let user;
 
@@ -195,7 +196,13 @@
 	});
 </script>
 
-<h2 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 dark:text-white">Commandes</h2>
-<Table {headers} {actions} {dbInfo} {filters} {parseItems} type="commande" type_accord="une" />
+<div class="w-full py-2 sm:px-8 lg:px-16">
+	<h2 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 dark:text-white">Commandes</h2>
+</div>
+<div class="w-full py-2 sm:px-8 lg:px-16">
+	<div class="bg-gray-800 rounded-lg">
+		<Table {headers} {actions} {dbInfo} {filters} {parseItems} type="commande" type_accord="une" />
+	</div>
+</div>
 
 <style></style>

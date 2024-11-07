@@ -1,10 +1,11 @@
 <script>
-	import Table from '$lib/components/Table.svelte';
 	import { onMount } from 'svelte';
 	import { supabase, supabaseUrl } from '$lib/supabaseClient';
 	import { createClient } from '@supabase/supabase-js';
-	import CrudForm from '../../../lib/components/CrudForm.svelte';
-	import SucessModal from '../../../lib/components/SucessModal.svelte';
+
+	import Table from '$lib/components/admin/Table.svelte';
+	import CrudForm from '$lib/components/modals/CrudForm.svelte';
+	import SucessModal from '$lib/components/modals/InfoModal.svelte';
 
 	let headers = ['Nom', 'Rôle', 'Projets', 'Actions'];
 
@@ -181,7 +182,13 @@
 	});
 </script>
 
-<h2 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 dark:text-white">Utilisateurs</h2>
-<Table {headers} {parseItems} {filters} {dbInfo} {addNew} />
+<div class="w-full py-2 sm:px-8 lg:px-16">
+	<h2 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 dark:text-white">Utilisateurs</h2>
+</div>
+<div class="w-full py-2 sm:px-8 lg:px-16">
+	<div class="bg-gray-800 rounded-lg">
+		<Table {headers} {parseItems} {filters} {dbInfo} {addNew} />
+	</div>
+</div>
 
 <style></style>

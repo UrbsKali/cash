@@ -1,5 +1,5 @@
 <script>
-	import SucessModal from '$lib/components/SucessModal.svelte';
+	import SucessModal from '$lib/components/InfoModal.svelte';
 </script>
 
 <button

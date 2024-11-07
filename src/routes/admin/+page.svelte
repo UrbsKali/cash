@@ -2,11 +2,11 @@
 	import { onMount } from 'svelte';
 	import { userdata } from '$lib/store';
 	import { loadUserdata } from '$lib/utils';
-	import Table from '../../lib/components/Table.svelte';
-	import { initFlowbite } from 'flowbite';
 	import { supabase } from '$lib/supabaseClient';
-	import ReadModal from '../../lib/components/ReadModal.svelte';
 	import { statusText } from '$lib/utils';
+
+	import Table from '$lib/components/admin/Table.svelte';
+	import ReadModal from '$lib/components/modals/ReadModal.svelte'; 
 
 	let skip = false;
 	let user;
@@ -150,7 +150,6 @@
 	onMount(async () => {
 		if (skip) return;
 		await loadUserdata();
-		initFlowbite();
 	});
 </script>
 
@@ -164,6 +163,8 @@
 		Voici la liste de vos commandes. Vous pouvez en ajouter, modifier ou supprimer.
 	</p>
 </div>
-<div>
-	<Table {headers} {dbInfo} {parseItems} {actions} {filters} type="commande" type_accord="une" />
+<div class="w-full py-2 sm:px-8 lg:px-16">
+	<div class="bg-gray-800 rounded-lg">
+		<Table {headers} {dbInfo} {parseItems} {actions} {filters} type="commande" type_accord="une" />
+	</div>
 </div>

@@ -2,9 +2,9 @@
 	// @ts-nocheck
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabaseClient';
-	import UserBadge from '$lib/components/UserBadge.svelte';
-	import SideBar from '$lib/components/SideBar.svelte';
-	import { config, currentOrigin, parseURI } from '$lib/config';
+	
+	import UserBadge from '$lib/components/share/UserBadge.svelte';
+	import SideBar from '$lib/components/admin/SideBar.svelte';
 
 	let current_user = {};
 	let current_role = '';
@@ -79,14 +79,13 @@
 	
 
 	let __menu = [];
-	menu = parseURI(menu);
-
+	
 	onMount(async () => {
 		{
 			const { data, error } = await supabase.auth.getUser();
 			if (error) {
 				console.error(error);
-				window.location.href = `${currentOrigin()}/login?redirect=${window.location.pathname}`;
+				window.location.href = `/login?redirect=${window.location.pathname}`;
 			}
 			current_user = data.user;
 		}
@@ -97,7 +96,7 @@
 				.eq('id', current_user.id);
 			if (error) {
 				console.error(error);
-				window.location.href = `${currentOrigin()}/`;
+				window.location.href = `/`;
 			}
 			current_role = data[0].role;
 		}
@@ -109,7 +108,7 @@
 		// get the allowed roles for the current uri
 		const allowed_roles = searchAllowedRoles([...menu, ...custom_uri], uri);
 		if (!allowed_roles.includes(current_role)) {
-			window.location.href = `${currentOrigin()}/`;
+			window.location.href = `/`;
 		}
 
 		menu.forEach((el) => {

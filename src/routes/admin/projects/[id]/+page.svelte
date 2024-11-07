@@ -1,5 +1,4 @@
 <script>
-	// get slug from the URL
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { supabase } from '$lib/supabaseClient';
@@ -53,15 +52,17 @@
 
 	async function loadPage() {
 		project = await fetchProject();
-		const { data, error } = await supabase.rpc('get_project_cost', {
-			projectid: slug,
-			year: project.budget.year
-		});
-		if (error) {
-			console.error(error);
-			return;
+		if (project.budget) {			
+			const { data, error } = await supabase.rpc('get_project_cost', {
+				projectid: slug,
+				year: project.budget.year
+			});
+			if (error) {
+				console.error(error);
+				return;
+			}
+			project.budget.cost = data;
 		}
-		project.budget.cost = data;
 	}
 </script>
 

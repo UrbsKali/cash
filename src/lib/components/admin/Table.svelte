@@ -4,8 +4,7 @@
 	import { writable } from 'svelte/store';
 	import { hashCode, saveSettings, loadSettings, hideOnClickOutside } from '$lib/utils';
 	import { supabase } from '$lib/supabaseClient';
-	import CrudForm from './CrudForm.svelte';
-	import ReadModal from './ReadModal.svelte';
+	import CrudForm from '../modals/CrudForm.svelte';
 
 	export let actions = [];
 	export let headers = ['Nom', 'Email', 'Rôle', 'Actions'];
@@ -16,6 +15,9 @@
 	export let type_accord = 'un';
 	export let parseItems = null;
 	export let size = 10;
+
+	export let can_load = true;
+	export let clickable = false;
 
 	export let addNew = null;
 
@@ -36,7 +38,7 @@
 
 	$: {
 		page = [];
-		if (items.length > 0) {
+		if (items?.length > 0) {
 			for (let i = 0; i <= total_items / size; i++) {
 				page = [...page, i + 1];
 			}
@@ -52,6 +54,7 @@
 	 */
 	async function loadPage(page, filter = '', step = size) {
 		let items = [];
+		if (!can_load) return items;
 
 		let query = supabase.from(dbInfo.table).select(dbInfo.key, { count: 'estimated', head: false });
 
@@ -68,8 +71,16 @@
 			return;
 		}
 		total_items = count;
-		items = parseItems ? parseItems(data) : data;
-
+		// if parseItems is async we need to wait for it
+		if (parseItems) {
+			if (parseItems.constructor.name === 'AsyncFunction') {
+				items = await parseItems(data);
+			} else {
+				items = parseItems(data);
+			}
+		} else {
+			items = data;
+		}
 		return items;
 	}
 
@@ -101,16 +112,21 @@
 	});
 
 	onMount(async () => {
+		mounted = true;
+
 		let tmp = loadSettings(hash);
 		if (tmp.length > 0) {
 			filters = tmp;
 		}
 		items = await loadPage(0, getFiltersString(filters));
-		mounted = true;
 
 		const dropdown = document.querySelector('#filterDropdown-' + hash);
 		setupDropdown();
 		document.body.appendChild(dropdown);
+
+		onresize = () => {
+			setupDropdown();
+		};
 	});
 
 	function setupDropdown() {
@@ -119,26 +135,27 @@
 		const rect = document.getElementById('filterDropdownButton').getBoundingClientRect();
 		dropdown.style.top = 'calc(' + rect.bottom + 'px + 0.5rem)';
 		if (window.innerWidth < 768) {
-			dropdown.style.left = rect.left + 'px';
+			dropdown.style.left = rect.left - width + 'px';
 			dropdown.style.width = rect.width + 'px';
 		} else {
 			dropdown.style.left = 'calc(' + rect.left + 'px - 1.5rem)';
 		}
 	}
 
-	onresize = () => {
-		setupDropdown();
-	};
-
 	onDestroy(() => {
-		const dropdown = document.querySelector('#filterDropdown-' + hash);
-		dropdown.remove();
+		try {
+			document.body.removeChild(document.querySelector('#filterDropdown-' + hash));
+		} catch (e) {
+			if (!(e instanceof ReferenceError)) {
+				console.error(e);
+			} // else the el is prerenred
+		}
 	});
 </script>
 
-<section class="bg-gray-50 dark:bg-gray-900 sm:p-5">
-	<div class="max-w-screen-xl mx-auto sm:px-4 lg:px-12">
-		<div class="relative bg-white rounded-lg shadow-md dark:bg-gray-800">
+<section class="w-full">
+	<div>
+		<div class="relative rounded-lg shadow-md backdrop-blur-lg">
 			<div
 				class="flex flex-col items-center justify-between p-4 space-y-3 md:flex-row md:space-y-0 md:space-x-4"
 			>
@@ -149,7 +166,7 @@
 							<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
 								<svg
 									aria-hidden="true"
-									class="w-5 h-5 text-gray-500 dark:text-gray-400"
+									class="w-5 h-5 text-gray-400"
 									fill="currentColor"
 									viewbox="0 0 20 20"
 									xmlns="http://www.w3.org/2000/svg"
@@ -164,7 +181,7 @@
 							<input
 								type="text"
 								id="simple-search"
-								class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+								class="block w-full p-2 pl-10 text-sm text-white placeholder-gray-400 bg-gray-700 border border-gray-600 rounded-lg focus:border-primary-500"
 								placeholder="Search"
 								required=""
 							/>
@@ -177,7 +194,7 @@
 					{#if addNew != null}
 						<button
 							type="button"
-							class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+							class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-800"
 							id="addNewButton"
 							on:click={addNew}
 						>
@@ -201,7 +218,7 @@
 					<div class="flex items-center w-full space-x-3 md:w-auto">
 						<button
 							id="filterDropdownButton"
-							class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg md:w-auto focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+							class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-400 bg-gray-800 border border-gray-600 rounded-lg md:w-auto focus:outline-none focus:z-10 focus:ring-4 focus:ring-gray-700 hover:text-white hover:bg-gray-700"
 							type="button"
 							on:click={(e) => {
 								const el = document.querySelector('#filterDropdown-' + hash);
@@ -240,14 +257,14 @@
 						</button>
 						<div
 							id="filterDropdown-{hash}"
-							class="absolute z-10 hidden p-3 bg-white rounded-lg shadow md:w-48 dark:bg-gray-700 w-72"
+							class="absolute z-10 hidden p-3 bg-gray-700 rounded-lg shadow md:w-36 w-72"
 						>
 							{#each filters as filter, i}
 								{#if filter.category != 'hidden'}
 									{#if i > 0}
-										<hr class="my-3 border-gray-200 dark:border-gray-600" />
+										<hr class="my-3 border-gray-600" />
 									{/if}
-									<h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">
+									<h6 class="mb-3 text-sm font-medium text-white">
 										{filter.category}
 									</h6>
 									<ul class="space-y-2 text-sm" aria-labelledby="filterDropdownButton">
@@ -258,18 +275,15 @@
 													type="checkbox"
 													value={option.value}
 													checked={option.active}
-													class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+													class="w-4 h-4 bg-gray-600 border-gray-500 rounded focus:ring-primary-600 ring-offset-gray-700 focus:ring-2"
 													on:change={(e) => {
 														e.preventDefault();
 														can_update_settings = true;
-														console.log('can update localstorage');
 														option.active = e.target.checked;
 														filtersStore.set(filters);
 													}}
 												/>
-												<label
-													for={option.name}
-													class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
+												<label for={option.name} class="ml-2 text-sm font-medium text-gray-100"
 													>{option.name}</label
 												>
 											</li>
@@ -282,10 +296,8 @@
 				</div>
 			</div>
 			<div class="overflow-x-auto">
-				<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-					<thead
-						class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
-					>
+				<table class="w-full text-sm text-left text-gray-400">
+					<thead class="text-xs text-gray-400 uppercase bg-gray-700">
 						<tr>
 							{#each headers as item}
 								{#if item === 'Actions'}
@@ -300,12 +312,20 @@
 					</thead>
 					<tbody>
 						{#each items as item, i}
-							<tr class="border-b dark:border-gray-700">
+							<tr
+								class="border-b border-gray-700 {clickable ? 'cursor-pointer' : ''} max-w-52"
+								on:click={clickable
+									? (e) => {
+											e.preventDefault();
+											actions.find((el) => el.type == 'view').handler(e);
+										}
+									: null}
+							>
 								{#each item as key}
-									{#if key.value === item[0].value && headers[0] === 'Nom'}
+									{#if key.value === item[0].value && item[0].avatar}
 										<th
 											scope="row"
-											class="flex items-center px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+											class="flex items-center px-4 py-3 font-medium text-white whitespace-nowrap"
 											data-utils={key.data || ''}
 										>
 											{#if key.avatar}
@@ -323,8 +343,7 @@
 									<td class="flex items-center justify-end px-4 py-3">
 										<button
 											id="{i}-dropdown-button"
-											data-dropdown-toggle="{i}-dropdown"
-											class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
+											class="inline-flex items-center p-0.5 text-sm font-medium text-center rounded-lg focus:outline-none text-gray-400 hover:text-gray-100"
 											type="button"
 											on:click={(e) => {
 												actions.find((el) => el.type == 'view').handler(e);
@@ -344,7 +363,13 @@
 										</button>
 									</td>
 								{/if}
-							</tr>{/each}
+							</tr>
+						{/each}
+						{#if items.length == 0}
+							<tr>
+								<td class="px-4 py-3 text-center" colspan={headers.length}> Aucun résultat </td>
+							</tr>
+						{/if}
 					</tbody>
 				</table>
 			</div>
@@ -352,17 +377,17 @@
 				class="flex flex-col items-start justify-between p-4 space-y-3 md:flex-row md:items-center md:space-y-0"
 				aria-label="Table navigation"
 			>
-				<span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+				<span class="text-sm font-normal text-gray-400">
 					Showing
-					<span class="font-semibold text-gray-900 dark:text-white">{items.length}</span>
+					<span class="font-semibold text-white">{items.length}</span>
 					of
-					<span class="font-semibold text-gray-900 dark:text-white">{total_items}</span>
+					<span class="font-semibold text-white">{total_items}</span>
 				</span>
 				<ul class="inline-flex items-stretch -space-x-px">
 					<li>
 						<a
 							href="#"
-							class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+							class="flex items-center justify-center h-full py-1.5 px-3 ml-0 rounded-l-lg border bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700 hover:text-white"
 							on:click={async (e) => {
 								e.preventDefault();
 								current_page--;
@@ -393,7 +418,7 @@
 									<a
 										href="#"
 										aria-current="page"
-										class="z-10 flex items-center justify-center px-3 py-2 text-sm leading-tight border text-primary-600 bg-primary-50 border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
+										class="z-10 flex items-center justify-center px-3 py-2 text-sm leading-tight text-white bg-gray-700 border border-gray-700 hover:bg-primary-100"
 										>{p}</a
 									>
 								</li>
@@ -401,7 +426,7 @@
 								<li>
 									<a
 										href="#"
-										class="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+										class="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-400 bg-gray-800 border border-gray-700 hover:bg-gray-700 hover:text-white"
 										on:click={async (e) => {
 											e.preventDefault();
 											current_page = p - 1;
@@ -416,7 +441,7 @@
 							<li>
 								<a
 									href="#"
-									class="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+									class="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-400 bg-gray-800 border border-gray-700 hover:bg-gray-700 hover:text-white"
 									on:click={async (e) => {
 										e.preventDefault();
 										current_page = 0;
@@ -429,7 +454,7 @@
 							<a
 								href="#"
 								aria-current="page"
-								class="z-10 flex items-center justify-center px-3 py-2 text-sm leading-tight border text-primary-600 bg-primary-50 border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
+								class="z-10 flex items-center justify-center px-3 py-2 text-sm leading-tight text-white bg-gray-700 border border-gray-700 hover:bg-primary-100"
 								>{current_page + 1}</a
 							>
 						</li>
@@ -437,7 +462,7 @@
 							<li>
 								<a
 									href="#"
-									class="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+									class="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-400 bg-gray-800 border border-gray-700 hover:bg-gray-700 hover:text-white"
 									on:click={async (e) => {
 										e.preventDefault();
 										current_page = page.length - 1;
@@ -451,7 +476,7 @@
 					<li>
 						<a
 							href="#"
-							class="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+							class="flex items-center justify-center h-full py-1.5 px-3 leading-tight rounded-r-lg border bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700 hover:text-white"
 							on:click={async (e) => {
 								e.preventDefault();
 								current_page++;
