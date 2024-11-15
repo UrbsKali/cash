@@ -16,7 +16,6 @@ const config = {
 				'/sign-up',
 				'/login',
 				'/password-reset',
-				'/debug',
 				'/admin/projects/1',
 				'/admin/projects/2',
 				'/admin/projects/3',

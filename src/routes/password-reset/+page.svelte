@@ -1,5 +1,5 @@
 <script>
-	import AuthForm from '$lib/components/AuthForm.svelte';
+	import AuthForm from '$lib/components/utils/AuthForm.svelte';
 </script>
 
 <section class="min-h-screen bg-slate-800">
