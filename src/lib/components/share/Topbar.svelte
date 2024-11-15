@@ -2,8 +2,9 @@
 	import { userdata } from '$lib/store';
 	import { loadUserdata } from '$lib/utils';
 	import { onMount } from 'svelte';
-	import UserBadge from './UserBadge.svelte';
 	import { page } from '$app/stores';
+
+	import UserBadge from './UserBadge.svelte';
 
 	let user;
 	let skip = false;
@@ -77,7 +78,8 @@
 					<span class="sr-only">Toggle sidebar</span>
 				</button>
 				<a href="/" class="flex items-center justify-between mr-4">
-					<img src="/white_logo.webp" class="h-12 mr-3" alt="DaVinciBot Logo" />
+					<img src="/white_logo.webp" class="hidden h-12 mr-3 dark:block" alt="DaVinciBot Logo" />
+					<img src="/colored_logo.webp" class="block h-12 mr-3 dark:hidden" alt="DaVinciBot Logo" />
 					<span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"></span>
 				</a>
 			</div>
