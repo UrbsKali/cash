@@ -1,23 +1,42 @@
 <script>
-	export let title;
-	export let description;
-	export let image;
-	export let url = '#';
-	export let is_big = false;
+	export let title = '';
+	export let description = '';
+	export let image = '';
+	export let link = '';
 </script>
 
 <div
-	class="flex flex-row items-end gap-5 p-5 bg-opacity-25 bg-center bg-no-repeat bg-cover border border-gray-700 rounded-lg min-h-36 backdrop-blur-lg sm:h-48"
-	style="background-image: linear-gradient(rgba(14, 19, 31, 0.3) 0%, rgba(14, 19, 31, 1) 100%), url({image});"
+	class="rounded-xl border-[3.5px] border-light-blue dark:border-dark-light-blue p-4 w-[450px] flex flex-col gap-2 min-w-96"
 >
-	<div class="flex flex-col gap-1">
-		<h2 class="text-2xl font-bold text-white">{title}</h2>
-		<div class="flex flex-col gap-5">
-			<a
-				href={url}
-				class="px-4 py-2 text-center text-white border rounded-md border-primary-700 backdrop-blur-lg max-w-32 bg-opacity-30 bg-primary-500 hover:bg-opacity-70"
-				>Lire l'article</a
-			>
+	<div class="flex justify-between">
+		<h1 class="text-2xl font-bold">{title}</h1>
+	</div>
+	<div class="flex gap-5">
+		<div class="max-w-[50%]">
+			<p class="mb-2 text-sm text-justify text-blue-gray dark:text-dark-blue-gray">{description}</p>
+			<a href={link} class=" text-light-blue dark:text-dark-light-blue">En savoir plus...</a>
+		</div>
+		<div id="img-mask" class="h-28">
+			<img src={image} alt={title} class="h-28 aspect-auto" />
 		</div>
 	</div>
 </div>
+
+<style>
+	#img-mask::after {
+		content: '';
+		width: 100%;
+		height: 100%;
+		transform: translateY(-100%);
+		position: relative;
+		display: block;
+		/* add blue transparent filter  */
+		background:
+			linear-gradient(rgb(2, 50, 255, 0.3), rgba(2, 50, 255, 0.3)),
+			url('') no-repeat center center;
+		background-size: cover;
+	}
+	#img-mask img {
+		object-fit: cover;
+	}
+</style>
