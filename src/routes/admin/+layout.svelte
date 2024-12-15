@@ -2,7 +2,7 @@
 	// @ts-nocheck
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabaseClient';
-	
+
 	import UserBadge from '$lib/components/share/UserBadge.svelte';
 	import SideBar from '$lib/components/admin/SideBar.svelte';
 
@@ -49,7 +49,7 @@
 		},
 		{
 			title: 'Gestion de la trésorerie',
-			uri: '/admin/wip',
+			uri: '/admin/treso',
 			icon: 'bar-chart-outline',
 			allowed_roles: ['admin', 'bureau']
 		},
@@ -64,7 +64,7 @@
 			uri: '/admin/wip',
 			icon: 'briefcase-outline',
 			allowed_roles: ['admin', 'bureau']
-		},
+		}
 	];
 
 	let custom_uri = [
@@ -74,12 +74,10 @@
 			icon: 'add-outline',
 			allowed_roles: ['admin', 'bureau', 'cdp', 'membre']
 		}
-	]
-
-	
+	];
 
 	let __menu = [];
-	
+
 	onMount(async () => {
 		{
 			const { data, error } = await supabase.auth.getUser();
@@ -140,7 +138,7 @@
 	}
 </script>
 
-<div class="min-h-screen overflow-hidden antialiased bg-gray-50 dark:bg-gray-900 min-w-screen" >
+<div class="min-h-screen overflow-hidden antialiased bg-gray-50 dark:bg-gray-900 min-w-screen">
 	<nav
 		class="bg-white border-b border-gray-200 px-4 py-2.5 dark:bg-gray-800 dark:border-gray-700 fixed left-0 right-0 top-0 z-50 w-screen"
 	>
@@ -182,7 +180,8 @@
 				</button>
 				<a href="/admin" class="flex items-center justify-between mr-4">
 					<img src="/white_logo_notext.webp" class="h-8 mr-3" alt="Davincibot Logo" />
-					<span class="self-center hidden text-2xl font-semibold whitespace-nowrap dark:text-white sm:block"
+					<span
+						class="self-center hidden text-2xl font-semibold whitespace-nowrap dark:text-white sm:block"
 						>DaVinciBot</span
 					>
 				</a>
