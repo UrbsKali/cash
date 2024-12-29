@@ -50,6 +50,7 @@
 	 * @param {number} page - The page number
 	 * @param {string} filter - The filter to apply to the query (optional, default '')
 	 * @param {number} step - The number of items per page (optional, default 5 items)
+	 * @param {string} ordering - The order of the items (optional, default '')
 	 * @returns {none} - Sets the items variable
 	 */
 	async function loadPage(page, filter = '', step = size) {
@@ -63,6 +64,12 @@
 			for (let i = 0; i < filter.length; i++) {
 				query = query.filter(...filter[i].split(':'));
 			}
+		}
+
+		if (dbInfo.ordering) {
+			query = query.order(dbInfo.ordering.split(':')[0], {
+				ascending: dbInfo.ordering.split(':')[1] === 'asc'
+			});
 		}
 
 		const { data, error, count } = await query.range(page * step, (page + 1) * step - 1);
@@ -325,7 +332,8 @@
 									{#if key.value === item[0].value && item[0].avatar}
 										<th
 											scope="row"
-											class="flex items-center px-4 py-3 font-medium text-white whitespace-nowrap"
+											class="flex items-center px-4 py-3 font-medium text-white whitespace-nowrap {key.style ||
+												''}"
 											data-utils={key.data || ''}
 										>
 											{#if key.avatar}
@@ -336,7 +344,9 @@
 											{key.value}</th
 										>
 									{:else}
-										<td class="px-4 py-3" data-utils={key.data || ''}>{key.value}</td>
+										<td class="px-4 py-3 {key.style || ''}" data-utils={key.data || ''}
+											>{key.value}</td
+										>
 									{/if}
 								{/each}
 								{#if actions.length > 0}

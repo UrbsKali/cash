@@ -2,6 +2,7 @@
 	import Table from '$lib/components/admin/Table.svelte';
 	import CrudForm from '$lib/components/modals/CrudForm.svelte';
 	import SucessModal from '$lib/components/modals/InfoModal.svelte';
+	import ReadModal from '$lib/components/modals/ReadModal.svelte';
 
 	import { supabase } from '$lib/supabaseClient';
 
@@ -15,9 +16,9 @@
 						type: 'number',
 						id: 'price',
 						required: true,
-						placeholder: '0.00'
+						placeholder: '0.00',
+						wide: true
 					},
-					{ name: 'TVA', type: 'number', required: true, placeholder: '0.00' },
 					{ name: 'Justificatif', type: 'document', required: true, wide: true },
 					{
 						name: 'Date effective',
@@ -60,7 +61,6 @@
 						.insert([
 							{
 								price: data.price,
-								tva: data.tva,
 								date: data.date,
 								is_positive: data.is_positive,
 								description: data.description
@@ -78,11 +78,10 @@
 					// upload proof
 					const logoFile = form_data.get('justificatif');
 					console.log(logoFile);
-					let extension = logoFile.name.split('.').pop();
 
 					const { data: _, error: err } = await supabase.storage
 						.from('proof')
-						.upload(`invoices/${row.id}.${extension}`, logoFile, {
+						.upload(`invoices/${row.id}`, logoFile, {
 							cacheControl: '3600',
 							upsert: true
 						});
@@ -105,23 +104,75 @@
 
 	const dbInfo = {
 		table: 'spending',
-		fields: '*'
+		fields: '*',
+		ordering: 'date:desc'
 	};
 
-	const headers = ['Valeur', 'TVA', 'Date', 'Description', 'Actions'];
+	const headers = ['Valeur', 'Date', 'Description', 'Actions'];
 
 	function parseItems(items) {
 		let parsedItems = [];
 		items.forEach((item) => {
 			parsedItems.push([
-				{ value: item.price },
-				{ value: item.tva },
-				{ value: item.date },
+				{
+					value: item.price,
+					style: item.is_positive ? 'text-green-300' : 'text-red-300',
+					data: item.id
+				},
+				{ value: item.date.split('T')[0] },
 				{ value: item.description }
 			]);
 		});
 		return parsedItems;
 	}
+
+	const actions = [
+		{
+			title: 'Voir',
+			type: 'view',
+			handler: async (e) => {
+				// get the info from the order
+				const id = e.target.closest('tr').querySelector('td').dataset.utils;
+
+				const { data, error } = await supabase.from('spending').select('*').eq('id', id).single();
+
+				if (error) {
+					console.error(error);
+					return;
+				}
+
+				// get the proof
+				const {
+					data: { signedUrl },
+					error: err
+				} = await supabase.storage.from('proof').createSignedUrl(`invoices/${id}`, 600);
+
+				if (err) {
+					console.error(err);
+					return;
+				}
+
+				new ReadModal({
+					target: document.body,
+					props: {
+						values: {
+							header: {
+								title: 'SKT vs T1',
+								sub: '2024-05-17'
+							},
+							body: [
+								{ label: 'Valeur', value: data.price },
+								{ label: 'Date', value: data.date.split('T')[0] },
+								{ label: 'Description', value: data.description }
+							]
+						},
+
+						file: signedUrl
+					}
+				});
+			}
+		}
+	];
 </script>
 
 <div>
@@ -129,6 +180,6 @@
 </div>
 <div class="w-full py-2 sm:px-8 lg:px-16">
 	<div class="bg-gray-800 rounded-lg">
-		<Table {addNew} {parseItems} {dbInfo} {headers} type="ligne" type_accord="une" />
+		<Table {addNew} {parseItems} {dbInfo} {headers} {actions} type="ligne" type_accord="une" />
 	</div>
 </div>

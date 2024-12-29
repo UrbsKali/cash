@@ -5,6 +5,7 @@
 	const current_component = get_current_component();
 
 	import { supabase } from '$lib/supabaseClient';
+	import { preloadData } from '$app/navigation';
 
 	export let values = {
 		header: {
@@ -41,10 +42,12 @@
 			}
 		]
 	};
+	export let file = '';
 	export let actions = [];
 	export let id = 'readModal';
 
 	export let onClose = (e) => {};
+	let mime_type = '';
 
 	let __onClose = (e) => {
 		// remove componant from tree
@@ -52,9 +55,15 @@
 		onClose(e);
 	};
 
-	onMount(() => {
+	onMount(async () => {
 		const popup = document.querySelector(`#popup-${id}`);
 		hideOnClickOutside(popup, __onClose);
+		if (file) {
+			const f = await fetch(file);
+			let blob = await f.blob();
+			mime_type = blob.type;
+			file = URL.createObjectURL(blob);
+		}
 	});
 </script>
 
@@ -104,10 +113,21 @@
 					</button>
 				</div>
 			</div>
-			<dl>
-				{#each values.body as { label, value }}
-					<dt class="mb-2 font-semibold leading-none text-white">{label}</dt>
-					{#if typeof value === 'object'}
+			<div class="grid space-x-4 {file ? 'grid-cols-2' : 'grid-cols-1'}">
+				{#if file}
+					<div class="h-auto">
+						{#if mime_type.endsWith('pdf')}
+							<iframe src={file} frameborder="0" class="h-full" title="Invoices"></iframe>
+						{:else}
+							<img src={file} alt="invoices" class="w-full max-w-96" />
+						{/if}
+					</div>
+				{/if}
+
+				<dl>
+					{#each values.body as { label, value }}
+						<dt class="mb-2 font-semibold leading-none text-white">{label}</dt>
+						{#if typeof value === 'object'}
 							<dd class="mb-4 ml-2 font-light text-gray-500 sm:mb-5 dark:text-gray-400">
 								<table class="w-full border-separate">
 									<thead class="font-bold">
@@ -168,13 +188,16 @@
 									</tbody>
 								</table>
 							</dd>
-					{:else}
-						<dd class="mb-4 font-light text-gray-400 transition-colors sm:mb-5 hover:text-gray-300">
-							{value}
-						</dd>
-					{/if}
-				{/each}
-			</dl>
+						{:else}
+							<dd
+								class="mb-4 font-light text-gray-400 transition-colors sm:mb-5 hover:text-gray-300"
+							>
+								{value}
+							</dd>
+						{/if}
+					{/each}
+				</dl>
+			</div>
 			<div class="flex items-center justify-between">
 				{#each actions as { title, type, handler }}
 					{#if type == 'edit'}
