@@ -3,6 +3,7 @@
 	import Card from '$lib/components/share/Card.svelte';
 	import Topbar from '$lib/components/share/Topbar.svelte';
 	import CtaButton from '$lib/components/utils/CTAButton.svelte';
+	import Footer from '$lib/components/share/Footer.svelte';
 </script>
 
 <Topbar />
@@ -811,6 +812,8 @@
 		</div>
 	</div>
 </div>
+
+<Footer />
 
 <style>
 </style>

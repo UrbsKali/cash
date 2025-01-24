@@ -1,6 +1,4 @@
 <script>
-	// You can add any necessary script here
-	let current_year = new Date().getFullYear();
 </script>
 
 <footer
@@ -10,6 +8,17 @@
 		<div>
 			<img src="" alt="" class="w-20" />
 		</div>
+		<a href="https://www.linkedin.com/company/oblivionfr" target="_blank">
+			<svg
+				class="shareLinkedIn"
+				viewBox="0 0 16 16"
+				style="width:20px;height:18px;display:block;fill:currentColor;flex-shrink:0"
+				><defs><clipPath id="a"><path d="M0 0h16v16H0z"></path></clipPath></defs><path
+					d="M14.81 0H1.18C.53 0 0 .52 0 1.15v13.69C0 15.48.53 16 1.18 16h13.63c.65 0 1.18-.52 1.18-1.15V1.15c0-.64-.53-1.15-1.18-1.15ZM4.75 13.63H2.38V5.99h2.37v7.64ZM3.56 4.96c-.76 0-1.38-.62-1.38-1.37s.62-1.37 1.38-1.37 1.37.62 1.37 1.37-.62 1.37-1.37 1.37Zm10.07 8.67h-2.37V9.92c0-.88-.02-2.02-1.23-2.02s-1.42.97-1.42 1.96v3.77H6.24V5.99h2.27v1.04h.03c.32-.6 1.09-1.23 2.24-1.23 2.4 0 2.85 1.58 2.85 3.64v4.19Z"
+					style="clip-path:url(#a)"
+				></path></svg
+			></a
+		>
 		<div class="flex gap-2 py-2">
 			<a href="https://www.instagram.com/trankil_world_cup/" target="_blank">
 				<svg
@@ -24,6 +33,7 @@
 				>
 			</a>
 			<a href="https://twitter.com/oblivion_fr" target="_blank">
+				<!--Github-->
 				<svg
 					class="shareX"
 					viewBox="0 0 15 13"
@@ -33,17 +43,17 @@
 					></path></svg
 				>
 			</a>
-			<a href="https://www.linkedin.com/company/oblivionfr" target="_blank">
+			<a href="https://www.youtube.com/@oblivionesport" target="_blank">
+				<!--Facebook-->
 				<svg
-					class="shareLinkedIn"
-					viewBox="0 0 16 16"
-					style="width:20px;height:18px;display:block;fill:currentColor;flex-shrink:0"
-					><defs><clipPath id="a"><path d="M0 0h16v16H0z"></path></clipPath></defs><path
-						d="M14.81 0H1.18C.53 0 0 .52 0 1.15v13.69C0 15.48.53 16 1.18 16h13.63c.65 0 1.18-.52 1.18-1.15V1.15c0-.64-.53-1.15-1.18-1.15ZM4.75 13.63H2.38V5.99h2.37v7.64ZM3.56 4.96c-.76 0-1.38-.62-1.38-1.37s.62-1.37 1.38-1.37 1.37.62 1.37 1.37-.62 1.37-1.37 1.37Zm10.07 8.67h-2.37V9.92c0-.88-.02-2.02-1.23-2.02s-1.42.97-1.42 1.96v3.77H6.24V5.99h2.27v1.04h.03c.32-.6 1.09-1.23 2.24-1.23 2.4 0 2.85 1.58 2.85 3.64v4.19Z"
-						style="clip-path:url(#a)"
+					class="shareYouTube"
+					viewBox="0 0 18 18"
+					style="width:18px;height:18px;display:block;fill:currentColor;flex-shrink:0"
+					><path
+						d="M9 2.070c-8.845 0-9 0.787-9 6.93s0.155 6.93 9 6.93 9-0.787 9-6.93-0.155-6.93-9-6.93zM11.884 9.301l-4.041 1.886c-0.354 0.164-0.644-0.020-0.644-0.41v-3.553c0-0.39 0.29-0.574 0.644-0.41l4.041 1.886c0.354 0.166 0.354 0.436 0 0.601z"
 					></path></svg
-				></a
-			>
+				>
+			</a>
 			<a href="https://www.youtube.com/@oblivionesport" target="_blank">
 				<svg
 					class="shareYouTube"
@@ -54,47 +64,33 @@
 					></path></svg
 				>
 			</a>
-			<a href="https://www.tiktok.com/@oblivionfr123123" target="_blank">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					style="width:18px;height:18px;display:block;fill:currentColor;flex-shrink:0"
-					viewBox="0 0 512 512"
-					><path
-						d="M412.19,118.66a109.27,109.27,0,0,1-9.45-5.5,132.87,132.87,0,0,1-24.27-20.62c-18.1-20.71-24.86-41.72-27.35-56.43h.1C349.14,23.9,350,16,350.13,16H267.69V334.78c0,4.28,0,8.51-.18,12.69,0,.52-.05,1-.08,1.56,0,.23,0,.47-.05.71,0,.06,0,.12,0,.18a70,70,0,0,1-35.22,55.56,68.8,68.8,0,0,1-34.11,9c-38.41,0-69.54-31.32-69.54-70s31.13-70,69.54-70a68.9,68.9,0,0,1,21.41,3.39l.1-83.94a153.14,153.14,0,0,0-118,34.52,161.79,161.79,0,0,0-35.3,43.53c-3.48,6-16.61,30.11-18.2,69.24-1,22.21,5.67,45.22,8.85,54.73v.2c2,5.6,9.75,24.71,22.38,40.82A167.53,167.53,0,0,0,115,470.66v-.2l.2.2C155.11,497.78,199.36,496,199.36,496c7.66-.31,33.32,0,62.46-13.81,32.32-15.31,50.72-38.12,50.72-38.12a158.46,158.46,0,0,0,27.64-45.93c7.46-19.61,9.95-43.13,9.95-52.53V176.49c1,.6,14.32,9.41,14.32,9.41s19.19,12.3,49.13,20.31c21.48,5.7,50.42,6.9,50.42,6.9V131.27C453.86,132.37,433.27,129.17,412.19,118.66Z"
-					/></svg
-				>
-			</a>
-			<a href="https://twitch.tv/kckitt_" target="_blank">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					class="shareTwitch"
-					style="width:18px;height:18px;display:block;fill:currentColor;flex-shrink:0"
-					viewBox="0 0 64 64"
-					><path
-						d="M5.7 0L1.4 10.985V55.88h15.284V64h8.597l8.12-8.12h12.418l16.716-16.716V0H5.7zm51.104 36.3L47.25 45.85H31.967l-8.12 8.12v-8.12H10.952V5.73h45.85V36.3zM47.25 16.716v16.716h-5.73V16.716h5.73zm-15.284 0v16.716h-5.73V16.716h5.73z"
-						fill-rule="evenodd"
-					/></svg
-				>
-			</a>
-		</div>
-		<div class="text-left max-w-80">
-			<p>We do not sell or share your personal information</p>
-			<br />
-			<p>© {current_year} Oblivion Esport</p>
 		</div>
 	</div>
+
+	<!--Changer les ref des liens en dessous-->
+
 	<div class="grid w-full h-auto text-gray-300" id="sitemap">
 		<div class="flex flex-col items-center justify-center h-auto gap-2 align-middle sm:px-5">
-			<p class="font-bold text-white">Légal</p>
-			<a href="/policies/privacy" class=""> Données personnelles </a>
-			<a href="/policies/cgu"> CGU </a>
-			<a href="/policies/legal"> Mentions légales </a>
+			<p class="font-bold text-white">A Propos</p>
+			<a href="/association" class=""> L'association </a>
+			<a href="/nos-ecoles"> Nos écoles </a>
+			<a href="/soutenez-nous"> Soutenez-nous </a>
 		</div>
 		<div class="flex flex-col items-center justify-center h-auto gap-2 align-middle sm:px-5">
-			<p class="font-bold text-white">Association</p>
-			<a href="/tournaments" class=""> Tournois </a>
-			<a href="/staff"> Notre équipe </a>
-			<a href="/blog"> Le blog </a>
+			<p class="font-bold text-white">Nos Projets</p>
+			<a href="/CDR" class=""> La CDR </a>
+			<a href="/travelers"> Travelers </a>
+			<a href="/exaudus"> Exaudus </a>
+		</div>
+		<div class="flex flex-col items-center justify-center h-auto gap-2 align-middle sm:px-5">
+			<p class="font-bold text-white">Légal</p>
+			<a href="/donnees-personnelles" class=""> Données personnelles </a>
+			<a href="/cgu"> CGU </a>
+			<a href="/mention-legales"> Mentions légales </a>
+		</div>
+		<div class="flex flex-col items-center justify-center h-auto gap-2 align-middle sm:px-5">
+			<p class="font-bold text-white">Retrouvez-nous</p>
+			<p class="font-bold text-white">12 Av. Léonard de Vinci, 92400 Courbevoie</p>
 		</div>
 	</div>
 </footer>
