@@ -89,7 +89,7 @@
 				<a
 					href="/admin/"
 					class="block px-4 py-2 text-sm hover:bg-gray-700 hover:text-white bg-opacity-80"
-					>Pannel Admin</a
+					>Panel Admin</a
 				>
 			</li>
 		</ul>
