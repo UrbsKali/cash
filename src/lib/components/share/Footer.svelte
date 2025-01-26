@@ -4,40 +4,42 @@
 </script>
 
 <footer
-	class="flex flex-col pt-5 pb-5 pl-20 pr-20 space-y-5 text-center text-white bg-gray-900 border-t border-gray-700 backdrop-blur-lg g-3"
+	class="flex flex-col pt-5 pb-2 pl-20 pr-20 space-y-5 text-center bg-gray-900 border-t border-gray-700 backdrop-blur-lg gap-2"
 >
 	<!--Changer les ref des liens en dessous-->
 
-	<div class="grid w-full h-auto text-gray-300" id="sitemap">
-		<img src="/white_logo.webp" class="hidden h-full dark:block" alt="Davincibot Logo" />
-		<img src="/colored_logo.webp" class="hidden h-full dark:hidden" alt="Davincibot Logo" />
-		<div class="flex flex-col items-center justify-center h-auto gap-2 align-middle sm:px-5">
+	<div class="grid items-start" id="sitemap">
+		<img src="/white_logo.webp" class="hidden dark:block" alt="Davincibot Logo" />
+		<img src="/colored_logo.webp" class="hidden dark:hidden" alt="Davincibot Logo" />
+		<div class="flex flex-col gap-2">
 			<p class="font-bold text-white uppercase">à Propos</p>
 			<a href="/association" class="text-dark-blue-gray"> L'association </a>
 			<a href="/nos-ecoles" class="text-dark-blue-gray"> Nos écoles </a>
 			<a href="/soutenez-nous" class="text-dark-blue-gray"> Soutenez-nous </a>
 		</div>
-		<div class="flex flex-col items-center justify-center h-auto gap-2 align-middle sm:px-5">
+		<div class="flex flex-col gap-2">
 			<p class="font-bold text-white uppercase">Nos Projets</p>
 			<a href="/CDR" class="text-dark-blue-gray"> La CDR </a>
 			<a href="/travelers" class="text-dark-blue-gray"> Travelers </a>
 			<a href="/exaudus" class="text-dark-blue-gray"> Exaudus </a>
 		</div>
-		<div class="flex flex-col items-center justify-center h-auto gap-2 align-middle sm:px-5">
+		<div class="flex flex-col gap-2">
 			<p class="font-bold text-white uppercase">Légal</p>
-			<a href="/donnees-personnelles" class="text-dark-blue-gray"> Données personnelles </a>
 			<a href="/cgu" class="text-dark-blue-gray"> CGU </a>
 			<a href="/mention-legales" class="text-dark-blue-gray"> Mentions légales </a>
+			<a href="/donnees-personnelles" class="text-dark-blue-gray"> Données personnelles </a>
 		</div>
-		<div class="flex flex-col items-center justify-center h-auto gap-2 align-middle sm:px-5">
+		<div class="flex flex-col gap-4 sm:px-5">
 			<p class="font-bold text-white uppercase">Retrouvez-nous</p>
-			<p class="text-dark-blue-gray">12 Av. Léonard de Vinci, <wbr /> 92400 Courbevoie</p>
+			<p class="text-dark-blue-gray">
+				12 Av. Léonard de Vinci, <wbr /> 92400 Courbevoie
+			</p>
 		</div>
 	</div>
-	<div class="flex flex-row grid w-full items-start" id="sitemap">
-		<div class="flex flex-col">
+	<div class="flex flex-row w-full gap-4 items-start" id="sitemap">
+		<div class="flex flex-col gap-4">
 			<h1 class="uppercase font-bold">Suivez Nous</h1>
-			<div class="flex flex-row items-center gap-auto align-middle sm:px-5">
+			<div class="flex flex-row gap-auto">
 				<a href="https://www.linkedin.com/company/davincibot/" target="_blank">
 					<img src="/dark/LinkedIn.png" class="hidden h-12 mr-3 dark:block" alt="LinkedIn Logo" />
 					<img src="/light/LinkedIn.png" class="block h-12 mr-3 dark:hidden" alt="LinkedIn Logo" />
@@ -66,7 +68,7 @@
 		</div>
 		<div class="flex flex-col">
 			<h1 class="uppercase font-bold">Nos Partenaires</h1>
-			<div class="w-full">
+			<div class="">
 				<Carousel>
 					<a href="">
 						<svg
@@ -99,7 +101,7 @@
 								/>
 								<path
 									d="M148.642 23.0801C147.657 23.0801 146.337 22.9542 144.917 22.5754C144.616 22.4995 144.442 22.2998 144.442 22.0002V20.4993C144.442 20.2985 144.616 20.0956 144.869 20.0956H144.968C149.541 20.8444 150.81 20.4906 150.81 19.1688C150.81 18.2615 149.47 17.848 148.01 17.1925C145.373 16.0074 144.109 15.099 144.109 12.7342C144.109 10.2598 145.831 8.57219 149.072 8.57219C150.615 8.57219 151.929 8.79358 153.217 9.07032C153.519 9.14955 153.673 9.34598 153.673 9.64877V11.103C153.673 11.4015 153.519 11.5795 153.268 11.5795H153.166C149.294 11.0846 147.446 11.0423 147.446 12.6051C147.446 13.6285 148.464 13.9095 150.443 14.7647C153.3 16.0019 154.198 17.2337 154.198 18.8171C154.198 20.9942 153.2 23.0801 148.642 23.0801Z"
-									fill="#B3C2FF"
+									fill="#010128"
 								/>
 								<path
 									d="M110.671 16.416H108.105C107.828 16.416 107.602 16.2369 107.602 15.9645V14.3866C107.602 14.1066 107.828 13.9058 108.105 13.9058H110.671C110.955 13.9058 111.152 14.1066 111.152 14.3866V15.9645C111.152 16.2369 110.955 16.416 110.671 16.416Z"
@@ -815,7 +817,7 @@
 				</Carousel>
 			</div>
 		</div>
-		<div class=" justify-items-center">
+		<div class="">
 			<CtaButton>Espace Membre</CtaButton>
 		</div>
 	</div>

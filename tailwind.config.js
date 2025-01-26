@@ -13,7 +13,6 @@ export default {
         "dark-blue": "#010128",
         "dark-light-blue": "#B3C2FF",
         "main-blue": "#0232FF",
-
       }
     }
   },
