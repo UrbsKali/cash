@@ -4,13 +4,15 @@
 </script>
 
 <footer
-	class="flex flex-col pt-5 pb-2 pl-20 pr-20 space-y-5 text-center bg-gray-900 border-t border-gray-700 backdrop-blur-lg gap-2"
+	class="flex flex-col gap-2 pt-5 pb-2 pl-20 pr-20 space-y-5 text-center bg-gray-900 border-t border-gray-700 backdrop-blur-lg"
 >
 	<!--Changer les ref des liens en dessous-->
 
 	<div class="grid items-start" id="sitemap">
-		<img src="/white_logo.webp" class="hidden dark:block" alt="Davincibot Logo" />
-		<img src="/colored_logo.webp" class="hidden dark:hidden" alt="Davincibot Logo" />
+		<div class="w-64">
+			<img src="/white_logo.webp" class="hidden dark:block" alt="Davincibot Logo" />
+			<img src="/colored_logo.webp" class="hidden dark:hidden" alt="Davincibot Logo" />
+		</div>
 		<div class="flex flex-col gap-2">
 			<p class="font-bold text-white uppercase">à Propos</p>
 			<a href="/association" class="text-dark-blue-gray"> L'association </a>
@@ -36,39 +38,35 @@
 			</p>
 		</div>
 	</div>
-	<div class="flex flex-row w-full gap-4 items-start" id="sitemap">
-		<div class="flex flex-col gap-4">
-			<h1 class="uppercase font-bold">Suivez Nous</h1>
-			<div class="flex flex-row gap-auto">
+	<div class="flex flex-row items-center justify-between" id="sitemap">
+		<div class="flex flex-col gap-4 min-w-64">
+			<h1 class="font-bold uppercase">Suivez Nous</h1>
+			<div class="flex flex-row justify-between">
 				<a href="https://www.linkedin.com/company/davincibot/" target="_blank">
-					<img src="/dark/LinkedIn.png" class="hidden h-12 mr-3 dark:block" alt="LinkedIn Logo" />
-					<img src="/light/LinkedIn.png" class="block h-12 mr-3 dark:hidden" alt="LinkedIn Logo" />
+					<img src="/dark/LinkedIn.png" class="hidden w-12 h-12 dark:block" alt="LinkedIn Logo" />
+					<img src="/light/LinkedIn.png" class="block h-12 dark:hidden" alt="LinkedIn Logo" />
 				</a>
 				<a href="https://www.instagram.com/davincibot_pulv/" target="_blank">
-					<img src="/dark/instagram.png" class="hidden h-12 mr-3 dark:block" alt="Instagram Logo" />
-					<img
-						src="/light/instagram.png"
-						class="block h-12 mr-3 dark:hidden"
-						alt="Instagram Logo"
-					/>
+					<img src="/dark/instagram.png" class="hidden h-12 dark:block" alt="Instagram Logo" />
+					<img src="/light/instagram.png" class="block h-12 dark:hidden" alt="Instagram Logo" />
 				</a>
 				<a href="https://github.com/DaVinciBot" target="_blank">
-					<img src="/dark/Github.png" class="hidden h-12 mr-3 dark:block" alt="Github Logo" />
-					<img src="/light/Github.png" class="block h-12 mr-3 dark:hidden" alt="Github Logo" />
+					<img src="/dark/Github.png" class="hidden h-12 dark:block" alt="Github Logo" />
+					<img src="/light/Github.png" class="block h-12 dark:hidden" alt="Github Logo" />
 				</a>
 				<a href="https://www.facebook.com/DaVinciBotPULV/" target="_blank">
-					<img src="/dark/facebook.png" class="hidden h-12 mr-3 dark:block" alt="Facebook Logo" />
-					<img src="/light/facebook.png" class="block h-12 mr-3 dark:hidden" alt="Facebook Logo" />
+					<img src="/dark/facebook.png" class="hidden h-12 dark:block" alt="Facebook Logo" />
+					<img src="/light/facebook.png" class="block h-12 dark:hidden" alt="Facebook Logo" />
 				</a>
 				<a href="https://www.youtube.com/@davincibot-pulv" target="_blank">
-					<img src="/dark/youtube.png" class="hidden h-12 mr-3 dark:block" alt="YouTube Logo" />
-					<img src="/light/youtube.png" class="block h-12 mr-3 dark:hidden" alt="YouTube Logo" />
+					<img src="/dark/youtube.png" class="hidden h-12 dark:block" alt="YouTube Logo" />
+					<img src="/light/youtube.png" class="block h-12 dark:hidden" alt="YouTube Logo" />
 				</a>
 			</div>
 		</div>
-		<div class="flex flex-col">
-			<h1 class="uppercase font-bold">Nos Partenaires</h1>
-			<div class="">
+		<div class="flex flex-col w-2/4">
+			<h1 class="font-bold uppercase">Nos Partenaires</h1>
+			<div class="w-full">
 				<Carousel>
 					<a href="">
 						<svg
