@@ -28,7 +28,7 @@
 				{ name: 'En attente', value: 'pendingCDP","pendingTreso' },
 				{ name: 'Validé par le CDP', value: 'approvedCDP', active: true },
 				{ name: 'A commander', value: 'approvedTreso' },
-				{ name: 'commandé', value: 'ordered' },
+				{ name: 'Commandé', value: 'ordered' },
 				{ name: 'Terminé', value: 'completed' },
 				{ name: 'Refusé', value: 'canceled","refusedTreso","refusedCDP' }
 			]

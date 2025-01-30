@@ -32,8 +32,8 @@
 				{ name: 'Pôle Event', value: '6', active: true },
 				{ name: 'Pôle Com', value: '4', active: true },
 				{ name: 'Pôle Formation', value: '5', active: true },
-				{ name: 'Mini-projets', value: '9', active: true },
 				{ name: 'Bureau', value: '8', active: true }
+				{ name: 'Mini-projets', value: '9', active: true },
 			]
 		},
 		{
@@ -43,7 +43,7 @@
 				{ name: 'En attente', value: 'pendingCDP","pendingTreso' },
 				{ name: 'Validé par le CDP', value: 'approvedCDP', active: true },
 				{ name: 'A commander', value: 'approvedTreso' },
-				{ name: 'commandé', value: 'ordered' },
+				{ name: 'Commandé', value: 'ordered' },
 				{ name: 'Terminé', value: 'completed' },
 				{ name: 'Refusé', value: 'canceled","refusedTreso","refusedCDP' }
 			]
