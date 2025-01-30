@@ -6,7 +6,7 @@
 	import { statusText } from '$lib/utils';
 
 	import Table from '$lib/components/admin/Table.svelte';
-	import ReadModal from '$lib/components/modals/ReadModal.svelte'; 
+	import ReadModal from '$lib/components/modals/ReadModal.svelte';
 
 	let skip = false;
 	let user;
@@ -25,9 +25,10 @@
 			category: 'Status',
 			value: 'status',
 			options: [
-				{ name: 'En attente', value: 'pendingCDP","pendingTreso', active: true },
-				{ name: 'Validé par le CDP', value: 'approvedCDP' },
-				{ name: 'Commandé', value: 'approvedTreso' },
+				{ name: 'En attente', value: 'pendingCDP","pendingTreso' },
+				{ name: 'Validé par le CDP', value: 'approvedCDP', active: true },
+				{ name: 'A commander', value: 'approvedTreso' },
+				{ name: 'commandé', value: 'ordered' },
 				{ name: 'Terminé', value: 'completed' },
 				{ name: 'Refusé', value: 'canceled","refusedTreso","refusedCDP' }
 			]
@@ -49,7 +50,7 @@
 			type: 'view',
 			handler: async (e) => {
 				// get the info from the order
-				const id = e.target.closest('tr').querySelector('td').dataset.utils;
+				const id = e.target.closest('tr').querySelector('th').dataset.utils;
 
 				const { data, error } = await supabase
 					.from('orders')
@@ -128,14 +129,16 @@
 
 	let dbInfo = {
 		table: 'orders',
-		key: 'id, creationDate, projectId, status, lastUpdate, items(*)'
+		key: 'id, creationDate, projectId, status, lastUpdate, items(*), name'
 	};
 
 	function parseItems(data) {
 		let items = [];
 		data.forEach((el) => {
-			const price = el.items.reduce((acc, item, i) => acc + item.price * item.quantity, 0);
-			const name = el.items.map((item) => item.name).join(', ');
+			const price =
+				Math.round(el.items.reduce((acc, item, i) => acc + item.price * item.quantity, 0) * 100) /
+				100;
+			const name = el.name.length > 30 ? el.name.slice(0, 30) + '...' : el.name;
 			items.push([
 				{ value: name, data: el.id },
 				{ value: el.creationDate.toLocaleString().split('T')[0] },

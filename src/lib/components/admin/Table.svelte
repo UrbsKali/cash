@@ -10,6 +10,7 @@
 	export let headers = ['Nom', 'Email', 'Rôle', 'Actions'];
 	export let filters = [];
 	export let dbInfo = {}; // { table: 'users', key: 'id, email, role'}
+	export let searchable = 'username';
 
 	export let type = 'utilisateur';
 	export let type_accord = 'un';
@@ -35,6 +36,7 @@
 	let current_page = 0;
 	let total_items = 0;
 	let page = [];
+	let search = '';
 
 	$: {
 		page = [];
@@ -45,12 +47,18 @@
 		}
 	}
 
+	$: {
+		if (search.length > 0) {
+			current_page = 0;
+			filtersStore.set(filters);
+		}
+	}
+
 	/**
 	 * Load the page of items
 	 * @param {number} page - The page number
 	 * @param {string} filter - The filter to apply to the query (optional, default '')
 	 * @param {number} step - The number of items per page (optional, default 5 items)
-	 * @param {string} ordering - The order of the items (optional, default '')
 	 * @returns {none} - Sets the items variable
 	 */
 	async function loadPage(page, filter = '', step = size) {
@@ -64,12 +72,6 @@
 			for (let i = 0; i < filter.length; i++) {
 				query = query.filter(...filter[i].split(':'));
 			}
-		}
-
-		if (dbInfo.ordering) {
-			query = query.order(dbInfo.ordering.split(':')[0], {
-				ascending: dbInfo.ordering.split(':')[1] === 'asc'
-			});
 		}
 
 		const { data, error, count } = await query.range(page * step, (page + 1) * step - 1);
@@ -97,14 +99,17 @@
 		// copy array
 		let tmp = JSON.parse(JSON.stringify(filters));
 		tmp.forEach((el) => {
-			el.options = el.options.filter((option) => option.active);
+			el.options = el.options?.filter((option) => option.active);
 		});
 		// create string
 		tmp.forEach((el) => {
-			if (el.options.length > 0) {
+			if (el.options?.length > 0) {
 				filtersString += `${el.value}:in:("${el.options.map((option) => option.value).join('","')}")&`;
 			}
 		});
+		if (search) {
+			filtersString += `${searchable}:ilike:%${search}%&`;
+		}
 		return filtersString.slice(0, -1);
 	}
 
@@ -191,6 +196,7 @@
 								class="block w-full p-2 pl-10 text-sm text-white placeholder-gray-400 bg-gray-700 border border-gray-600 rounded-lg focus:border-primary-500"
 								placeholder="Search"
 								required=""
+								bind:value={search}
 							/>
 						</div>
 					</form>
@@ -328,25 +334,22 @@
 										}
 									: null}
 							>
-								{#each item as key}
-									{#if key.value === item[0].value && item[0].avatar}
+								{#each item as key, i}
+									{#if i == 0}
 										<th
 											scope="row"
-											class="flex items-center px-4 py-3 font-medium text-white whitespace-nowrap {key.style ||
-												''}"
+											class="flex items-center px-4 py-3 font-medium text-white whitespace-nowrap"
 											data-utils={key.data || ''}
 										>
 											{#if key.avatar}
-												<div class="flex items-center mr-2 space-x-2">
+												<div class="flex items-center w-8 h-8 mr-2 space-x-2">
 													<img src={key.avatar} class="w-8 h-8 rounded-full" alt="user face" />
 												</div>
 											{/if}
 											{key.value}</th
 										>
 									{:else}
-										<td class="px-4 py-3 {key.style || ''}" data-utils={key.data || ''}
-											>{key.value}</td
-										>
+										<td class="px-4 py-3" data-utils={key.data || ''}>{key.value}</td>
 									{/if}
 								{/each}
 								{#if actions.length > 0}

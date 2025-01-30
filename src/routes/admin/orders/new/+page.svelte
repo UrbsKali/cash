@@ -10,6 +10,8 @@
 	let projectId = -1;
 	let projectTitle = {};
 
+	let name = '';
+
 	async function updateProjectTitle() {
 		const { data: projects, error } = await supabase.from('projects').select().in('id', projectId);
 		if (error) {
@@ -26,6 +28,7 @@
 		if (projectId?.length > 0) {
 			updateProjectTitle();
 		}
+		name = value?.name;
 	});
 
 	async function onSubmit(e) {
@@ -54,23 +57,51 @@
 			return item;
 		});
 
-		const order = {
-			comment: object.comment,
-			projectId: projectId.length > 1 ? object.project : projectId[0]
-		};
-
 		if (object.items.length === 0) {
 			alert('Vous devez ajouter au moins un objet.');
 			return;
 		}
 		// check if one of the items is empty
 		for (let i = 0; i < object.items.length; i++) {
-			if (object.items[i].name === '' || object.items[i].lien === '' || object.items[i].price === '' || object.items[i].quantity === '' || object.items[i].price == '0' || object.items[i].quantity == '0') {
+			if (
+				object.items[i].name === '' ||
+				object.items[i].lien === '' ||
+				object.items[i].price === '' ||
+				object.items[i].quantity === '' ||
+				object.items[i].price == '0' ||
+				object.items[i].quantity == '0'
+			) {
 				alert('Vous devez remplir tous les champs pour chaque objet.');
 				return;
 			}
 		}
 
+		// create a spending
+
+		const { data: spendings, error: spendingError } = await supabase
+			.from('spendings')
+			.insert([
+				{
+					amount:
+						Math.round(
+							(object.items.reduce(
+								(acc, item) => acc + parseFloat(item.price) * parseInt(item.quantity),
+								0
+							) +
+								Number.EPSILON) *
+								100
+						) / 100,
+					comment: `Commande de matériel pour le projet ${projectId.length > 1 ? object.project : projectId[0]}, par ${name}`
+				}
+			])
+			.select();
+
+		const order = {
+			comment: object.comment,
+			projectId: projectId.length > 1 ? object.project : projectId[0],
+			spendingId: spendings[0].id,
+			name: object.items.reduce((acc, item) => acc + item.name + ', ', 0).slice(0, -2)
+		};
 
 		const { data: orders, error } = await supabase.from('orders').insert([order]).select();
 		if (error) {
