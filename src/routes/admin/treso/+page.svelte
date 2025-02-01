@@ -14,7 +14,7 @@
 					{
 						name: 'Valeur',
 						type: 'number',
-						id: 'price',
+						id: 'amount',
 						required: true,
 						placeholder: '0.00',
 						wide: true
@@ -60,7 +60,7 @@
 						.from('spending')
 						.insert([
 							{
-								price: data.price,
+								amount: data.amount,
 								date: data.date,
 								is_positive: data.is_positive,
 								description: data.description
@@ -115,7 +115,7 @@
 		items.forEach((item) => {
 			parsedItems.push([
 				{
-					value: item.price,
+					value: `${item.is_positive ? '+' : '-'} ${item.amount} €`,
 					style: item.is_positive ? 'text-green-300' : 'text-red-300',
 					data: item.id
 				},
@@ -132,7 +132,7 @@
 			type: 'view',
 			handler: async (e) => {
 				// get the info from the order
-				const id = e.target.closest('tr').querySelector('td').dataset.utils;
+				const id = e.target.closest('tr').querySelector('th').dataset.utils;
 
 				const { data, error } = await supabase.from('spending').select('*').eq('id', id).single();
 
@@ -142,14 +142,13 @@
 				}
 
 				// get the proof
-				const {
-					data: { signedUrl },
-					error: err
-				} = await supabase.storage.from('proof').createSignedUrl(`invoices/${id}`, 600);
+				const { data: dat, error: err } = await supabase.storage
+					.from('proof')
+					.createSignedUrl(`invoices/${id}`, 600);
 
 				if (err) {
 					console.error(err);
-					return;
+					console.log('No proof, skipping');
 				}
 
 				new ReadModal({
@@ -161,13 +160,16 @@
 								sub: '2024-05-17'
 							},
 							body: [
-								{ label: 'Valeur', value: data.price },
+								{
+									label: 'Valeur',
+									value: `${data.amount} €`
+								},
 								{ label: 'Date', value: data.date.split('T')[0] },
 								{ label: 'Description', value: data.description }
 							]
 						},
 
-						file: signedUrl
+						file: dat?.signedUrl
 					}
 				});
 			}
