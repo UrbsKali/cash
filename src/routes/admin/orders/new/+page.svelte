@@ -79,7 +79,7 @@
 		const order = {
 			comment: object.comment,
 			projectId: projectId.length > 1 ? object.project : projectId[0],
-			name: object.items.reduce((acc, item) => acc + item.name + ', ', 0).slice(0, -2)
+			name: object.items.reduce((acc, item) => (acc || '') + item.name + ', ', 0).slice(0, -2)
 		};
 
 		const { data: orders, error } = await supabase.from('orders').insert([order]).select();
