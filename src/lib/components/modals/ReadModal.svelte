@@ -5,12 +5,14 @@
 	const current_component = get_current_component();
 
 	import { supabase } from '$lib/supabaseClient';
-	import { preloadData } from '$app/navigation';
+
+	import Stepper from '../admin/Stepper.svelte';
 
 	export let values = {
 		header: {
 			title: 'SKT vs T1',
-			sub: '2024-05-17'
+			sub: '2024-05-17',
+			stepper: []
 		},
 		body: [
 			{
@@ -86,6 +88,9 @@
 					<h3 class="mr-2 font-semibold">{values.header.title}</h3>
 					{#if values.header.sub}
 						<p class="font-semibold text-gray-400">- {values.header.sub}</p>
+					{/if}
+					{#if values.header.stepper}
+						<Stepper></Stepper>
 					{/if}
 				</div>
 				<div>
