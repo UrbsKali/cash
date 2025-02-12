@@ -1,6 +1,31 @@
 <script>
 	import Carousel from '$lib/components/others/Carousel.svelte';
 	import CtaButton from '$lib/components/utils/CTAButton.svelte';
+	import FooterEl from './FooterEl.svelte';
+	let items = [
+		[
+			{ text: "L'association", href: '/association' },
+			{ text: 'Noes écoles', href: '/nos-ecoles' },
+			{ text: 'Soutenez-nous', href: '/soutenez-nous' }
+		],
+		[
+			{ text: 'La CDR', href: '/CDR' },
+			{ text: 'Travelers', href: '/travelers' },
+			{ text: 'Exaudus', href: '/exaudus' }
+		],
+		[
+			{ text: 'CGU', href: '/cgu' },
+			{ text: 'Mentions légales', href: '/mention-legales' },
+			{ text: 'Données personnelles', href: '/donnees-personnelles' }
+		],
+		[
+			{
+				text: '<p style="padding-bottom:10px;"> 12 Av. Léonard de Vinci,<br/> 92400 Courbevoie </p>',
+				href: '#'
+			}
+		]
+	];
+	let title = ['à Propos', 'Nos Projets', 'Légal', 'Retrouvez-nous'];
 </script>
 
 <footer
@@ -8,7 +33,7 @@
 >
 	<!--Changer les ref des liens en dessous-->
 
-	<div class="grid items-start h-16" id="sitemap">
+	<div class="grid items-start h-[100px]" id="sitemap">
 		<div class="flex align-middle m-auto h-full">
 			<svg
 				class="dark:fill-white fill-main-blue h-full"
@@ -73,32 +98,9 @@
 				</defs>
 			</svg>
 		</div>
-		<div class="flex flex-col text-left h-full justify-between content-between">
-			<p class="font-bold dark:text-white uppercase">à Propos</p>
-			<div class="flex flex-col">
-				<a href="/association" class="text-dark-blue-gray pt-1"> L'association </a>
-				<a href="/nos-ecoles" class="text-dark-blue-gray"> Nos écoles </a>
-				<a href="/soutenez-nous" class="text-dark-blue-gray"> Soutenez-nous </a>
-			</div>
-		</div>
-		<div class="flex flex-col pt-5 text-left">
-			<p class="font-bold dark:text-white uppercase pt-1">Nos Projets</p>
-			<a href="/CDR" class="text-dark-blue-gray"> La CDR </a>
-			<a href="/travelers" class="text-dark-blue-gray"> Travelers </a>
-			<a href="/exaudus" class="text-dark-blue-gray"> Exaudus </a>
-		</div>
-		<div class="flex flex-col pt-5 text-left">
-			<p class="font-bold dark:text-white uppercase pt-1">Légal</p>
-			<a href="/cgu" class="text-dark-blue-gray"> CGU </a>
-			<a href="/mention-legales" class="text-dark-blue-gray"> Mentions légales </a>
-			<a href="/donnees-personnelles" class="text-dark-blue-gray"> Données personnelles </a>
-		</div>
-		<div class="flex flex-col gap-4 sm:px-5 pt-5 text-left">
-			<p class="font-bold dark:text-white uppercase">Retrouvez-nous</p>
-			<p class="text-dark-blue-gray">
-				12 Av. Léonard de Vinci, <br /> 92400 Courbevoie
-			</p>
-		</div>
+		{#each items as item, i}
+			<FooterEl items={item} title={title[i]} />
+		{/each}
 	</div>
 	<div class="flex flex-row items-center justify-between" id="sitemap">
 		<div class="flex flex-col gap-4 min-w-64">
