@@ -29,12 +29,12 @@
 </script>
 
 <footer
-	class="flex flex-col pt-5 pb-2 pl-20 pr-20 gap-2 text-center dark:bg-dark-blue bg-white border-white backdrop-blur-lg"
+	class="flex flex-col gap-10 pt-5 pb-2 pl-32 pr-32 text-center dark:bg-dark-blue bg-white border-white backdrop-blur-lg"
 >
 	<!--Changer les ref des liens en dessous-->
 
 	<div class="grid items-start h-[100px]" id="sitemap">
-		<div class="flex align-middle m-auto h-full">
+		<div class="flex justify-start w-4/6 my-auto h-full">
 			<svg
 				class="dark:fill-white fill-main-blue h-full"
 				viewBox="0 0 252 164"
@@ -102,7 +102,7 @@
 			<FooterEl items={item} title={title[i]} />
 		{/each}
 	</div>
-	<div class="flex flex-row items-center justify-between" id="sitemap">
+	<div class="flex flex-row items-center justify-around">
 		<div class="flex flex-col gap-4 min-w-64">
 			<h1 class="font-bold uppercase">Suivez Nous</h1>
 			<div class="flex flex-row justify-between">
@@ -177,7 +177,7 @@
 				</a>
 			</div>
 		</div>
-		<div class="flex flex-col w-2/4">
+		<div class="flex flex-col w-3/I4">
 			<h1 class="font-bold uppercase">Nos Partenaires</h1>
 			<div class="w-full">
 				<Carousel>
@@ -927,9 +927,6 @@
 					</a>
 				</Carousel>
 			</div>
-		</div>
-		<div class="">
-			<CtaButton>Espace Membre</CtaButton>
 		</div>
 	</div>
 </footer>
