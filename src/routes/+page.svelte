@@ -1,22 +1,23 @@
 <script>
 	import Carousel from '$lib/components/others/Carousel.svelte';
 	import Card from '$lib/components/share/Card.svelte';
+	import Footer from '$lib/components/share/Footer.svelte';
 	import Topbar from '$lib/components/share/Topbar.svelte';
 	import CtaButton from '$lib/components/utils/CTAButton.svelte';
 </script>
 
 <Topbar />
 
-<div class="flex flex-col h-full gap-8 px-4 sm:px-8 md:px-16 lg:px-32 pt-16 md:pt-32 lg:pt-48">
+<div class="flex flex-col h-full gap-8 px-4 pt-16 sm:px-8 md:px-16 lg:px-32 md:pt-32 lg:pt-48">
 	<div class="justify-start">
 		<div class="grid grid-cols-1 md:grid-cols-[2fr_1.5fr] items-center gap-8">
-			<div class="flex flex-col justify-start gap-4 text-start overflow-hidden order-2 md:order-1">
+			<div class="flex flex-col justify-start order-2 gap-4 overflow-hidden text-start md:order-1">
 				<div class="flex flex-col gap-5">
 					<h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-[4.10px] pr-5">
 						DaVinciBot dépasse <wbr />les voies du binaire.
 					</h1>
 					<p
-						class="self-stretch text-lg sm:text-xl tracking-wider text-blue-gray dark:text-dark-blue-gray"
+						class="self-stretch text-lg tracking-wider sm:text-xl text-blue-gray dark:text-dark-blue-gray"
 					>
 						DaVinciBot rassemble des étudiants de l'ESILV, de l'EMLV et de l'IIM du Pôle
 						Universitaire Léonard de Vinci autour d'activités, de projets innovants et de nombreuses
@@ -24,7 +25,7 @@
 						professionnelle.
 					</p>
 				</div>
-				<div class="flex flex-col sm:flex-row gap-4 sm:gap-8">
+				<div class="flex flex-col gap-4 sm:flex-row sm:gap-8">
 					<CtaButton>Nos Projets</CtaButton>
 					<CtaButton secondary={true}>Soutenez nous</CtaButton>
 				</div>
@@ -32,11 +33,11 @@
 			<img
 				src="/assets/projets/rob_shadows.png"
 				alt="Robot illustration"
-				class="w-full mx-auto mb-6 md:mb-0 order-1 md:order-2 scale-130"
+				class="order-1 w-full mx-auto mb-6 md:mb-0 md:order-2 scale-130"
 			/>
 		</div>
 
-		<div class="flex flex-col justify-center mt-8 md:mt-16 w-full sm:w-10/12 md:w-9/12 lg:w-7/12">
+		<div class="flex flex-col justify-center w-full mt-8 md:mt-16 sm:w-10/12 md:w-9/12 lg:w-7/12">
 			<h2 class="text-base font-bold">Nos soutiens</h2>
 
 			<Carousel>
@@ -823,6 +824,8 @@
 		</div>
 	</div>
 </div>
+
+<Footer />
 
 <style>
 </style>
