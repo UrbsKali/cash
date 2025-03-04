@@ -29,14 +29,17 @@
 </script>
 
 <footer
-	class="flex flex-col gap-10 pt-5 pb-2 pl-32 pr-32 text-center dark:bg-dark-blue bg-white border-white backdrop-blur-lg"
+	class="flex flex-col gap-10 pt-5 pb-2 px-6 lg:px-32 md:px-16 text-center dark:bg-dark-blue bg-white border-white backdrop-blur-lg"
 >
 	<!--Changer les ref des liens en dessous-->
 
-	<div class="grid items-start h-[100px]" id="sitemap">
-		<div class="flex justify-start w-4/6 my-auto h-full">
+	<div
+		class="sm:flex sm:flex-column sm: md:grid md:h-[100px] md:grid-cols-2 lg:grid-cols-4 md:py-0"
+		id="sitemap"
+	>
+		<div class="flex justify-center md:justify-start md:w-4/6 my-auto h-full">
 			<svg
-				class="dark:fill-white fill-main-blue h-full"
+				class="dark:fill-white fill-main-blue h-20 md:h-28"
 				viewBox="0 0 252 164"
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"
@@ -102,13 +105,14 @@
 			<FooterEl items={item} title={title[i]} />
 		{/each}
 	</div>
-	<div class="flex flex-row items-center justify-around">
-		<div class="flex flex-col gap-4 min-w-64">
+	<div class="md:flex md:flex-column items-center md:justify-around">
+		<hr class="md:hidden white border-white rounded-sm pt-1 mx-6" />
+		<div class="flex flex-col gap-4 min-w-64 md:pt-0 py-5">
 			<h1 class="font-bold uppercase">Suivez Nous</h1>
-			<div class="flex flex-row justify-between">
+			<div class="flex flex-row justify-between md:m-0 mx-12">
 				<a href="https://www.linkedin.com/company/davincibot/" target="_blank">
 					<svg
-						class=" h-12 dark:fill-dark-light-blue fill-main-blue"
+						class=" h-10 md:h-12 dark:fill-dark-light-blue fill-main-blue"
 						viewBox="0 0 80 80"
 						xmlns="http://www.w3.org/2000/svg"
 					>
@@ -119,7 +123,7 @@
 				</a>
 				<a href="https://www.instagram.com/davincibot_pulv/" target="_blank">
 					<svg
-						class=" h-12 dark:fill-dark-light-blue fill-main-blue"
+						class="h-10 md:h-12 dark:fill-dark-light-blue fill-main-blue"
 						viewBox="0 0 80 80"
 						xmlns="http://www.w3.org/2000/svg"
 					>
@@ -130,7 +134,7 @@
 				</a>
 				<a href="https://github.com/DaVinciBot" target="_blank">
 					<svg
-						class=" h-12 dark:fill-dark-light-blue fill-main-blue"
+						class="h-10 md:h-12 dark:fill-dark-light-blue fill-main-blue"
 						viewBox="0 0 80 80"
 						xmlns="http://www.w3.org/2000/svg"
 					>
@@ -155,7 +159,7 @@
 				</a>
 				<a href="https://www.facebook.com/DaVinciBotPULV/" target="_blank">
 					<svg
-						class=" h-12 dark:fill-dark-light-blue fill-main-blue"
+						class=" h-10 md:h-12 dark:fill-dark-light-blue fill-main-blue"
 						viewBox="0 0 80 80"
 						xmlns="http://www.w3.org/2000/svg"
 					>
@@ -166,7 +170,7 @@
 				</a>
 				<a href="https://www.youtube.com/@davincibot-pulv" target="_blank">
 					<svg
-						class=" h-12 dark:fill-dark-light-blue fill-main-blue"
+						class=" h-10 md:h-12 dark:fill-dark-light-blue fill-main-blue"
 						viewBox="0 0 80 80"
 						xmlns="http://www.w3.org/2000/svg"
 					>
@@ -177,7 +181,8 @@
 				</a>
 			</div>
 		</div>
-		<div class="flex flex-col w-3/I4">
+		<hr class="md:hidden white border-white rounded-sm pt-1 mx-6" />
+		<div class="flex flex-col md:w-3/4 pt-5">
 			<h1 class="font-bold uppercase">Nos Partenaires</h1>
 			<div class="w-full">
 				<Carousel>
