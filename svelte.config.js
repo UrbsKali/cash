@@ -18,6 +18,7 @@ const config = {
 				'/admin',
 				'/sign-up',
 				'/login',
+				'/blog',
 				'/password-reset',
 				'/admin/projects/1',
 				'/admin/projects/2',

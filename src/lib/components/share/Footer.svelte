@@ -37,7 +37,7 @@
 		class="sm:flex sm:flex-column sm: md:grid md:h-[100px] md:grid-cols-2 lg:grid-cols-4 md:py-0"
 		id="sitemap"
 	>
-		<div class="flex justify-center md:justify-start md:w-4/6 my-auto h-full">
+		<div class="flex justify-center md:justify-start md:w-4/6 h-full">
 			<svg
 				class="dark:fill-white fill-main-blue h-20 md:h-28"
 				viewBox="0 0 252 164"
