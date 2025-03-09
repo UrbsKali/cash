@@ -5,6 +5,7 @@
 	import { page } from '$app/stores';
 
 	import UserBadge from './UserBadge.svelte';
+	import DvbLogo from './Logo/DVBLogo.svelte';
 
 	let user;
 	let skip = false;
@@ -42,7 +43,7 @@
 
 <section class={enable_cursor ? 'enable-cursor' : ''}>
 	<nav
-		class="border-b px-4 py-2.5 border-gray-700 fixed left-0 right-0 top-0 z-50 backdrop-blur-lg"
+		class="border-b px-2 md:px-6 py-2.5 border-gray-700 fixed left-0 right-0 top-0 z-50 backdrop-blur-lg w-screen"
 	>
 		<div class="flex flex-wrap items-center justify-between">
 			<div class="flex items-center justify-start">
@@ -78,9 +79,7 @@
 					<span class="sr-only">Toggle sidebar</span>
 				</button>
 				<a href="/" class="flex items-center justify-between mr-4">
-					<img src="/white_logo.webp" class="hidden h-12 mr-3 dark:block" alt="DaVinciBot Logo" />
-					<img src="/colored_logo.webp" class="block h-12 mr-3 dark:hidden" alt="DaVinciBot Logo" />
-					<span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"></span>
+					<DvbLogo size="h-12" />
 				</a>
 			</div>
 			<div class="items-center hidden md:flex">

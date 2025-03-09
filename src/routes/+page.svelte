@@ -789,7 +789,7 @@
 		</div>
 	</div>
 	<div class="flex flex-col items-center justify-center mt-12">
-		<div class="flex flex-col w-6/12 gap-12 text-center">
+		<div class="flex flex-col gap-12 text-left md:text-center md:w-6/12">
 			<h1 class="text-6xl font-extrabold tracking-[4.10px] pr-5">Nos actualités</h1>
 			<p class="self-stretch text-xl tracking-wider text-blue-gray dark:text-dark-blue-gray">
 				DaVinciBot organise et participe à des événements de robotique, offrant à ses membres des

@@ -37,16 +37,16 @@
 >
 	<!--Changer les ref des liens en dessous-->
 
-	<div class="flex justify-center h-full col-span-2 order-0 md:justify-left md:col-span-1">
+	<div class="flex justify-center h-full col-span-2 order-0 md:justify-start md:col-span-1">
 		<DVBLogo />
 	</div>
 	{#each items as item, i}
 		<FooterEl items={item} title={title[i]} />
 	{/each}
 
-	<div class="flex flex-col order-3 col-span-2 gap-4 py-5 w-80 md:pt-0 md:order-2">
+	<div class="flex flex-col order-3 col-span-2 gap-4 py-5 w-80 md:pt-0">
 		<h1 class="font-bold text-left uppercase">Suivez Nous</h1>
-		<div class="flex flex-row justify-between mx-12 md:m-0">
+		<div class="flex flex-row justify-between">
 			<a href="https://www.linkedin.com/company/davincibot/" target="_blank">
 				<svg
 					class="h-10 md:h-12 dark:fill-dark-light-blue fill-main-blue"

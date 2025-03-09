@@ -1,8 +1,9 @@
 <script>
+	export let size = 'h-20 md:h-28';
 </script>
 
 <svg
-	class="h-20 dark:fill-white fill-main-blue md:h-28"
+	class=" dark:fill-white fill-main-blue {size} "
 	viewBox="0 0 252 164"
 	fill="none"
 	xmlns="http://www.w3.org/2000/svg"
