@@ -95,14 +95,14 @@
 						<a
 							href="/tournaments"
 							class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-							>Tournois</a
+							>Projets</a
 						>
 					</li>
 					<li>
 						<a
 							href="/"
 							class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-							>Staff</a
+							>Partenaires</a
 						>
 					</li>
 
