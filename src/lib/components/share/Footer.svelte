@@ -1,5 +1,10 @@
 <script>
-	import SponsorLogo from './Logo/SponsorLogo.svelte';
+	import HDSLogo from './Logo/HDS.svelte';
+	import RSLogo from './Logo/RS.svelte';
+	import FaulhaberLogo from './Logo/Faulhaber.svelte';
+	import SYNLogo from './Logo/SYN.svelte';
+	import IFTLogo from './Logo/IFT.svelte';
+	import GotronicLogo from './Logo/Gotronic.svelte';
 	import DVBLogo from './Logo/DVBLogo.svelte';
 
 	import Carousel from '$lib/components/others/Carousel.svelte';
@@ -120,15 +125,14 @@
 	</div>
 	<div class="flex flex-col order-4 col-span-2 md:col-span-3 md:-ml-32">
 		<h1 class="font-bold text-left uppercase">Nos Partenaires</h1>
-		<div class="w-full">
+		<div class="w-full h-40">
 			<Carousel>
-				<SponsorLogo></SponsorLogo>
-				<SponsorLogo></SponsorLogo>
-				<SponsorLogo></SponsorLogo>
-				<SponsorLogo></SponsorLogo>
-				<SponsorLogo></SponsorLogo>
-				<SponsorLogo></SponsorLogo>
-				<SponsorLogo></SponsorLogo>
+				<HDSLogo />
+				<RSLogo />
+				<FaulhaberLogo />
+				<!-- <SYNLogo />
+				<IFTLogo />
+				<GotronicLogo /> -->
 			</Carousel>
 		</div>
 	</div>
