@@ -1,34 +1,42 @@
 <script>
 	import { onMount } from 'svelte';
 
-	export let speed = 10;
+	export let time = 50;
 
-	let random = Math.floor(Math.random() * 10000); // Random number to avoid conflicts with multiple carousels
+	let carouselContainer;
+	let carouselInner;
+
+	let elOne;
+	let elTwo;
 
 	onMount(() => {
-		const carouselContainer = document.querySelector(`#carousel-container-${random}`);
-		const carousel = document.querySelector('#carousel-' + random);
 		const carouselHeight = carouselContainer.getBoundingClientRect().height;
 		carouselContainer.style.height = `${carouselHeight}px`;
 
-		carousel.style.animationDuration = `${speed}s`;
+		const carouselInnerWidth =
+			elOne.getBoundingClientRect().width + elTwo.getBoundingClientRect().width;
+		carouselInner.style.width = `${carouselInnerWidth + 32}px`;
+
+		carouselInner.style.animationDuration = `${time}s`;
 	});
 </script>
 
-<div>
-	<div id="carousel-container-{random}" class="relative w-full py-5 overflow-hidden carrousel">
-		<div
-			class="flex items-center justify-center gap-8 align-middle carousel-inner"
-			id="carousel-{random}"
-		>
-			<slot></slot>
+<div class="w-full h-full">
+	<div class="relative w-full h-full py-5 overflow-hidden carrousel" bind:this={carouselContainer}>
+		<div class="flex carousel-inner" bind:this={carouselInner}>
+			<div class="flex items-center h-full gap-8" bind:this={elOne}>
+				<slot></slot>
+			</div>
+			<div class="flex items-center h-full gap-8 pl-8" bind:this={elTwo}>
+				<slot></slot>
+			</div>
 		</div>
 	</div>
 </div>
 
 <style>
 	.carousel-inner {
-		animation: infinite_scroll 10s linear infinite;
+		animation: slidein 50s linear infinite;
 	}
 
 	.carrousel::after {
@@ -51,12 +59,12 @@
 		}
 	}
 
-	@keyframes infinite_scroll {
-		0% {
-			transform: translateX(0%);
+	@keyframes slidein {
+		from {
+			transform: translate3d(0, 0, 0);
 		}
-		100% {
-			transform: translateX(-232px);
+		to {
+			transform: translate3d(-50%, 0, 0);
 		}
 	}
 </style>

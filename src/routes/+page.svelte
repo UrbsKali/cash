@@ -68,7 +68,7 @@
 			</p>
 		</div>
 		<div class="max-w-full my-10">
-			<Carousel>
+			<Carousel time={90}>
 				<Card
 					title="DaVinciBot l’association étudiante de robotique."
 					description="Notre équipe a été invitée à participer au lancement de la coupe de france de robotique 2025 à EPITA pour l'annonce du nouveau theme de l'année."

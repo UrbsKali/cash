@@ -130,9 +130,9 @@
 				<HDSLogo />
 				<RSLogo />
 				<FaulhaberLogo />
-				<!-- <SYNLogo />
+				<SYNLogo />
 				<IFTLogo />
-				<GotronicLogo /> -->
+				<GotronicLogo />
 			</Carousel>
 		</div>
 	</div>
