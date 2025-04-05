@@ -127,86 +127,56 @@
 					<p class="uppercase text-sm md:text-xl self-center">campus</p>
 				</div>
 			</div>
-			<div class=" md:hidden">
-				<div class="flex flex-col relative pt-4">
-					<img class="rounded-2xl opacity-40" alt="CDR" src="/assets/projets/CDR.jpg" />
-					<div class="flex flex-col h-full absolute">
-						<h1 class="text-xl font-extrabold text-center bg-blue-gray rounded-t-2xl pb-1">
+
+			<div class="flex-col flex pt-4 gap-4 md:pt-0 md:gap-0">
+				<div class="flex flex-col md:flex-row py-6 gap-10 justify-center items-center">
+					<img class="md:w-1/4 rounded-2xl" alt="CDR" src="/assets/projets/CDR.jpg" />
+					<div class="flex flex-col h-full justify-between content-between">
+						<h1 class="text-2xl md:text-3xl font-extrabold text-center md:text-left">
 							Coupe de France de Robotique
 						</h1>
-						<div class="flex flex-col justify-center items-center text-center h-full">
-							<p class="text-center">
-								Nous participons depuis plus de 10 ans à cette compétition avec tous les ans une
-								nouvelle équipe.
-							</p>
-						</div>
-					</div>
-				</div>
-				<div class="flex flex-col relative pt-4">
-					<img class="rounded-2xl opacity-40" alt="CDR" src="/assets/projets/Travelers.jpg" />
-					<div class="flex flex-col h-full absolute">
-						<h1 class="text-xl font-extrabold text-center bg-blue-gray rounded-t-2xl pb-1">
-							TRAVELERS
-						</h1>
-						<div class="flex flex-col justify-center items-center text-center h-full">
-							<p class="text-center">
-								Il s’agit d’un rover tout terrain amphibie dont l’objectif est de pouvoir vivre sur
-								Titan, une lune de Saturne.
-							</p>
-						</div>
-					</div>
-				</div>
-				<div class="flex flex-col relative pt-4">
-					<img class="rounded-2xl opacity-40" alt="CDR" src="/assets/projets/CDR.jpg" />
-					<div class="flex flex-col h-full absolute">
-						<h1 class="text-xl font-extrabold text-center bg-blue-gray rounded-t-2xl pb-1">
-							Exaudus
-						</h1>
-						<div class="flex flex-col justify-center items-center text-center h-full">
-							<p class="text-center">
-								Nous entamons la conception d’un exosquelette qui pourra contrôler un petit robot
-								humanoïde.
-							</p>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="flex-col hidden md:flex">
-				<div class="flex flex-row py-6 gap-10 justify-center items-center">
-					<img class="w-1/4 rounded-2xl" alt="CDR" src="/assets/projets/CDR.jpg" />
-					<div class="flex flex-col h-full justify-between content-between">
-						<h1 class="text-3xl font-extrabold">Coupe de France de Robotique</h1>
-						<p class="text-xl py-2 text-blue-gray dark:text-dark-blue-gray">
+						<p
+							class="md:text-xl py-2 text-blue-gray dark:text-dark-blue-gray text-center md:text-left"
+						>
 							Nous participons depuis plus de 10 ans à cette compétition avec tous les ans une
 							nouvelle équipe.
 						</p>
-						<div class="w-80 py-4">
+						<div class="flex flex-col md:block px-0 md:w-80 py-4">
 							<CtaButton>Découvrir</CtaButton>
 						</div>
 					</div>
 				</div>
-				<div class="flex flex-row py-6 gap-10 justify-center items-center">
+				<div class="flex flex-col md:flex-row py-6 gap-10 justify-center items-center">
+					<img class="rounded-2xl md:hidden" alt="Travelers" src="/assets/projets/Travelers.jpg" />
 					<div class="flex flex-col h-full justify-between content-between">
-						<h1 class="text-3xl font-extrabold">TRAVELERS</h1>
-						<p class="text-xl py-2 text-blue-gray dark:text-dark-blue-gray">
+						<h1 class="text-2xl md:text-3xl font-extrabold text-center md:text-left">TRAVELERS</h1>
+						<p
+							class="md:text-xl py-2 text-blue-gray dark:text-dark-blue-gray text-center md:text-left"
+						>
 							Il s’agit d’un rover tout terrain amphibie dont l’objectif est de pouvoir vivre sur
 							Titan, une lune de Saturne.
 						</p>
-						<div class="w-80 py-4">
+						<div class="flex flex-col md:block px-0 md:w-80 py-4">
 							<CtaButton>Découvrir</CtaButton>
 						</div>
 					</div>
-					<img class="w-1/4 rounded-2xl" alt="Travelers" src="/assets/projets/Travelers.jpg" />
+					<img
+						class="w-1/4 rounded-2xl hidden md:flex"
+						alt="Travelers"
+						src="/assets/projets/Travelers.jpg"
+					/>
 				</div>
-				<div class="flex flex-row py-6 gap-10 justify-center items-center">
-					<img class="w-1/4 rounded-2xl" src="" alt="Exaudus" />
+				<div class="flex flex-col md:flex-row py-6 gap-10 justify-center items-center">
+					<img class="md:w-1/4 rounded-2xl" src="" alt="Exaudus" />
 					<div class="flex flex-col h-full justify-between content-between">
-						<h1 class="text-3xl font-extrabold">Exaudus</h1>
-						<p class="text-xl py-2 text-blue-gray dark:text-dark-blue-gray">
+						<h1 class="text-2xl md:text-3xl font-extrabold text-center md:text-left">Exaudus</h1>
+						<p
+							class="md:text-xl py-2 text-blue-gray dark:text-dark-blue-gray text-center md:text-left"
+						>
 							Nous entamons la conception d’un exosquelette qui pourra contrôler un petit robot
 							humanoïde.
 						</p>
-						<div class="w-80 py-4">
+						<div class="flex flex-col md:block px-0 md:w-80 py-4">
 							<CtaButton>Découvrir</CtaButton>
 						</div>
 					</div>
