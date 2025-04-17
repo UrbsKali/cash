@@ -18,7 +18,8 @@
 	let headers = ['Objet', 'Date', 'Dernière MàJ', 'Prix', 'Projet', 'Membre', 'Status', 'Actions'];
 	let dbInfo = {
 		table: 'orders',
-		key: 'id, creationDate, projectId(id, name), status, lastUpdate, items(*), requestedBy(*), name'
+		key: 'id, creationDate, projectId(id, name), status, lastUpdate, items(*), requestedBy(*), name',
+		ordering: 'lastUpdate:desc'
 	};
 
 	let filters = [

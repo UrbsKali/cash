@@ -5,17 +5,18 @@
 	import { hashCode, saveSettings, loadSettings, hideOnClickOutside } from '$lib/utils';
 	import { supabase } from '$lib/supabaseClient';
 	import CrudForm from '../modals/CrudForm.svelte';
+	import { detach_dev } from 'svelte/internal';
 
 	export let actions = [];
 	export let headers = ['Nom', 'Email', 'Rôle', 'Actions'];
 	export let filters = [];
-	export let dbInfo = {}; // { table: 'users', key: 'id, email, role'}
+	export let dbInfo = {}; // { table: 'users', key: 'id, email, role', ordering: 'id:desc' }
 	export let searchable = 'username';
 
 	export let type = 'utilisateur';
 	export let type_accord = 'un';
 	export let parseItems = null;
-	export let size = 10;
+	export let size = 15;
 
 	export let can_load = true;
 	export let clickable = false;
@@ -72,6 +73,11 @@
 			for (let i = 0; i < filter.length; i++) {
 				query = query.filter(...filter[i].split(':'));
 			}
+		}
+		if (dbInfo.ordering) {
+			query = query.order(dbInfo.ordering.split(':')[0], {
+				ascending: dbInfo.ordering.split(':')[1] == 'asc' ? true : false
+			});
 		}
 
 		const { data, error, count } = await query.range(page * step, (page + 1) * step - 1);

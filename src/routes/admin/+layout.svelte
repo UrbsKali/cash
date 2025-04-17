@@ -32,6 +32,22 @@
 					uri: '/admin/projects/2'
 				},
 				{
+					title: 'SmartScreen',
+					uri: '/admin/projects/10'
+				},
+				{
+					title: 'Mur Végétal',
+					uri: '/admin/projects/12'
+				},
+				{
+					title: 'BallBalancing',
+					uri: '/admin/projects/11'
+				},
+				{
+					title: 'Bureau',
+					uri: '/admin/projects/8'
+				},
+				{
 					title: 'Exaudus',
 					uri: '/admin/projects/3'
 				}
@@ -107,7 +123,7 @@
 
 		// get the allowed roles for the current uri
 		const allowed_roles = searchAllowedRoles([...menu, ...custom_uri], uri);
-		if (!allowed_roles.includes(current_role)) {
+		if (!allowed_roles?.includes(current_role)) {
 			window.location.href = `/`;
 		}
 

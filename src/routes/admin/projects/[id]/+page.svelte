@@ -52,17 +52,16 @@
 
 	async function loadPage() {
 		project = await fetchProject();
-		if (project.budget) {			
-			const { data, error } = await supabase.rpc('get_project_cost', {
-				projectid: slug,
-				year: project.budget.year
-			});
-			if (error) {
-				console.error(error);
-				return;
-			}
-			project.budget.cost = data;
+		const { data, error } = await supabase.rpc('get_project_cost', {
+			projectid: slug,
+			year: project.budget.year
+		});
+		if (error) {
+			console.error(error);
+			return;
 		}
+		project.budget.cost = data;
+		console.log(project.budget.cost);
 	}
 </script>
 
@@ -77,13 +76,23 @@
 		<h3 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Budget</h3>
 		<div class="flex items-center space-x-2">
 			<span class="text-xl font-bold tracking-tight text-gray-900 dark:text-white"
-				>{project.budget?.budget} €</span
+				>{project.budget?.budget ?? 0} €</span
 			>
 			<span class="text-xl font-bold tracking-tight text-gray-900 dark:text-white"
-				>({project.budget?.year})</span
+				>({project.budget?.year ?? 0})</span
 			>
 		</div>
 	</div>
+	{#if project.budget?.cost}
+		<p class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+			Dépenses : {project.budget.cost} €
+		</p>
+	{/if}
+	{#if project.budget?.budget - project.budget?.cost < 0}
+		<p class="text-xl font-bold tracking-tight text-red-500 dark:text-red-400">
+			Dépassement de budget !
+		</p>
+	{/if}
 	<div class="w-80">
 		<Pie {data} options={{ responsive: true }} />
 	</div>
