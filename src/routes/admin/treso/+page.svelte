@@ -227,7 +227,7 @@
 
 					if (error) {
 						console.error(error);
-						alert('Une erreur est survenue lors de la création de la dépense');
+						alert("Une erreur est survenue lors de l'édition de la dépense");
 					}
 					console.log(row);
 
@@ -237,7 +237,7 @@
 
 					// const { data: _, error: err } = await supabase.storage
 					// 	.from('proof')
-					// 	.upload(`invoices/${row.id}`, logoFile, {
+					// 	.upload(`invoices/${row.id}/`, logoFile, {
 					// 		cacheControl: '3600',
 					// 		upsert: true
 					// 	});
@@ -315,12 +315,18 @@
 				// get the proof
 				const { data: dat, error: err } = await supabase.storage
 					.from('proof')
-					.createSignedUrl(`invoices/${id}`, 600);
+					.list(`invoices/${id}`, {
+						limit: 20,
+						offset: 0,
+						sortBy: { column: 'name', order: 'asc' }
+					});
 
 				if (err) {
 					console.error(err);
 					console.log('No proof, skipping');
 				}
+
+				let files = [...dat.map((file) => `invoices/${id}/${file.name}`)];
 
 				new ReadModal({
 					target: document.body,
@@ -340,7 +346,7 @@
 							]
 						},
 
-						file: dat?.signedUrl,
+						files: files,
 						actions: [
 							{
 								title: 'Modifier',

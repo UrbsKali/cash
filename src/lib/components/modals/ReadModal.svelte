@@ -10,8 +10,8 @@
 
 	export let values = {
 		header: {
-			title: 'SKT vs T1',
-			sub: '2024-05-17',
+			title: 'Pas de détails',
+			sub: '-',
 			stepper: []
 		},
 		body: [
@@ -44,12 +44,12 @@
 			}
 		]
 	};
-	export let file = '';
+	export let files = [];
 	export let actions = [];
 	export let id = 'readModal';
 
 	export let onClose = (e) => {};
-	let mime_type = '';
+	let files_array = [{ mime: 'application/pdf', url: null }];
 
 	let __onClose = (e) => {
 		// remove componant from tree
@@ -60,11 +60,31 @@
 	onMount(async () => {
 		const popup = document.querySelector(`#popup-${id}`);
 		hideOnClickOutside(popup, __onClose);
-		if (file) {
-			const f = await fetch(file);
-			let blob = await f.blob();
-			mime_type = blob.type;
-			file = URL.createObjectURL(blob);
+		if (files) {
+			// get the all signed url from supabase
+			const { data: urls } = await supabase.storage.from('proof').createSignedUrls(files, 600);
+
+			for (let i = 0; i < urls.length; i++) {
+				if (urls[i].error) {
+					console.error(urls[i].error);
+					continue;
+				}
+				// get the blob from the url
+				const r = await fetch(urls[i].signedUrl);
+				if (!r.ok) {
+					console.error('Error fetching blob:', r.statusText);
+					continue;
+				}
+				const b = await r.blob();
+				if (!b) {
+					console.error('Error getting blob:', r.statusText);
+					continue;
+				}
+				files_array[i] = {
+					mime: b.type,
+					url: urls[i].signedUrl
+				};
+			}
 		}
 	});
 </script>
@@ -118,14 +138,18 @@
 					</button>
 				</div>
 			</div>
-			<div class="grid space-x-4 {file ? 'grid-cols-2' : 'grid-cols-1'}">
-				{#if file}
+			<div class="grid space-x-4 {files ? 'grid-cols-2' : 'grid-cols-1'}">
+				{#if files}
 					<div class="h-auto">
-						{#if mime_type.endsWith('pdf')}
-							<iframe src={file} frameborder="0" class="h-full" title="Invoices"></iframe>
-						{:else}
-							<img src={file} alt="invoices" class="w-full max-w-96" />
-						{/if}
+						{#each files_array as { mime, url }, i}
+							{#if mime == 'application/pdf'}
+								<p class="text-sm text-gray-400">Fichier {i + 1} : PDF</p>
+								<iframe src={url} frameborder="0" class="h-full" title="Invoices"></iframe>
+							{:else if mime.startsWith('image/')}
+								<p class="text-sm text-gray-400">Fichier {i + 1} : Image</p>
+								<img src={url} alt="invoices" class="w-full max-w-96" />
+							{/if}
+						{/each}
 					</div>
 				{/if}
 
