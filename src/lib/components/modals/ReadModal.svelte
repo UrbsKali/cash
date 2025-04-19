@@ -48,6 +48,10 @@
 	export let actions = [];
 	export let id = 'readModal';
 
+	let current_file = '';
+	let current_file_index = 0;
+	let scroll_body = null;
+
 	export let onClose = (e) => {};
 	let files_array = [{ mime: 'application/pdf', url: null }];
 
@@ -82,9 +86,12 @@
 				}
 				files_array[i] = {
 					mime: b.type,
-					url: urls[i].signedUrl
+					url: urls[i].signedUrl,
+					name: decodeURI(urls[i].signedUrl.split('/')[10].split('?')[0])
 				};
+				console.log(files_array[i]);
 			}
+			current_file = files_array[0].name;
 		}
 	});
 </script>
@@ -141,18 +148,81 @@
 			<div class="grid space-x-4 {files ? 'grid-cols-2' : 'grid-cols-1'}">
 				{#if files}
 					<!-- Make a carousel -->
-					<div class="flex h-auto overflow-x-scroll w-96 aspect-[1/1.414] gap-2">
-						<div class="flex bg-gray-700 rounded-lg">
-							{#each files_array as { mime, url }, i}
-								<div class="flex flex-col">
-									<p class="text-white">{url?.split('/')[10].split('?')[0]}</p>
-									{#if mime == 'application/pdf'}
-										<iframe src={url} frameborder="0" class="h-full" title="Invoices"></iframe>
-									{:else if mime.startsWith('image/')}
-										<img src={url} alt="invoices" class="w-full max-w-96" />
-									{/if}
-								</div>
-							{/each}
+					<div class="mb-2">
+						<div class="header">
+							<h3 class="text-lg font-semibold text-white">Pièces jointes</h3>
+							<div class="flex justify-between w-full mt-2 mb-2">
+								<button
+									class="
+									text-gray-400 bg-transparent rounded-lg text-sm p-1.5 inline-flex hover:bg-gray-600 hover:text-white"
+									on:click={() => {
+										if (current_file_index > 0) {
+											current_file_index--;
+											current_file = files_array[current_file_index].name;
+											scroll_body.style.transform = `translateX(${
+												(scroll_body.scrollWidth / files.length) * current_file_index
+											}px)`;
+										}
+									}}
+								>
+									<svg
+										class="w-5 h-5"
+										aria-hidden="true"
+										fill="white"
+										viewBox="0 0 20 20"
+										xmlns="http://www.w3.org/2000/svg"
+										><path
+											fill-rule="evenodd"
+											d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+											clip-rule="evenodd"
+										></path></svg
+									>
+								</button>
+								<p class="items-center self-center text-sm text-center text-gray-400">
+									{current_file} - {current_file_index + 1}/{files.length}
+								</p>
+								<button
+									class="
+								text-gray-400 bg-transparent rounded-lg text-sm p-1.5 inline-flex hover:bg-gray-600 hover:text-white"
+									on:click={() => {
+										if (current_file_index < files.length - 1) {
+											current_file_index++;
+											current_file = files_array[current_file_index].name;
+											scroll_body.style.transform = `translateX(-${
+												(scroll_body.scrollWidth / files.length) * current_file_index
+											}px)`;
+										}
+									}}
+								>
+									<svg
+										class="w-5 h-5 rotate-180"
+										aria-hidden="true"
+										fill="white"
+										viewBox="0 0 20 20"
+										xmlns="http://www.w3.org/2000/svg"
+										><path
+											fill-rule="evenodd"
+											d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+											clip-rule="evenodd"
+										></path></svg
+									>
+								</button>
+							</div>
+						</div>
+						<div class="flex h-auto overflow-x-hidden w-96 aspect-[1/1.414] gap-2">
+							<div class="flex rounded-lg" bind:this={scroll_body}>
+								{#each files_array as { mime, url }, i}
+									{@const name = decodeURI(url?.split('/')[10].split('?')[0])}
+									<div class="flex flex-col w-96">
+										<!-- <p class="text-white">{url?.split('/')[10].split('?')[0]}</p> -->
+										{#if mime == 'application/pdf'}
+											<iframe src={url} frameborder="0" class="h-full" title={name}></iframe>
+										{:else if mime.startsWith('image/')}
+											<img src={url} alt={name} class="w-full max-w-96" />
+										{/if}
+									</div>
+								{/each}
+							</div>
 						</div>
 					</div>
 				{/if}
