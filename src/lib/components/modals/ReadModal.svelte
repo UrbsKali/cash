@@ -52,6 +52,8 @@
 	let current_file_index = 0;
 	let scroll_body = null;
 
+	let isMobile = false;
+
 	export let onClose = (e) => {};
 	let files_array = [{ mime: 'application/pdf', url: null }];
 
@@ -64,6 +66,12 @@
 	onMount(async () => {
 		const popup = document.querySelector(`#popup-${id}`);
 		hideOnClickOutside(popup, __onClose);
+		// check if mobile
+		if (window.innerWidth < 768) {
+			isMobile = true;
+		} else {
+			isMobile = false;
+		}
 		if (files) {
 			// get the all signed url from supabase
 			const { data: urls } = await supabase.storage.from('proof').createSignedUrls(files, 600);
@@ -145,7 +153,7 @@
 					</button>
 				</div>
 			</div>
-			<div class="grid space-x-4 {files ? 'grid-cols-2' : 'grid-cols-1'}">
+			<div class="grid space-x-4 {files ? 'md:grid-cols-2' : 'grid-cols-1'}">
 				{#if files}
 					<!-- Make a carousel -->
 					<div class="mb-2">
@@ -179,7 +187,7 @@
 									>
 								</button>
 								<p class="items-center self-center text-sm text-center text-gray-400">
-									{current_file} - {current_file_index + 1}/{files.length}
+									{current_file || 'Chargement'} - {current_file_index + 1}/{files.length}
 								</p>
 								<button
 									class="
@@ -209,14 +217,21 @@
 								</button>
 							</div>
 						</div>
-						<div class="flex h-auto overflow-x-hidden w-96 aspect-[1/1.414] gap-2">
+						<div class="flex h-auto overflow-x-hidden w-[22rem] md:w-96 aspect-[1/1.414] gap-2">
 							<div class="flex rounded-lg" bind:this={scroll_body}>
 								{#each files_array as { mime, url }, i}
 									{@const name = decodeURI(url?.split('/')[10].split('?')[0])}
-									<div class="flex flex-col w-96">
+									<div class="flex flex-col w-[22rem] md:w-96">
 										<!-- <p class="text-white">{url?.split('/')[10].split('?')[0]}</p> -->
-										{#if mime == 'application/pdf'}
+										{#if mime == 'application/pdf' && !isMobile}
 											<iframe src={url} frameborder="0" class="h-full" title={name}></iframe>
+										{:else if mime == 'application/pdf' && isMobile}
+											<iframe
+												src="https://docs.google.com/viewer?url={url}&embedded=true"
+												frameborder="0"
+												class="h-full"
+												title={name}
+											></iframe>
 										{:else if mime.startsWith('image/')}
 											<img src={url} alt={name} class="w-full max-w-96" />
 										{/if}
