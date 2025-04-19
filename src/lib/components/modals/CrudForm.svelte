@@ -75,7 +75,14 @@
 				<div class="grid gap-4 mb-4 sm:grid-cols-2">
 					{#each fields as field}
 						<div class={field.wide ? 'col-span-2' : ''}>
-							{#if field.type !== 'duplicate' && field.type !== 'info'}
+							{#if field.type == 'document' || field.type == 'img'}
+								<p
+									class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+									data-utils={field.data || ''}
+								>
+									{field.name}
+								</p>
+							{:else if field.type !== 'duplicate' && field.type !== 'info'}
 								<label
 									for={field.id || field.name.toLowerCase()}
 									class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -174,23 +181,90 @@
 									{/if}
 								</label>
 							{:else if field.type === 'document'}
+								{#if field.multiple}
+									<div
+										class="flex items-center flex-col justify-center w-full border text-sm rounded-lg mb-2 p-2.5 bg-gray-700 border-gray-600 text-white"
+									>
+										{#each field.value as doc, i}
+											<div class="flex items-center w-full gap-2 py-1 border-gray-600">
+												{#if doc.type.split('/')[0] === 'image'}
+													<svg> </svg>
+												{:else if doc.type.split('/')[0] === 'application'}
+													<svg
+														aria-hidden="true"
+														height="16"
+														viewBox="0 0 16 16"
+														version="1.1"
+														width="16"
+														fill="white"
+														data-view-component="true"
+														class="octicon octicon-file"
+													>
+														<path
+															d="M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.062V4.25c0 .138.112.25.25.25h2.688l-.011-.013-2.914-2.914-.013-.011Z"
+														></path>
+													</svg>
+												{/if}
+												<p>
+													{doc.name}
+												</p>
+												<button
+													type="button"
+													class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+													on:click={() => {
+														field.value = field.value.filter((el) => el.name != doc.name);
+													}}
+												>
+													<svg
+														aria-hidden="true"
+														height="16"
+														viewBox="0 0 16 16"
+														version="1.1"
+														width="16"
+														data-view-component="true"
+														class="octicon octicon-x"
+														fill="white"
+													>
+														<path
+															d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"
+														></path>
+													</svg>
+												</button>
+											</div>
+										{/each}
+									</div>
+								{/if}
 								<input
 									type="file"
 									name={field.id || field.name.toLowerCase()}
 									id={field.id || field.name.toLowerCase()}
+									multiple={field.multiple || false}
 									accept="image/png, image/jpeg, application/pdf, application/octet-stream"
 									class="hidden"
 									on:change={field.onChange ||
 										((e) => {
-											console.log(e.target.files[0]);
-											const file = e.target.files[0];
-											field.data = file.type.split('/')[0];
-											if (field.data === 'image') {
-												const reader = new FileReader();
-												reader.onload = (e) => (field.value = e.target.result);
-												reader.readAsDataURL(file);
+											if (field.multiple) {
+												const temp_arr = [...e.target.files].map((file) => {
+													return { name: file.name, type: file.type };
+												});
+												for (let i = 0; i < temp_arr.length; i++) {
+													if (temp_arr[i].type.split('/')[0] === 'image') {
+														const reader = new FileReader();
+														reader.onload = (e) => (temp_arr.value = e.target.result);
+														reader.readAsDataURL(e.target.file[i]);
+													}
+												}
+												field.value = [...field.value, ...temp_arr];
 											} else {
-												field.value = file;
+												const file = e.target.files[0];
+												field.data = file.type.split('/')[0];
+												if (field.data === 'image') {
+													const reader = new FileReader();
+													reader.onload = (e) => (field.value = e.target.result);
+													reader.readAsDataURL(file);
+												} else {
+													field.value = file;
+												}
 											}
 										})}
 								/>
@@ -198,14 +272,14 @@
 									for={field.id || field.name.toLowerCase()}
 									class="flex items-center justify-center w-full h-12 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 								>
-									{#if field.value && field.data === 'image'}
+									{#if field.value && field.data === 'image' && !field.multiple}
 										<img
 											id="svelte_breffffffffff"
 											src={field.value}
 											alt={field.name}
 											class="object-contain w-full h-full rounded-lg"
 										/>
-									{:else if field.value && field.data === 'application'}
+									{:else if field.value && field.data === 'application' && !field.multiple}
 										<p>
 											{field.value.name}
 										</p>

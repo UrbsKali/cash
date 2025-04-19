@@ -99,7 +99,7 @@
 	<div class="relative flex w-full h-full p-4 m-auto">
 		<!-- Modal content -->
 		<div
-			class="relative p-4 m-auto bg-gray-800 rounded-lg sm:p-5 min-w-96 max-w-[75%] md:max-w-[70%] lg:max-w-[65%] xl:max-w-[60%] 2xl:max-w-[50%] modal"
+			class="relative p-4 m-auto bg-gray-800 rounded-lg sm:p-5 min-w-96 max-w-[80%] md:max-w-[75%] lg:max-w-[70%] xl:max-w-[65%] 2xl:max-w-[55%] modal"
 			id="popup-{id}"
 		>
 			<!-- Modal header -->
@@ -140,16 +140,20 @@
 			</div>
 			<div class="grid space-x-4 {files ? 'grid-cols-2' : 'grid-cols-1'}">
 				{#if files}
-					<div class="h-auto">
-						{#each files_array as { mime, url }, i}
-							{#if mime == 'application/pdf'}
-								<p class="text-sm text-gray-400">Fichier {i + 1} : PDF</p>
-								<iframe src={url} frameborder="0" class="h-full" title="Invoices"></iframe>
-							{:else if mime.startsWith('image/')}
-								<p class="text-sm text-gray-400">Fichier {i + 1} : Image</p>
-								<img src={url} alt="invoices" class="w-full max-w-96" />
-							{/if}
-						{/each}
+					<!-- Make a carousel -->
+					<div class="flex h-auto overflow-x-scroll w-96 aspect-[1/1.414] gap-2">
+						<div class="flex bg-gray-700 rounded-lg">
+							{#each files_array as { mime, url }, i}
+								<div class="flex flex-col">
+									<p class="text-white">{url?.split('/')[10].split('?')[0]}</p>
+									{#if mime == 'application/pdf'}
+										<iframe src={url} frameborder="0" class="h-full" title="Invoices"></iframe>
+									{:else if mime.startsWith('image/')}
+										<img src={url} alt="invoices" class="w-full max-w-96" />
+									{/if}
+								</div>
+							{/each}
+						</div>
 					</div>
 				{/if}
 
