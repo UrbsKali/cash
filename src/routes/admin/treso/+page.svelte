@@ -85,18 +85,9 @@
 						console.error(error);
 						alert('Une erreur est survenue lors de la création de la dépense');
 					}
-					console.log(row);
 
 					// upload proof
 					const logoFile = data['justificatif'];
-					console.log(logoFile);
-
-					// const { data: _, error: err } = await supabase.storage
-					// 	.from('proof')
-					// 	.upload(`invoices/${row.id}`, logoFile, {
-					// 		cacheControl: '3600',
-					// 		upsert: true
-					// 	});
 
 					// upload all files
 					for (let i = 0; i < logoFile.length; i++) {
@@ -127,7 +118,7 @@
 	async function edit(e) {
 		e.preventDefault();
 		const id = e.target.closest('tr').querySelector('th').dataset.utils;
-		const { current_uid, current_avatar } = e.target
+		const [current_uid, current_avatar] = e.target
 			.closest('tr')
 			.querySelector('td:nth-child(3)')
 			.dataset.utils.split('+');
@@ -154,6 +145,18 @@
 			data.description = order.description ?? 'Aucune description';
 			data.name = order.name;
 		}
+		// get files names
+		const { data: file_data, error: err } = await supabase.storage
+			.from('proof')
+			.list(`invoices/${id}`, {
+				limit: 20,
+				offset: 0,
+				sortBy: { column: 'name', order: 'asc' }
+			});
+		if (err) {
+			console.error(err);
+			console.log('No proof, skipping');
+		}
 
 		new CrudForm({
 			target: document.body,
@@ -168,7 +171,23 @@
 						value: data.amount,
 						wide: true
 					},
-					// { name: 'Nouveau Justificatif', type: 'document', required: true, wide: true },
+					{
+						name: 'Justificatif',
+						type: 'document',
+						required: true,
+						wide: true,
+						multiple: true,
+						value: file_data,
+						onRemove: async (e, value) => {
+							const { data, error } = await supabase.storage
+								.from('proof')
+								.remove([`invoices/${id}/${value}`]);
+							if (error) {
+								console.error(error);
+								alert('Une erreur est survenue lors de la suppression du justificatif');
+							}
+						}
+					},
 					{
 						name: 'Date effective',
 						type: 'date',
@@ -237,12 +256,13 @@
 						if (key.startsWith('author')) {
 							const uid = document.querySelector('label[for="author"]').dataset.utils;
 							fdata.author = { uid: uid };
+						} else if (key.startsWith('justificatif')) {
+							const files = document.querySelector('input[name="justificatif"]').files;
+							fdata['justificatif'] = files;
 						} else {
 							fdata[key.toLowerCase()] = value;
 						}
 					}
-
-					console.log(fdata);
 
 					// update spending
 					const { data: row, error: error } = await supabase
@@ -261,23 +281,24 @@
 						console.error(error);
 						alert("Une erreur est survenue lors de l'édition de la dépense");
 					}
-					console.log(row);
 
-					// upload proof
-					// const logoFile = form_data.get('justificatif');
-					// console.log(logoFile);
+					const logoFile = fdata['justificatif'];
+					console.log(logoFile);
 
-					// const { data: _, error: err } = await supabase.storage
-					// 	.from('proof')
-					// 	.upload(`invoices/${row.id}/`, logoFile, {
-					// 		cacheControl: '3600',
-					// 		upsert: true
-					// 	});
-					// if (err) {
-					// 	console.error(err);
-					// 	alert("Une erreur est survenue lors de l'envoi du logo");
-					// 	return;
-					// }
+					// upload all files
+					for (let i = 0; i < logoFile.length; i++) {
+						const { data: _, error: err } = await supabase.storage
+							.from('proof')
+							.upload(`invoices/${row.id}/${logoFile[i].name}`, logoFile[i], {
+								cacheControl: '3600',
+								upsert: true
+							});
+						if (err) {
+							console.error(err);
+							alert("Une erreur est survenue lors de l'envoi du logo");
+							return;
+						}
+					}
 
 					new SucessModal({
 						target: document.body,
