@@ -154,7 +154,7 @@
 				</div>
 			</div>
 			<div class="grid space-x-4 {files ? 'md:grid-cols-2' : 'grid-cols-1'}">
-				{#if files}
+				{#if files.length > 0}
 					<!-- Make a carousel -->
 					<div class="mb-2">
 						<div class="header">

@@ -5,8 +5,7 @@
 
 	import InfoModal from '$lib/components/modals/InfoModal.svelte';
 
-	let items = [0];
-	let current = 0;
+	let items = [{ nom: '', lien: '', price: '', quantity: '' }];
 	let projectId = -1;
 	let projectTitle = {};
 
@@ -62,18 +61,18 @@
 			return;
 		}
 		// check if one of the items is empty
-		for (let i = 0; i < object.items.length; i++) {
+		let empty = false;
+		object.items.forEach((item) => {
 			if (
-				object.items[i].name === '' ||
-				object.items[i].lien === '' ||
-				object.items[i].price === '' ||
-				object.items[i].quantity === '' ||
-				object.items[i].price == '0' ||
-				object.items[i].quantity == '0'
+				(item.name === '' || item.lien === '' || item.price === '' || item.quantity === '') &&
+				!empty
 			) {
-				alert('Vous devez remplir tous les champs pour chaque objet.');
-				return;
+				empty = true;
 			}
+		});
+		if (empty) {
+			alert('Vous devez remplir tous les champs de chaque objet.');
+			return;
 		}
 
 		const order = {
@@ -118,51 +117,49 @@
 	}
 </script>
 
-<h2 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
-	Nouvelle Commande
-</h2>
+<h2 class="mb-4 ml-4 text-4xl font-bold tracking-tight text-white">Nouvelle Commande</h2>
 <div class="sm:ml-10">
-	<h3 class="text-2xl font-bold tracking-tight text-gray-900 sm:mb-2 dark:text-white">Objets</h3>
+	<h3 class="text-2xl font-bold tracking-tight text-white sm:mb-2">Objets</h3>
 	<form>
 		<div class="sm:pl-5">
-			{#each items as i}
-				<div class="flex flex-col items-center sm:flex-row">
-					<div class="w-20 my-5 sm:mr-5">
-						<a
-							type="button"
-							class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white transition-all border-2 border-gray-100 border-dashed rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 dark:hover:bg-primary-600 hover:border-transparent focus:outline-none dark:focus:ring-primary-800"
-							href=""
+			{#each items as item, i}
+				<div class="flex flex-col items-end sm:flex-row">
+					<div class="w-20 sm:mr-5">
+						<button
+							class="justify-center w-full px-4 py-2 text-sm font-medium text-white align-middle transition-all border-2 border-dashed rounded-lg focus:ring-4 hover:bg-primary-600 hover:border-transparent focus:outline-none focus:ring-primary-800"
 							on:click={(e) => {
 								e.preventDefault();
-								items = items.filter((item) => item !== i);
+								if (items.length > 1) {
+									items = items.filter((item, index) => index !== i);
+								}
 							}}
 						>
 							-
-						</a>
+						</button>
 					</div>
 					<form class="grid w-full grid-flow-row gap-5 objects md:grid-flow-col">
 						<div>
 							<label for="name">Nom</label>
 							<input
 								type="text"
-								name="name"
-								id="name"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+								name={`name-${i}`}
+								id={`name-${i}`}
+								class=" border text-sm rounded-lg w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
 								placeholder="Vis"
-								required=""
-								value=""
+								required
+								bind:value={item.nom}
 							/>
 						</div>
 						<div>
 							<label for="lien">Lien</label>
 							<input
 								type="text"
-								name="lien"
-								id="lien"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+								name={`lien-${i}`}
+								id={`lien-${i}`}
+								class=" border text-sm rounded-lg w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
 								placeholder="https://fr.rs-online.com/web/"
-								required=""
-								value=""
+								required
+								bind:value={item.lien}
 							/>
 						</div>
 						<div>
@@ -170,17 +167,17 @@
 							<div class="flex">
 								<input
 									type="number"
-									name="price"
-									id="price"
-									class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-s-lg focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 pl-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+									name={`price-${i}`}
+									id={`price-${i}`}
+									class=" border-s border-y text-sm rounded-s-lg w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
 									placeholder="15.5"
-									required="true"
-									value=""
+									required
+									bind:value={item.price}
 									step="0.01"
 									min="0"
 								/>
 								<div
-									class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-e-lg focus:ring-primary-600 focus:border-primary-600 block w-7 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500"
+									class=" border text-sm rounded-e-lg block w-7 p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-gray-400 focus:ring-primary-500 focus:border-primary-500"
 								>
 									€
 								</div>
@@ -190,12 +187,12 @@
 							<label for="quantity">Quantité</label>
 							<input
 								type="number"
-								name="quantity"
-								id="quantity"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+								name={`quantity-${i}`}
+								id={`quantity-${i}`}
+								class=" border text-sm rounded-lg w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
 								placeholder="5"
-								required="true"
-								value=""
+								required
+								bind:value={item.quantity}
 								step="1"
 								min="1"
 							/>
@@ -205,40 +202,26 @@
 			{/each}
 
 			<div class="my-5">
-				<a
+				<button
 					type="button"
-					class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white transition-all border-2 border-gray-100 border-dashed rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 dark:hover:bg-primary-600 hover:border-transparent focus:outline-none dark:focus:ring-primary-800"
-					href=""
+					class="w-full px-4 text-xl text-white align-middle transition-all border-2 border-gray-100 border-dashed rounded-lg focus:ring-4 hover:bg-primary-600 hover:border-transparent focus:outline-none focus:ring-primary-800"
 					on:click={(e) => {
 						e.preventDefault();
-						items = [...items, current + 1];
-						current = current + 1;
+						items = [...items, { nom: '', lien: '', price: '', quantity: '' }];
 					}}
 				>
-					<svg
-						class="h-3.5 w-3.5 fill-gray-100"
-						fill="currentColor"
-						viewbox="0 0 20 20"
-						xmlns="http://www.w3.org/2000/svg"
-						aria-hidden="true"
-					>
-						<path
-							clip-rule="evenodd"
-							fill-rule="evenodd"
-							d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-						/>
-					</svg>
-				</a>
+					+
+				</button>
 			</div>
 		</div>
-		<h3 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Détails</h3>
+		<h3 class="mb-2 text-2xl font-bold tracking-tight text-white">Détails</h3>
 		<div class="grid gap-5 ml-5 details">
 			<div class="col-span-2">
 				<label for="comment">Commentaire</label>
 				<textarea
 					name="comment"
 					id="comment"
-					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+					class=" border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
 					placeholder="Commentaire"
 				></textarea>
 			</div>
@@ -248,7 +231,7 @@
 					<select
 						name="project"
 						id="project"
-						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+						class=" border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
 					>
 						{#each Object.entries(projectTitle) as [key, value]}
 							<option value={key}>{value}</option>
@@ -260,7 +243,7 @@
 			<div class="col-span-2">
 				<button
 					type="submit"
-					class="px-4 py-2 text-sm font-medium text-white transition-all rounded-lg bg-primary-500 hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 dark:hover:bg-primary-600 hover:border-transparent focus:outline-none dark:focus:ring-primary-800"
+					class="px-4 py-2 text-sm font-medium text-white transition-all rounded-lg bg-primary-600 focus:ring-4 hover:bg-primary-800 hover:border-transparent focus:outline-none focus:ring-primary-800"
 					on:click={onSubmit}>Envoyer</button
 				>
 			</div>
