@@ -156,9 +156,9 @@
 	}
 </script>
 
-<div class="min-h-screen overflow-hidden antialiased bg-gray-50 dark:bg-gray-900 min-w-screen">
+<div class="min-h-screen overflow-hidden antialiased bg-gray-900 min-w-screen">
 	<nav
-		class="bg-white border-b border-gray-200 px-4 py-2.5 dark:bg-gray-800 dark:border-gray-700 fixed left-0 right-0 top-0 z-50 w-screen"
+		class=" border-b px-4 py-2.5 bg-gray-800 border-gray-700 fixed left-0 right-0 top-0 z-50 w-screen"
 	>
 		<div class="flex flex-wrap items-center justify-between">
 			<div class="flex items-center justify-start">
@@ -166,7 +166,7 @@
 					data-drawer-target="drawer-navigation"
 					data-drawer-toggle="drawer-navigation"
 					aria-controls="drawer-navigation"
-					class="p-2 mr-2 text-gray-600 rounded-lg cursor-pointer md:hidden hover:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-700 focus:ring-2 focus:ring-gray-100 dark:focus:ring-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+					class="p-2 mr-2 text-gray-400 rounded-lg cursor-pointer md:hidden focus:bg-gray-700 focus:ring-2 focus:ring-gray-100 focus:ring-gray-700 hover:bg-gray-700 hover:text-white"
 					on:click={(e) => {
 						open = !open;
 					}}
@@ -202,7 +202,7 @@
 				<a href="/admin" class="flex items-center justify-between mr-4">
 					<img src="/white_logo_notext.webp" class="h-8 mr-3" alt="Davincibot Logo" />
 					<span
-						class="self-center hidden text-2xl font-semibold whitespace-nowrap dark:text-white sm:block"
+						class="self-center hidden text-2xl font-semibold text-white whitespace-nowrap sm:block"
 						>DaVinciBot</span
 					>
 				</a>
@@ -211,7 +211,7 @@
 			<div class="flex items-center lg:order-2">
 				<a
 					type="button"
-					class="flex items-center justify-center p-2 py-2 mr-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:px-4 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+					class="flex items-center justify-center p-2 py-2 mr-2 text-sm font-medium text-white rounded-lg focus:ring-4 sm:px-4 bg-primary-600 hover:bg-primary-800 focus:outline-none focus:ring-primary-800"
 					href="/admin/orders/new"
 				>
 					<svg
