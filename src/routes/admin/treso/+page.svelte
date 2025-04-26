@@ -89,6 +89,8 @@
 					// upload proof
 					const logoFile = data['justificatif'];
 
+					console.log(logoFile);
+
 					// upload all files
 					for (let i = 0; i < logoFile.length; i++) {
 						const { data: _, error: err } = await supabase.storage
@@ -99,7 +101,7 @@
 							});
 						if (err) {
 							console.error(err);
-							alert("Une erreur est survenue lors de l'envoi du logo");
+							alert("Une erreur est survenue lors de l'envoi des justificatifs");
 							return;
 						}
 					}

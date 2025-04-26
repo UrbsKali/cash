@@ -248,7 +248,7 @@
 													if (temp_arr[i].type.split('/')[0] === 'image') {
 														const reader = new FileReader();
 														reader.onload = (e) => (temp_arr.value = e.target.result);
-														reader.readAsDataURL(e.target.file[i]);
+														reader.readAsDataURL(e.target.files[i]);
 													}
 												}
 												field.value = [...field.value, ...temp_arr];
