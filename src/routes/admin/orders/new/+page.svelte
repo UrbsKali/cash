@@ -45,24 +45,13 @@
 			object[key] = value;
 		});
 
-		let itemsArr = Array.from(document.querySelectorAll('.objects'));
-
-		object.items = itemsArr.map((i) => {
-			const item = {};
-			const itemData = new FormData(i);
-			itemData.forEach((value, key) => {
-				item[key] = value;
-			});
-			return item;
-		});
-
-		if (object.items.length === 0) {
+		if (items.length === 0) {
 			alert('Vous devez ajouter au moins un objet.');
 			return;
 		}
 		// check if one of the items is empty
 		let empty = false;
-		object.items.forEach((item) => {
+		items.forEach((item) => {
 			if (
 				(item.name === '' || item.lien === '' || item.price === '' || item.quantity === '') &&
 				!empty
@@ -78,7 +67,7 @@
 		const order = {
 			comment: object.comment,
 			projectId: projectId.length > 1 ? object.project : projectId[0],
-			name: object.items.reduce((acc, item) => (acc || '') + item.name + ', ', 0).slice(0, -2)
+			name: items.reduce((acc, item) => (acc || '') + item.nom + ', ', 0).slice(0, -2)
 		};
 
 		const { data: orders, error } = await supabase.from('orders').insert([order]).select();
@@ -88,9 +77,9 @@
 		}
 
 		// insert items
-		const items_ = object.items.map((i) => {
+		const items_ = items.map((i) => {
 			return {
-				name: i.name,
+				name: i.nom,
 				link: i.lien,
 				price: i.price,
 				order_id: orders[0].id,
