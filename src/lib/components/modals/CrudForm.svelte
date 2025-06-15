@@ -41,18 +41,15 @@
 >
 	<div class="relative flex w-full h-full p-4 m-auto">
 		<!-- Modal content -->
-		<div
-			class="relative p-4 m-auto bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5 min-w-96"
-			id="CrudPopup"
-		>
+		<div class="relative p-4 m-auto bg-gray-800 rounded-lg shadow sm:p-5 min-w-96" id="CrudPopup">
 			<!-- Modal header -->
 			<div class="flex justify-between mb-4 rounded-t sm:mb-5">
-				<h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+				<h3 class="text-lg font-semibold text-white">
 					{title}
 				</h3>
 				<button
 					type="button"
-					class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+					class="text-gray-500 bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center hover:bg-gray-600 hover:text-white"
 					on:click={onClose}
 				>
 					<svg
@@ -76,16 +73,13 @@
 					{#each fields as field}
 						<div class={field.wide ? 'col-span-2' : ''}>
 							{#if field.type == 'document' || field.type == 'img'}
-								<p
-									class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-									data-utils={field.data || ''}
-								>
+								<p class="block mb-2 text-sm font-medium text-white" data-utils={field.data || ''}>
 									{field.name}
 								</p>
 							{:else if field.type !== 'duplicate' && field.type !== 'info'}
 								<label
 									for={field.id || field.name.toLowerCase()}
-									class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+									class="block mb-2 text-sm font-medium text-white"
 									data-utils={field.data || ''}>{field.name}</label
 								>
 							{/if}
@@ -93,7 +87,7 @@
 								<select
 									id={field.id || field.name.toLowerCase()}
 									name={field.id || field.name.toLowerCase()}
-									class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+									class=" border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
 									on:change={field.onChange || null}
 									readonly={field.readonly || false}
 								>
@@ -121,7 +115,7 @@
 									type="number"
 									name={field.id || field.name.toLowerCase()}
 									id={field.id || field.name.toLowerCase()}
-									class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+									class=" border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
 									placeholder={field.placeholder || field.name.toLowerCase()}
 									required={field.required}
 									value={field.value || ''}
@@ -134,7 +128,7 @@
 								<textarea
 									name={field.id || field.name.toLowerCase()}
 									id={field.id || field.name.toLowerCase()}
-									class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+									class=" border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
 									placeholder={field.placeholder || field.name.toLowerCase()}
 									required={field.required}
 									value={field.value || ''}
@@ -158,7 +152,7 @@
 								/>
 								<label
 									for={field.id || field.name.toLowerCase()}
-									class="flex items-center justify-center w-full h-12 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+									class="flex items-center justify-center w-full h-12 border text-sm rounded-lg p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
 								>
 									{#if field.value}
 										<img
@@ -206,7 +200,7 @@
 												</p>
 												<button
 													type="button"
-													class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+													class="text-gray-400 bg-transparent hover: rounded-lg text-sm p-1.5 ml-auto inline-flex items-center hover:bg-gray-600 hover:text-white"
 													on:click={async (e) => {
 														field.value = field.value.filter((el) => el.name != doc.name);
 														if (field.onRemove) await field.onRemove(e, doc.name);
@@ -267,7 +261,7 @@
 								/>
 								<label
 									for={field.id || field.name.toLowerCase()}
-									class="flex items-center justify-center w-full h-12 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+									class="flex items-center justify-center w-full h-12 border text-sm rounded-lg p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
 								>
 									{#if field.value && field.data === 'image' && !field.multiple}
 										<img
@@ -297,7 +291,7 @@
 								<!--Duplicate is a + btn to replicate the last collumn -->
 								<button
 									type="button"
-									class="flex items-center justify-center w-full h-8 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+									class="flex items-center justify-center w-full h-8 border text-sm rounded-lg p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
 									on:click={() => {
 										const clean_filter = fields.filter((el) => el.type != 'duplicate');
 										let lasts = []; // get the last full row, 1 if wide, 2 if not
@@ -360,7 +354,7 @@
 								</div>
 								{#if field.completion?.length > 0}
 									<div
-										class="absolute z-10 block w-full p-2 pl-4 mt-1 text-sm text-white text-gray-900 bg-gray-700 border border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500"
+										class="absolute z-10 block w-full p-2 pl-4 mt-1 text-sm text-white bg-gray-700 border border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500"
 									>
 										{#each field.completion as c}
 											<button
@@ -397,7 +391,7 @@
 									type="checkbox"
 									id={field.id || field.name.toLowerCase()}
 									name={field.id || field.name.toLowerCase()}
-									class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+									class=" border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
 									placeholder={field.placeholder || field.name.toLowerCase()}
 									required={field.required}
 									checked={field.checked || false}
@@ -409,7 +403,7 @@
 									type={field.type}
 									name={field.id || field.name.toLowerCase()}
 									id={field.id || field.name.toLowerCase()}
-									class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+									class=" border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
 									placeholder={field.placeholder || field.name.toLowerCase()}
 									required={field.required}
 									value={field.value || ''}
@@ -421,7 +415,7 @@
 				</div>
 				<button
 					type="submit"
-					class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+					class="text-white inline-flex items-center focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-primary-600 hover:bg-primary-700 focus:ring-primary-800"
 					on:click={onSubmit}
 				>
 					<svg

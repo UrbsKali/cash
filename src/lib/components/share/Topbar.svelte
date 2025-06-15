@@ -48,7 +48,7 @@
 		<div class="flex flex-wrap items-center justify-between">
 			<div class="flex items-center justify-start">
 				<button
-					class="p-2 mr-2 text-gray-600 rounded-lg cursor-pointer md:hidden hover:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-700 focus:ring-2 focus:ring-gray-100 dark:focus:ring-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+					class="p-2 mr-2 text-gray-400 rounded-lg cursor-pointer md:hidden focus:bg-gray-700 focus:ring-2 focus:ring-gray-700 hover:bg-gray-700 hover:text-white"
 				>
 					<svg
 						aria-hidden="true"
@@ -85,33 +85,17 @@
 			<div class="items-center hidden md:flex">
 				<ul class="flex gap-10">
 					<li>
-						<a
-							href="/"
-							class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-							>Actus</a
-						>
+						<a href="/blog" class="text-gray-400 hover:text-white">Actus</a>
 					</li>
 					<li>
-						<a
-							href="/tournaments"
-							class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-							>Projets</a
-						>
+						<a href="/projects" class="text-gray-400 hover:text-white">Projets</a>
 					</li>
 					<li>
-						<a
-							href="/"
-							class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-							>Partenaires</a
-						>
+						<a href="/sponsors" class="text-gray-400 hover:text-white">Partenaires</a>
 					</li>
 
 					<li>
-						<a
-							href="/"
-							class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-							>Contact</a
-						>
+						<a href="/contact" class="text-gray-400 hover:text-white">Contact</a>
 					</li>
 				</ul>
 			</div>
@@ -120,7 +104,7 @@
 					<UserBadge />
 				{:else}
 					<a
-						class="inline-flex items-center px-3 py-2 m-auto text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+						class="inline-flex items-center px-3 py-2 m-auto text-sm font-medium text-center text-white rounded-lg focus:ring-4 focus:outline-none bg-primary-600 hover:bg-primary-700 focus:ring-primary-800"
 						href="/login"
 					>
 						Espace membre

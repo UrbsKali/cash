@@ -45,8 +45,6 @@
 	/>
 </svelte:head>
 
-<div
-	class="min-h-screen antialiased text-black bg-white dark:bg-dark-blue dark:text-white min-w-screen font-['Almarai']"
->
+<div class="min-h-screen antialiased bg-dark-blue text-white min-w-screen font-['Almarai']">
 	<slot />
 </div>

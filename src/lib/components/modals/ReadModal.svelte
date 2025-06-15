@@ -246,7 +246,7 @@
 					{#each values.body as { label, value }}
 						<dt class="mb-2 font-semibold leading-none text-white">{label}</dt>
 						{#if typeof value === 'object'}
-							<dd class="mb-4 ml-2 font-light text-gray-500 sm:mb-5 dark:text-gray-400">
+							<dd class="mb-4 ml-2 font-light text-gray-400 sm:mb-5">
 								<table class="w-full border-separate">
 									<thead class="font-bold">
 										<td>Nom</td>
@@ -266,7 +266,7 @@
 													<td>
 														<button
 															type="button"
-															class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900"
+															class="inline-flex items-center text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-red-500 hover:bg-red-600 focus:ring-red-900"
 															on:click={async () => {
 																// remove item from database
 																const { data, error } = await supabase
@@ -320,7 +320,7 @@
 				{#each actions as { title, type, handler }}
 					{#if type == 'selector'}
 						<select
-							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+							class="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
 							on:change={handler}
 						>
 							<option value="" disabled selected>Choisir une option</option>
@@ -376,7 +376,7 @@
 					{#if type == 'delete'}
 						<button
 							type="button"
-							class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-red-500 hover:bg-red-600 focus:ring-red-900"
+							class="inline-flex items-center text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-red-500 hover:bg-red-600 focus:ring-red-900"
 							on:click={handler}
 						>
 							<svg

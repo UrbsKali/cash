@@ -13,8 +13,8 @@
 	</div>
 	<div class="flex gap-5">
 		<div class="max-w-[50%]">
-			<p class="mb-2 text-sm text-justify text-blue-gray dark:text-dark-blue-gray">{description}</p>
-			<a href={link} class=" text-blue-peps dark:text-dark-light-blue">En savoir plus...</a>
+			<p class="mb-2 text-sm text-justify text-dark-blue-gray">{description}</p>
+			<a href={link} class="  text-dark-light-blue">En savoir plus...</a>
 		</div>
 		<div id="img-mask" class="h-28">
 			<img src={image} alt={title} class="h-28 aspect-auto" />

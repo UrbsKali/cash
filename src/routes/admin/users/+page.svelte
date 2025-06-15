@@ -183,7 +183,7 @@
 </script>
 
 <div class="w-full py-2 sm:px-8 lg:px-16">
-	<h2 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 dark:text-white">Utilisateurs</h2>
+	<h2 class="mb-4 text-4xl font-bold tracking-tight text-white">Utilisateurs</h2>
 </div>
 <div class="w-full py-2 sm:px-8 lg:px-16">
 	<div class="bg-gray-800 rounded-lg">

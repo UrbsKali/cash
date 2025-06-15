@@ -28,18 +28,18 @@
 	<aside
 		class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform {!open
 			? '-translate-x-full'
-			: 'translate-x-0'} bg-white border-r border-gray-200 pt-14 md:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
+			: 'translate-x-0'}  border-r pt-14 md:translate-x-0 bg-gray-800 border-gray-700"
 		aria-label="Sidenav"
 		id="drawer-navigation"
 	>
-		<div class="h-full px-3 py-5 overflow-y-auto bg-white dark:bg-gray-800">
+		<div class="h-full px-3 py-5 overflow-y-auto bg-gray-800">
 			<ul class="space-y-2">
 				{#each menu as item}
 					{#if item.sub}
 						<li>
 							<button
 								type="button"
-								class="flex items-center w-full p-2 text-base font-medium text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+								class="flex items-center w-full p-2 text-base font-medium transition duration-75 rounded-lg group text-white hover:bg-gray-700"
 								on:click={() => {
 									if (buttons_state[item.title] === undefined) {
 										buttons_state[item.title] = false;
@@ -69,7 +69,7 @@
 									<li>
 										<a
 											href={sub_item.uri}
-											class="flex items-center w-full p-2 text-base font-medium text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+											class="flex items-center w-full p-2 text-base font-medium transition duration-75 rounded-lg pl-11 group text-white hover:bg-gray-700"
 											>{sub_item.title}</a
 										>
 									</li>

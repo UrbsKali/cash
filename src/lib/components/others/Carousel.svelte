@@ -46,17 +46,7 @@
 		width: 100%;
 		height: 100%;
 		transform: translateY(-100%);
-		background: linear-gradient(
-			90deg,
-			rgb(255, 255, 255) 0%,
-			rgba(255, 255, 255, 0) 50%,
-			#fff 100%
-		);
-	}
-	@media (prefers-color-scheme: dark) {
-		.carrousel::after {
-			background: linear-gradient(90deg, rgb(1, 1, 40) 0%, rgba(1, 1, 40, 0) 50%, #010128 100%);
-		}
+		background: linear-gradient(90deg, rgb(1, 1, 40) 0%, rgba(1, 1, 40, 0) 50%, #010128 100%);
 	}
 
 	@keyframes slidein {

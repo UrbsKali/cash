@@ -37,7 +37,7 @@
 </script>
 
 <footer
-	class="grid grid-cols-2 px-6 pt-5 text-center bg-white gap-y-8 gap-x-2 md:gap-10 md:grid-cols-5 lg:px-32 md:px-16 dark:bg-dark-blue backdrop-blur-lg"
+	class="grid grid-cols-2 px-6 pt-5 text-center gap-y-8 gap-x-2 md:gap-10 md:grid-cols-5 lg:px-32 md:px-16 bg-dark-blue backdrop-blur-lg"
 	id="footer"
 >
 	<!--Changer les ref des liens en dessous-->
@@ -54,7 +54,7 @@
 		<div class="flex flex-row justify-between">
 			<a href="https://www.linkedin.com/company/davincibot/" target="_blank">
 				<svg
-					class="h-10 md:h-12 dark:fill-dark-light-blue fill-main-blue"
+					class="h-10 md:h-12 fill-dark-light-blue"
 					viewBox="0 0 80 80"
 					xmlns="http://www.w3.org/2000/svg"
 				>
@@ -65,7 +65,7 @@
 			</a>
 			<a href="https://www.instagram.com/davincibot_pulv/" target="_blank">
 				<svg
-					class="h-10 md:h-12 dark:fill-dark-light-blue fill-main-blue"
+					class="h-10 md:h-12 fill-dark-light-blue"
 					viewBox="0 0 80 80"
 					xmlns="http://www.w3.org/2000/svg"
 				>
@@ -76,7 +76,7 @@
 			</a>
 			<a href="https://github.com/DaVinciBot" target="_blank">
 				<svg
-					class="h-10 md:h-12 dark:fill-dark-light-blue fill-main-blue"
+					class="h-10 md:h-12 fill-dark-light-blue"
 					viewBox="0 0 80 80"
 					xmlns="http://www.w3.org/2000/svg"
 				>
@@ -101,7 +101,7 @@
 			</a>
 			<a href="https://www.facebook.com/DaVinciBotPULV/" target="_blank">
 				<svg
-					class="h-10 md:h-12 dark:fill-dark-light-blue fill-main-blue"
+					class="h-10 md:h-12 fill-dark-light-blue"
 					viewBox="0 0 80 80"
 					xmlns="http://www.w3.org/2000/svg"
 				>
@@ -112,7 +112,7 @@
 			</a>
 			<a href="https://www.youtube.com/@davincibot-pulv" target="_blank">
 				<svg
-					class="h-10 md:h-12 dark:fill-dark-light-blue fill-main-blue"
+					class="h-10 md:h-12 fill-dark-light-blue"
 					viewBox="0 0 80 80"
 					xmlns="http://www.w3.org/2000/svg"
 				>
@@ -125,7 +125,7 @@
 	</div>
 	<div class="flex flex-col order-4 col-span-2 md:col-span-3 md:-ml-32">
 		<h1 class="font-bold text-left uppercase">Nos Partenaires</h1>
-		<div class="w-full h-40">
+		<div class="w-full h-36">
 			<Carousel>
 				<HDSLogo />
 				<RSLogo />

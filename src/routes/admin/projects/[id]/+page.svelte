@@ -66,30 +66,28 @@
 </script>
 
 <div class="flex items-center justify-between w-full sm:px-8 lg:px-16">
-	<h2 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 align-middle dark:text-white">
+	<h2 class="mb-4 text-4xl font-bold tracking-tight text-white align-middle">
 		{project.name}
 		<span class="text-xl italic text-gray-400">({project.debut?.split('-')[0]})</span>
 	</h2>
 </div>
 <div class="flex flex-col items-center justify-center w-full gap-2 sm:w-80">
 	<div class="flex items-center justify-around w-full">
-		<h3 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Budget</h3>
+		<h3 class="text-2xl font-bold tracking-tight text-white">Budget</h3>
 		<div class="flex items-center space-x-2">
-			<span class="text-xl font-bold tracking-tight text-gray-900 dark:text-white"
+			<span class="text-xl font-bold tracking-tight text-white"
 				>{project.budget?.budget ?? 0} €</span
 			>
-			<span class="text-xl font-bold tracking-tight text-gray-900 dark:text-white"
-				>({project.budget?.year ?? 0})</span
-			>
+			<span class="text-xl font-bold tracking-tight text-white">({project.budget?.year ?? 0})</span>
 		</div>
 	</div>
 	{#if project.budget?.cost}
-		<p class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+		<p class="text-xl font-bold tracking-tight text-white">
 			Dépenses : {project.budget.cost} €
 		</p>
 	{/if}
 	{#if project.budget?.budget - project.budget?.cost < 0}
-		<p class="text-xl font-bold tracking-tight text-red-500 dark:text-red-400">
+		<p class="text-xl font-bold tracking-tight text-red-400 text-red-500">
 			Dépassement de budget !
 		</p>
 	{/if}

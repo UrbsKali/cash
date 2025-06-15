@@ -23,9 +23,7 @@
 					<h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-[4.10px] pr-5">
 						DaVinciBot dépasse <wbr />les voies du binaire.
 					</h1>
-					<p
-						class="self-stretch text-lg tracking-wider sm:text-xl text-blue-gray dark:text-dark-blue-gray"
-					>
+					<p class="self-stretch text-lg tracking-wider sm:text-xl text-dark-blue-gray">
 						DaVinciBot rassemble des étudiants de l'ESILV, de l'EMLV et de l'IIM du Pôle
 						Universitaire Léonard de Vinci autour d'activités, de projets innovants et de nombreuses
 						formations, dans le but de faire exceller ses membres dans leurs études et leur vie
@@ -60,7 +58,7 @@
 	<div class="flex flex-col items-center justify-center mt-12">
 		<div class="flex flex-col gap-12 text-left md:text-center md:w-6/12">
 			<h1 class="text-6xl font-extrabold tracking-[4.10px] pr-5">Nos actualités</h1>
-			<p class="self-stretch text-xl tracking-wider text-blue-gray dark:text-dark-blue-gray">
+			<p class="self-stretch text-xl tracking-wider text-dark-blue-gray">
 				DaVinciBot organise et participe à des événements de robotique, offrant à ses membres des
 				occasions de se perfectionner et de relever des défis concrets. <br /><br />
 				L'association propose des compétitions internes et externes, ainsi que des ateliers, permettant

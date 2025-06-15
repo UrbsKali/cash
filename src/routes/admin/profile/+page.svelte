@@ -94,7 +94,10 @@
 	async function handleSubmit() {
 		loading = true;
 
-		const { data, error } = await supabase.from('profiles').update({ username: new_username }).eq('id', user.id);
+		const { data, error } = await supabase
+			.from('profiles')
+			.update({ username: new_username })
+			.eq('id', user.id);
 
 		if (error) {
 			console.error(error);
@@ -116,12 +119,11 @@
 	});
 </script>
 
-
 <div class="grid gap-5" id="p-box">
 	<div
 		id="user-profile"
 		data-role={user.role}
-		class="flex flex-col items-center justify-center w-full h-full p-8 bg-white rounded-lg shadow-md dark:bg-gray-800 dark:text-white sm:mx-auto "
+		class="flex flex-col items-center justify-center w-full h-full p-8 text-white bg-gray-800 rounded-lg shadow-md sm:mx-auto"
 	>
 		<div class="z-20 flex items-center justify-center w-32 h-32 bg-gray-700 rounded-full" id="pp">
 			<label id="-label" class="z-10 w-32 rounded-full" for="file">
@@ -137,20 +139,20 @@
 			<img src={user?.avatar} alt="avatar" class="w-32 h-32 rounded-full" />
 		</div>
 		<div class="mt-4 text-center">
-			<h3 class="text-lg font-semibold text-gray-900 dark:text-white">{user?.name}</h3>
-			<p class="text-sm text-gray-500 dark:text-gray-400">
+			<h3 class="text-lg font-semibold text-white">{user?.name}</h3>
+			<p class="text-sm text-gray-400">
 				{user?.email}
 			</p>
 		</div>
 
 		<div>
-			<h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+			<h3 class="text-lg font-semibold text-white">
 				{user?.projectName?.join(', ')}
 			</h3>
 		</div>
 	</div>
 	<div
-		class="flex flex-col items-center justify-center w-full h-full p-8 bg-white rounded-lg shadow-md dark:bg-gray-800 dark:text-white sm:mx-auto "
+		class="flex flex-col items-center justify-center w-full h-full p-8 text-white bg-gray-800 rounded-lg shadow-md sm:mx-auto"
 	>
 		<form class="w-full space-y-4 md:space-y-6" on:submit|preventDefault={handleSubmit}>
 			<div>
@@ -160,7 +162,7 @@
 					name="username"
 					id="username"
 					placeholder="DaVinciBot"
-					class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+					class=" border rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
 					bind:value={new_username}
 				/>
 			</div>
@@ -168,22 +170,25 @@
 			<button
 				type="submit"
 				disabled={loading}
-				class="w-full text-white bg-primary-300 hover:bg-primary-500 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-primary-600 hover:bg-primary-700 focus:ring-primary-800"
+				class="w-full text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-primary-600 hover:bg-primary-700 focus:ring-primary-800"
 				>{loading ? 'Chargement ...' : 'Modifer mes informations'}</button
 			>
-			<hr>
+			<hr />
 			<button
-			class="w-full px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 dark:focus:ring-red-700"
-			on:click={LogOut}
-		>
-			Se déconnecter
-		</button>
+				class="w-full px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-red-700"
+				on:click={LogOut}
+			>
+				Se déconnecter
+			</button>
 		</form>
 	</div>
 	<div
-		class="flex flex-col items-center justify-center w-full h-full p-8 bg-white rounded-lg shadow-md dark:bg-gray-800 dark:text-white sm:mx-auto "
+		class="flex flex-col items-center justify-center w-full h-full p-8 text-white bg-gray-800 rounded-lg shadow-md sm:mx-auto"
 	>
-		<form class="w-full space-y-4 border-gray-700 md:space-y-6" on:submit|preventDefault={handlePassword}>
+		<form
+			class="w-full space-y-4 border-gray-700 md:space-y-6"
+			on:submit|preventDefault={handlePassword}
+		>
 			<div>
 				<label for="password" class="block mb-2 text-sm font-medium text-white"
 					>Nouveau mot de passe</label
@@ -192,7 +197,7 @@
 					type="password"
 					name="password"
 					id="password"
-					class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+					class=" border rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
 					placeholder="********"
 					bind:value={new_password}
 				/>
@@ -206,7 +211,7 @@
 					type="password"
 					name="password"
 					id="password"
-					class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+					class="border rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
 					placeholder="********"
 					bind:value={new_password_confirmation}
 				/>
@@ -214,12 +219,11 @@
 			<button
 				type="submit"
 				disabled={loading}
-				class="w-full text-white bg-primary-300 hover:bg-primary-500 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-primary-600 hover:bg-primary-700 focus:ring-primary-800"
+				class="w-full text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-primary-600 hover:bg-primary-700 focus:ring-primary-800"
 				>{loading ? 'Chargement ...' : 'Changer mon mot de passe'}</button
 			>
 		</form>
 	</div>
-
 </div>
 
 <style>
