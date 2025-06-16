@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { pushState } from '$app/navigation';
 	import { supabase } from '$lib/supabaseClient';
 
 	import SucessModal from '../modals/InfoModal.svelte';
@@ -28,6 +29,7 @@
 	let loading = false;
 	let email = '';
 	let password = '';
+	let password_confirm = '';
 
 	onMount(async () => {
 		redirect_uri = parseRedirectURI(redirect_uri);
@@ -76,6 +78,10 @@
 	const handleReset = async () => {
 		try {
 			loading = true;
+			if (password !== password_confirm) {
+				alert('Les mots de passe ne correspondent pas.');
+				return;
+			}
 			const { data, error } = await supabase.auth.updateUser({
 				password: password
 			});
@@ -105,16 +111,13 @@
 				new SucessModal({
 					target: document.body,
 					props: {
-						title: 'Inscription réussie',
 						message:
 							'Vous avez bien été inscrit. Vous allez être redirigé vers la page de connexion.',
-						open: true,
-						onclose: () => {
-							open = false;
-							current_component.$destroy();
-							window.location.href = `${currentOrigin()}/login`;
-						},
-						id: 'successModal'
+						onClose: () => {
+							pushState(`https://davincibot.fr/login`, {
+								replaceState: true
+							});
+						}
 					}
 				});
 			}
@@ -189,6 +192,21 @@
 							bind:value={password}
 						/>
 					</div>
+					{#if auth_type === AuthType.reset || auth_type === AuthType.register}
+						<div>
+							<label for="password-confirm" class="block mb-2 text-sm font-medium text-white"
+								>Confirmer votre mot de passe</label
+							>
+							<input
+								type="password"
+								name="password-confirm"
+								id="password-confirm"
+								placeholder="••••••••"
+								class=" border rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
+								bind:value={password_confirm}
+							/>
+						</div>
+					{/if}
 
 					<button
 						type="submit"
@@ -202,5 +220,5 @@
 	</div>
 </section>
 
-<style lang="postcss">
+<style>
 </style>
