@@ -15,6 +15,9 @@ const config = {
 		prerender: {
 			entries: [
 				'/',
+				'/blog',
+				'/sponsors',
+				'/contact',
 				'/admin',
 				'/sign-up',
 				'/login',

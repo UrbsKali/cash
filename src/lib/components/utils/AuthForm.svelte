@@ -64,7 +64,9 @@
 			});
 			if (error) throw error;
 			if (data) {
-				window.location.href = redirect_uri;
+				pushState(redirect_uri, {
+					replaceState: true
+				});
 			}
 		} catch (error) {
 			if (error instanceof Error) {
@@ -87,7 +89,9 @@
 			});
 			if (error) throw error;
 			if (data) {
-				window.location.href = redirect_uri;
+				pushState(redirect_uri, {
+					replaceState: true
+				});
 			}
 		} catch (error) {
 			if (error instanceof Error) {

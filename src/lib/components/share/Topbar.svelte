@@ -88,7 +88,7 @@
 						<a href="/blog" class="text-gray-400 hover:text-white">Actus</a>
 					</li>
 					<li>
-						<a href="/projects" class="text-gray-400 hover:text-white">Projets</a>
+						<a href="/" class="text-gray-400 hover:text-white">Projets</a>
 					</li>
 					<li>
 						<a href="/sponsors" class="text-gray-400 hover:text-white">Partenaires</a>
