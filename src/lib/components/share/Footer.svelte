@@ -2,7 +2,7 @@
 	import HDSLogo from './Logo/HDS.svelte';
 	import RSLogo from './Logo/RS.svelte';
 	import FaulhaberLogo from './Logo/Faulhaber.svelte';
-	import SYNLogo from './Logo/SYN.svelte';
+	import AlstomLogo from './Logo/Alstom.svelte';
 	import IFTLogo from './Logo/IFT.svelte';
 	import GotronicLogo from './Logo/Gotronic.svelte';
 	import DVBLogo from './Logo/DVBLogo.svelte';
@@ -130,7 +130,7 @@
 				<HDSLogo />
 				<RSLogo />
 				<FaulhaberLogo />
-				<SYNLogo />
+				<AlstomLogo />
 				<IFTLogo />
 				<GotronicLogo />
 			</Carousel>
