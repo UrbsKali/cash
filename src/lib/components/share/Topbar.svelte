@@ -101,7 +101,12 @@
 			</div>
 			<div class="gap-5">
 				{#if user}
-					<UserBadge />
+					<a
+						class="inline-flex items-center px-3 py-2 m-auto text-sm font-medium text-center text-white rounded-lg focus:ring-4 focus:outline-none bg-primary-600 hover:bg-primary-700 focus:ring-primary-800"
+						href="/admin"
+					>
+						Espace membre
+					</a>
 				{:else}
 					<a
 						class="inline-flex items-center px-3 py-2 m-auto text-sm font-medium text-center text-white rounded-lg focus:ring-4 focus:outline-none bg-primary-600 hover:bg-primary-700 focus:ring-primary-800"

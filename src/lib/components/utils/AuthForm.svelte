@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { pushState } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { supabase } from '$lib/supabaseClient';
 
 	import SucessModal from '../modals/InfoModal.svelte';
@@ -64,9 +64,7 @@
 			});
 			if (error) throw error;
 			if (data) {
-				pushState(redirect_uri, {
-					replaceState: true
-				});
+				goto(redirect_uri);
 			}
 		} catch (error) {
 			if (error instanceof Error) {
@@ -89,9 +87,7 @@
 			});
 			if (error) throw error;
 			if (data) {
-				pushState(redirect_uri, {
-					replaceState: true
-				});
+				goto(redirect_uri);
 			}
 		} catch (error) {
 			if (error instanceof Error) {
@@ -118,9 +114,7 @@
 						message:
 							'Vous avez bien été inscrit. Vous allez être redirigé vers la page de connexion.',
 						onClose: () => {
-							pushState(`https://davincibot.fr/login`, {
-								replaceState: true
-							});
+							goto(`https://davincibot.fr/login`);
 						}
 					}
 				});
