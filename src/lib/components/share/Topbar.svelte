@@ -1,15 +1,19 @@
 <script>
 	import { userdata } from '$lib/store';
-	import { loadUserdata } from '$lib/utils';
+	import { loadUserdata, hideOnClickOutside } from '$lib/utils';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 
-	import UserBadge from './UserBadge.svelte';
 	import DvbLogo from './Logo/DVBLogo.svelte';
 
 	let user;
 	let skip = false;
 	let enable_cursor = true;
+
+	let dropdown = {
+		projects: false,
+		infos: false
+	};
 
 	userdata.subscribe((value) => {
 		if (value) {
@@ -29,21 +33,38 @@
 		}
 	});
 
+	function setupDropdown(dropdownEl, activatorEl) {
+		// set position of the popup just below the button
+		const rect = activatorEl.getBoundingClientRect();
+		dropdownEl.style.top = 'calc(' + rect.bottom + 'px + 2rem)';
+		dropdownEl.style.left = 'calc(' + rect.left + 'px + 0rem)';
+	}
+
 	onMount(async () => {
 		if (!skip) await loadUserdata();
-		enable_cursor = document.querySelector('.cursor') != null;
-		// check after full page load
-		if (!enable_cursor) {
-			document.addEventListener('DOMContentLoaded', () => {
-				enable_cursor = document.querySelector('.cursor') != null;
-			});
-		}
+
+		// detach all dropdown menus from their parent
+		document.querySelectorAll('.dropdown').forEach((el) => {
+			document.body.appendChild(el);
+			const activator = document.querySelector('#' + el.dataset.activator);
+			if (activator) {
+				setupDropdown(el, activator);
+				hideOnClickOutside(
+					el,
+					() => {
+						dropdown.projects = false;
+						dropdown.infos = false;
+					},
+					true
+				);
+			}
+		});
 	});
 </script>
 
 <section class={enable_cursor ? 'enable-cursor' : ''}>
 	<nav
-		class="border-b px-2 md:px-6 py-2.5 border-gray-700 fixed left-0 right-0 top-0 z-50 backdrop-blur-lg w-screen"
+		class="border-b px-2 md:px-6 py-2.5 border-gray-700 fixed left-0 right-0 top-0 z-10 backdrop-blur-lg w-screen"
 	>
 		<div class="flex flex-wrap items-center justify-between">
 			<div class="flex items-center justify-start">
@@ -88,7 +109,103 @@
 						<a href="/blog" class="text-gray-400 hover:text-white">Actus</a>
 					</li>
 					<li>
-						<a href="/" class="text-gray-400 hover:text-white">Projets</a>
+						<button
+							id="ProjectsButton"
+							on:click={(e) => {
+								e.stopPropagation();
+								dropdown.projects = !dropdown.projects;
+								dropdown.infos = false;
+							}}
+							class="flex items-center justify-between w-full px-3 py-2 text-gray-400 rounded-sm hover:text-white md:border-0 md:p-0 md:w-auto"
+							>Nos Projets <svg
+								class="w-2.5 h-2.5 ms-2.5"
+								aria-hidden="true"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 10 6"
+							>
+								<path
+									stroke="currentColor"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="m1 1 4 4 4-4"
+								/>
+							</svg></button
+						>
+						<div
+							data-activator="ProjectsButton"
+							class="{dropdown.projects
+								? ''
+								: 'hidden'} dropdown z-30 font-normal bg-opacity-0 border border-gray-700 divide-y divide-gray-600 rounded-lg backdrop-blur-lg w-44 fixed"
+						>
+							<ul class="py-2 text-sm text-gray-400" aria-labelledby="dropdownLargeButton">
+								<li>
+									<a href="#" class="block px-4 py-2 hover:bg-gray-600 hover:text-white">La CDR</a>
+								</li>
+								<li>
+									<a href="#" class="block px-4 py-2 hover:bg-gray-600 hover:text-white">Exodus</a>
+								</li>
+								<li>
+									<a href="#" class="block px-4 py-2 hover:bg-gray-600 hover:text-white">CoHoMa</a>
+								</li>
+							</ul>
+							<div class="py-1">
+								<a href="#" class="block px-4 py-2 text-sm text-gray-500 hover:bg-gray-600"
+									>Travelers</a
+								>
+							</div>
+						</div>
+					</li>
+					<li>
+						<button
+							id="AssosButton"
+							on:click={(e) => {
+								e.stopPropagation();
+								dropdown.infos = !dropdown.infos;
+								dropdown.projects = false;
+							}}
+							class="flex items-center justify-between w-full px-3 py-2 text-gray-400 rounded-sm hover:text-white md:border-0 md:p-0 md:w-auto"
+							>À Propos<svg
+								class="w-2.5 h-2.5 ms-2.5"
+								aria-hidden="true"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 10 6"
+							>
+								<path
+									stroke="currentColor"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="m1 1 4 4 4-4"
+								/>
+							</svg></button
+						>
+						<div
+							data-activator="AssosButton"
+							class="{dropdown.infos
+								? ''
+								: 'hidden'} dropdown z-30 font-normal bg-opacity-0 border border-gray-700 divide-y divide-gray-600 rounded-lg backdrop-blur-lg w-44 fixed"
+						>
+							<ul class="py-2 text-sm text-gray-400" aria-labelledby="dropdownLargeButton">
+								<li>
+									<a href="#" class="block px-4 py-2 hover:bg-gray-600 hover:text-white"
+										>L'association</a
+									>
+								</li>
+								<li>
+									<a href="#" class="block px-4 py-2 hover:bg-gray-600 hover:text-white"
+										>Nos écoles</a
+									>
+								</li>
+								<li>
+									<a href="#" class="block px-4 py-2 hover:bg-gray-600 hover:text-white"
+										>Soutenez-nous</a
+									>
+								</li>
+							</ul>
+						</div>
 					</li>
 					<li>
 						<a href="/sponsors" class="text-gray-400 hover:text-white">Partenaires</a>

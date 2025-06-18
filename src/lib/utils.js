@@ -84,11 +84,11 @@ export function hashCode(obj) {
 
 export function hideOnClickOutside(element, destroyHandler = (el) => {
     el.classList.toggle("hidden")
-}) {
+}, permanent = false) {
     const outsideClickListener = event => {
         if (!element.contains(event.target) && isVisible(element)) { // or use: event.target.closest(selector) === null
             destroyHandler(element);
-            removeClickListener();
+            if (!permanent) removeClickListener();
         }
     }
 
