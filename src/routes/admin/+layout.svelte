@@ -19,6 +19,12 @@
 			allowed_roles: ['admin', 'bureau', 'cdp', 'membre']
 		},
 		{
+			title: 'SmartShare',
+			uri: '/admin/screen-share',
+			icon: 'albums-outline',
+			allowed_roles: ['admin', 'bureau', 'cdp', 'membre']
+		},
+		{
 			title: 'Gestion des projets',
 			icon: 'apps-outline',
 			allowed_roles: ['admin', 'bureau', 'cdp'],

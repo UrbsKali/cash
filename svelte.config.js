@@ -30,6 +30,7 @@ const config = {
 				// '/admin/projects/6',
 				// '/admin/projects/8',
 				'/admin/orders',
+				'/admin/screen-share',
 				'/admin/treso',
 				'/admin/orders/new',
 				'/admin/users/',
