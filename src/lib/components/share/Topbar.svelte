@@ -233,7 +233,10 @@
 		</div>
 	</nav>
 	{#if onMobile}
-		<div class="fixed inset-0 z-10 bg-black bg-opacity-40 md:hidden" on:click={closeSidebar}></div>
+		<div
+			class="fixed inset-0 z-10 bg-black bg-opacity-40 {!sidebarOpen ? 'hidden' : ''}"
+			on:click={closeSidebar}
+		></div>
 
 		<SideBar
 			open={sidebarOpen}
