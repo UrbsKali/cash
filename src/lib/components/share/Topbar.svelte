@@ -2,13 +2,14 @@
 	import { userdata } from '$lib/store';
 	import { loadUserdata, hideOnClickOutside } from '$lib/utils';
 	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
 
 	import DvbLogo from './Logo/DVBLogo.svelte';
+	import SideBar from '$lib/components/admin/SideBar.svelte';
 
 	let user;
 	let skip = false;
-	let enable_cursor = true;
+	let sidebarOpen = false;
+	let onMobile = false;
 
 	let dropdown = {
 		projects: false,
@@ -21,18 +22,6 @@
 		}
 	});
 
-	page.subscribe((value) => {
-		// only client side
-		if (typeof window !== 'undefined') {
-			enable_cursor = document.querySelector('.cursor') != null;
-			if (!enable_cursor) {
-				document.addEventListener('DOMContentLoaded', () => {
-					enable_cursor = document.querySelector('.cursor') != null;
-				});
-			}
-		}
-	});
-
 	function setupDropdown(dropdownEl, activatorEl) {
 		// set position of the popup just below the button
 		const rect = activatorEl.getBoundingClientRect();
@@ -42,6 +31,7 @@
 
 	onMount(async () => {
 		if (!skip) await loadUserdata();
+		onMobile = window.innerWidth < 768;
 
 		// detach all dropdown menus from their parent
 		document.querySelectorAll('.dropdown').forEach((el) => {
@@ -60,16 +50,23 @@
 			}
 		});
 	});
+
+	function closeSidebar() {
+		sidebarOpen = false;
+	}
 </script>
 
-<section class={enable_cursor ? 'enable-cursor' : ''}>
+<section>
 	<nav
-		class="border-b px-2 md:px-6 py-2.5 border-gray-700 fixed left-0 right-0 top-0 z-10 backdrop-blur-lg w-screen"
+		class="border-b px-2 md:px-6 py-2.5 border-gray-700 fixed left-0 right-0 top-0 z-20 backdrop-blur-lg w-screen"
 	>
 		<div class="flex flex-wrap items-center justify-between">
 			<div class="flex items-center justify-start">
 				<button
 					class="p-2 mr-2 text-gray-400 rounded-lg cursor-pointer md:hidden focus:bg-gray-700 focus:ring-2 focus:ring-gray-700 hover:bg-gray-700 hover:text-white"
+					on:click={() => (sidebarOpen = !sidebarOpen)}
+					aria-controls="drawer-navigation"
+					aria-expanded={sidebarOpen}
 				>
 					<svg
 						aria-hidden="true"
@@ -235,6 +232,40 @@
 			</div>
 		</div>
 	</nav>
+	{#if onMobile}
+		<div class="fixed inset-0 z-10 bg-black bg-opacity-40 md:hidden" on:click={closeSidebar}></div>
+
+		<SideBar
+			open={sidebarOpen}
+			noicon={true}
+			bgClass="backdrop-blur-lg bg-opacity-0"
+			activeClass="hover:backdrop-blur-lg hover:bg-opacity-20 hover:bg-gray-400"
+			menu={[
+				{ title: 'Actus', icon: 'newspaper', uri: '/blog' },
+				{
+					title: 'Nos Projets',
+					icon: 'briefcase',
+					sub: [
+						{ title: 'La CDR', uri: '#' },
+						{ title: 'Exodus', uri: '#' },
+						{ title: 'CoHoMa', uri: '#' }
+					]
+				},
+				{
+					title: 'À Propos',
+					icon: 'information-circle',
+					sub: [
+						{ title: "L'association", uri: '#' },
+						{ title: 'Nos écoles', uri: '#' },
+						{ title: 'Soutenez-nous', uri: '#' }
+					]
+				},
+				{ title: 'Partenaires', icon: 'people', uri: '/sponsors' },
+				{ title: 'Contact', icon: 'mail', uri: '/contact' }
+			]}
+			on:click={closeSidebar}
+		/>
+	{/if}
 </section>
 
 <style>

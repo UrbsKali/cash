@@ -3,6 +3,11 @@
 
 	export let menu = [{ title: 'fill me', icon: 'timer', uri: '/admin' }];
 	export let open = false;
+	export let close = () => {};
+	export let noicon = false;
+	export let bgClass = 'bg-gray-800';
+	export let activeClass = 'hover:bg-gray-700';
+
 	let buttons_state = {};
 
 	navigating.subscribe((value) => {
@@ -26,20 +31,19 @@
 
 <section>
 	<aside
-		class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform {!open
-			? '-translate-x-full'
-			: 'translate-x-0'}  border-r pt-14 md:translate-x-0 bg-gray-800 border-gray-700"
+		class="fixed top-0 left-0 z-10 w-64 h-screen transition-transform md:translate-x-0 border-r pt-14 border-gray-700
+			{!open ? '-translate-x-full' : 'translate-x-0'}"
 		aria-label="Sidenav"
 		id="drawer-navigation"
 	>
-		<div class="h-full px-3 py-5 overflow-y-auto bg-gray-800">
+		<div class="h-full px-3 py-5 overflow-y-auto {bgClass}">
 			<ul class="space-y-2">
 				{#each menu as item}
 					{#if item.sub}
 						<li>
 							<button
 								type="button"
-								class="flex items-center w-full p-2 text-base font-medium transition duration-75 rounded-lg group text-white hover:bg-gray-700"
+								class="flex items-center w-full p-2 text-base font-medium text-white transition duration-75 rounded-lg group {activeClass}"
 								on:click={() => {
 									if (buttons_state[item.title] === undefined) {
 										buttons_state[item.title] = false;
@@ -47,7 +51,9 @@
 									buttons_state[item.title] = !buttons_state[item.title];
 								}}
 							>
-								<ion-icon name={item.icon} class="text-2xl"></ion-icon>
+								{#if !noicon || !item.icon}
+									<ion-icon name={item.icon} class="text-2xl"></ion-icon>
+								{/if}
 
 								<span class="flex-1 ml-3 text-left whitespace-nowrap">{item.title}</span>
 								<svg
@@ -69,8 +75,10 @@
 									<li>
 										<a
 											href={sub_item.uri}
-											class="flex items-center w-full p-2 text-base font-medium transition duration-75 rounded-lg pl-11 group text-white hover:bg-gray-700"
-											>{sub_item.title}</a
+											class="flex items-center w-full p-2 text-base font-medium text-white transition duration-75 rounded-lg pl-11 group hover:bg-gray-700"
+											on:click={() => {
+												if (typeof close === 'function') close();
+											}}>{sub_item.title}</a
 										>
 									</li>
 								{/each}
@@ -83,9 +91,13 @@
 								class="flex items-center p-2 text-base font-medium rounded-lg text-white hover:bg-gray-700 group {item.active
 									? 'bg-gray-700'
 									: ''}"
+								on:click={() => {
+									if (typeof close === 'function') close();
+								}}
 							>
-								<ion-icon name={item.icon} class="text-2xl"></ion-icon>
-
+								{#if !noicon || !item.icon}
+									<ion-icon name={item.icon} class="text-2xl"></ion-icon>
+								{/if}
 								<span class="ml-3">{item.title}</span>
 							</a>
 						</li>
@@ -94,7 +106,7 @@
 			</ul>
 		</div>
 		<div
-			class="absolute bottom-0 left-0 z-20 justify-center hidden w-full p-4 space-x-4 bg-gray-800 lg:flex"
+			class="absolute bottom-0 left-0 z-10 justify-center hidden w-full p-4 space-x-4 bg-gray-800 lg:flex"
 		></div>
 	</aside>
 	<script
@@ -104,4 +116,5 @@
 	<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </section>
 
-<style></style>
+<style>
+</style>
