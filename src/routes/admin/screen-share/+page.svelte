@@ -54,15 +54,6 @@
 				await pc?.addIceCandidate(new RTCIceCandidate(data));
 			} else if (data.type === 'busy_update') {
 				is_busy = data.message;
-			} else if (data.type === 'peer_disconnected') {
-				pc?.close();
-				pc = null;
-				if (stream) {
-					stream.getTracks().forEach((track) => track.stop());
-					stream = null;
-				}
-				sharing = false;
-				is_busy = false;
 			}
 		};
 	}
