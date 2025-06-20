@@ -10,7 +10,7 @@
 	let is_busy = true;
 	let connected = false;
 	let sharing = false;
-	let wsUrl = 'wss://192.168.0.30'; // Change if needed
+	let wsUrl = 'wss://cast.davincibot.fr'; // Change if needed
 	let showToolbox = false; // Add this variable
 
 	userdata.subscribe((value) => {
@@ -23,7 +23,6 @@
 		if (!user) {
 			await loadUserdata();
 		}
-		setupWebSocket();
 		hideOnClickOutside(
 			document.querySelector('#infoToolbox'),
 			() => {
@@ -31,6 +30,7 @@
 			},
 			true
 		);
+		setupWebSocket();
 	});
 
 	onDestroy(() => {
@@ -41,7 +41,6 @@
 
 	function setupWebSocket() {
 		ws = new WebSocket(wsUrl);
-		pc = new RTCPeerConnection();
 		ws.onopen = () => {
 			connected = true;
 			ws!.send(JSON.stringify({ type: 'is_busy' }));
@@ -50,33 +49,47 @@
 			const messageText = event.data instanceof Blob ? await event.data.text() : event.data;
 			const data = JSON.parse(messageText);
 			if (data.type === 'answer') {
-				await pc!.setRemoteDescription(new RTCSessionDescription(data));
+				await pc?.setRemoteDescription(new RTCSessionDescription(data));
 			} else if (data.candidate) {
-				await pc!.addIceCandidate(new RTCIceCandidate(data));
+				await pc?.addIceCandidate(new RTCIceCandidate(data));
 			} else if (data.type === 'busy_update') {
 				is_busy = data.message;
 			} else if (data.type === 'peer_disconnected') {
-				pc!.close();
+				pc?.close();
+				pc = null;
 				if (stream) {
 					stream.getTracks().forEach((track) => track.stop());
+					stream = null;
 				}
 				sharing = false;
 				is_busy = false;
 			}
 		};
+	}
+
+	async function startShare() {
+		// Clean up previous connection if any
+		if (pc) {
+			pc.close();
+			pc = null;
+		}
+		if (stream) {
+			stream.getTracks().forEach((track) => track.stop());
+			stream = null;
+		}
+		// Create new RTCPeerConnection and set up handlers
+		pc = new RTCPeerConnection();
 		pc.onicecandidate = (event) => {
 			if (event.candidate && ws) {
 				ws.send(JSON.stringify(event.candidate));
 			}
 		};
-	}
-
-	async function startShare() {
 		stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
 		stream.getTracks().forEach((track) => {
 			track.onended = () => {
 				ws?.send(JSON.stringify({ type: 'disconnect' }));
 				pc?.close();
+				pc = null;
 				sharing = false;
 				is_busy = false;
 			};
