@@ -42,7 +42,7 @@
 		}
 		if (error && auth_type === AuthType.reset) {
 			console.error(error);
-			window.location.href = '/login';
+			window.location.href = '/auth/login';
 		}
 
 		if (error && auth_type == AuthType.register) {
@@ -114,7 +114,7 @@
 						message:
 							'Vous avez bien été inscrit. Vous allez être redirigé vers la page de connexion.',
 						onClose: () => {
-							goto(`https://davincibot.fr/login`);
+							goto(`https://davincibot.fr/auth/login`);
 						}
 					}
 				});

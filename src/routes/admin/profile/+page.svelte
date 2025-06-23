@@ -18,7 +18,7 @@
 
 	async function LogOut() {
 		supabase.auth.signOut().then(() => {
-			window.location.href = `${window.location.origin}/login`;
+			window.location.href = `${window.location.origin}/auth/login`;
 		});
 	}
 	async function handleImage(e) {
