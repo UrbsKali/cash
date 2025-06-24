@@ -20,8 +20,8 @@
 		<div class="grid grid-cols-1 md:grid-cols-[2fr_1.5fr] items-center gap-8">
 			<div class="flex flex-col justify-start order-2 gap-4 overflow-hidden text-start md:order-1">
 				<div class="flex flex-col gap-5">
-					<h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-[4.10px] pr-5">
-						Ingénieur par vocation<wbr />Robotique par passion
+					<h1 class="text-4xl font-extrabold sm:text-5xl lg:text-6xl">
+						Ingénieur par vocation <wbr /> Robotique par passion
 					</h1>
 					<p class="self-stretch text-lg tracking-wider sm:text-xl text-dark-blue-gray">
 						DaVinciBot rassemble des étudiants de l'ESILV, de l'EMLV et de l'IIM du Pôle

@@ -153,16 +153,15 @@
 
 <section class="">
 	<div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-		<!-- svelte-ignore a11y-missing-attribute -->
-		<a class="flex items-center mb-6 text-2xl font-semibold text-white">
+		<a class="flex items-center mb-6 text-2xl font-semibold text-white" href="/">
 			<img class="h-20 mr-2" src="/white_logo.webp" alt="logo" />
 		</a>
 		<div
-			class="w-full bg-gray-800 border border-gray-700 rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0"
+			class="w-full rounded-xl border-[3.5px] shadow border-dark-blue-gray md:mt-0 sm:max-w-md xl:p-0"
 		>
 			<div class="p-6 space-y-4 md:space-y-6 sm:p-8">
 				<h1 class="text-xl font-bold leading-tight tracking-tight text-white md:text-2xl">
-					DaVinciBot - {auth_type}
+					{auth_type}
 				</h1>
 				<form class="space-y-4 md:space-y-6" on:submit|preventDefault={handleAuth}>
 					<div>
@@ -171,7 +170,7 @@
 							type="email"
 							name="email"
 							id="email"
-							class=" border rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+							class="border-2 rounded-lg block w-full p-2.5 bg-transparent border-dark-blue-gray placeholder-dark-light-blue-faded text-dark-light-blue focus:ring-blue-500 focus:border-blue-500"
 							placeholder="davincibot@devinci.fr"
 							disabled={auth_type === AuthType.reset || auth_type === AuthType.register}
 							bind:value={email}
@@ -186,7 +185,7 @@
 							name="password"
 							id="password"
 							placeholder="••••••••"
-							class=" border rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
+							class="border-2 rounded-lg block w-full p-2.5 bg-transparent border-dark-blue-gray placeholder-dark-light-blue-faded text-dark-light-blue focus:ring-blue-500 focus:border-blue-500"
 							bind:value={password}
 						/>
 					</div>
@@ -200,7 +199,7 @@
 								name="password-confirm"
 								id="password-confirm"
 								placeholder="••••••••"
-								class=" border rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
+								class="border-2 rounded-lg block w-full p-2.5 bg-transparent border-dark-blue-gray placeholder-dark-light-blue-faded text-dark-light-blue focus:ring-blue-500 focus:border-blue-500"
 								bind:value={password_confirm}
 							/>
 						</div>
@@ -209,11 +208,18 @@
 					<button
 						type="submit"
 						disabled={loading}
-						class="w-full focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-primary-600 hover:bg-primary-700 focus:ring-primary-800"
+						class="px-4 py-2 font-bold rounded-xl hover:bg-dark-light-blue hover:text-dark-blue text-dark-light-blue border-[3.25px] transition-all border-dark-light-blue w-full focus:outline-none text-center bg-transparent focus:ring-dark-blue-gray focus:ring-4 disabled:opacity-50"
 						>{loading ? 'Chargement ...' : auth_type}</button
 					>
 				</form>
 			</div>
+			{#if auth_type === AuthType.login}
+				<div
+					class="flex items-center justify-center px-4 py-2 text-sm text-gray-400 border-t rounded-b-lg border-dark-blue-gray"
+				>
+					<a href="/auth/reset" class="hover:underline">Mot de passe oublié ?</a>
+				</div>
+			{/if}
 		</div>
 	</div>
 </section>
