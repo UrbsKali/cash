@@ -34,16 +34,14 @@
 	onMount(async () => {
 		redirect_uri = parseRedirectURI(redirect_uri);
 		const {
-			data: {
-				session: { user }
-			},
+			data: { session },
 			error
 		} = await supabase.auth.getSession();
-		if (user && auth_type === AuthType.login) {
+		if (session && auth_type === AuthType.login) {
 			window.location.href = redirect_uri;
 		}
 		if (error && auth_type === AuthType.reset) {
-			console.log(user);
+			console.log(session);
 		}
 		if (error && auth_type == AuthType.register) {
 			console.error(error);
@@ -52,7 +50,15 @@
 			);
 		}
 
-		email = user?.email || '';
+		email = session?.user?.email || '';
+	});
+
+	onAuthStateChange(async (event, session) => {
+		if (event === 'PASSWORD_RESET' && session) {
+			email = session?.user?.email || '';
+		} else if (event === 'SIGNED_OUT') {
+			// Handle sign out if needed
+		}
 	});
 
 	const handleLogin = async () => {
