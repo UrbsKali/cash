@@ -50,15 +50,15 @@
 			);
 		}
 
-		email = session?.user?.email || '';
-	});
+		supabase.auth.onAuthStateChange(async (event, session) => {
+			if (event === 'PASSWORD_RECOVERY' && session) {
+				email = session?.user?.email || '';
+			} else if (event === 'SIGNED_OUT') {
+				// Handle sign out if needed
+			}
+		});
 
-	onAuthStateChange(async (event, session) => {
-		if (event === 'PASSWORD_RESET' && session) {
-			email = session?.user?.email || '';
-		} else if (event === 'SIGNED_OUT') {
-			// Handle sign out if needed
-		}
+		email = session?.user?.email || '';
 	});
 
 	const handleLogin = async () => {
