@@ -42,9 +42,22 @@
 		}
 		if (error && auth_type === AuthType.reset) {
 			console.error(error);
-			window.location.href = '/auth/login';
+			// try again to get the user with a delay
+			setTimeout(async () => {
+				const {
+					data: { user },
+					error
+				} = await supabase.auth.getUser();
+				if (error) {
+					console.error(error);
+					alert(
+						'Votre lien de réinitialisation a expiré, veuillez contacter Urbain Lantrès pour avoir un autre lien'
+					);
+					return;
+				}
+				window.location.href = redirect_uri;
+			}, 2000);
 		}
-
 		if (error && auth_type == AuthType.register) {
 			console.error(error);
 			alert(
