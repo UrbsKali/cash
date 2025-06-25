@@ -19,6 +19,7 @@ const config = {
 				'/sponsors',
 				'/contact',
 				'/admin',
+				'/caroussel',
 				'/auth/sign-up',
 				'/auth/login',
 				'/auth/reset',
