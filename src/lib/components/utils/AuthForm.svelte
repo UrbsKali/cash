@@ -42,7 +42,7 @@
 				const redirectUrl = buildRedirectUrlWithParams(
 					'https://lxilsopqfrtwsitzalkm.supabase.co/functions/v1/auth/authorize'
 				);
-				goto(redirectUrl);
+				window.location.href = redirectUrl;
 			} else {
 				// If the user is already logged in, redirect to the specified redirect_uri
 				goto(redirect_uri);
@@ -83,7 +83,7 @@
 					const redirectUrl = buildRedirectUrlWithParams(
 						'https://lxilsopqfrtwsitzalkm.supabase.co/functions/v1/auth/authorize'
 					);
-					goto(redirectUrl);
+					window.location.href = redirectUrl;
 				} else {
 					// Otherwise, just redirect to the specified redirect_uri
 					goto(redirect_uri);
