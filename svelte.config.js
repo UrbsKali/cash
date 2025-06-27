@@ -22,6 +22,7 @@ const config = {
 				'/caroussel',
 				'/auth/sign-up',
 				'/auth/login',
+				'/auth/oauth',
 				'/auth/reset',
 				'/auth/reset/callback',
 				'/admin/projects/1',

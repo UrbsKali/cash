@@ -8,7 +8,8 @@
 	const AuthType = {
 		login: 'Login',
 		register: 'Inscription',
-		reset: 'Changement du mot de passe'
+		reset: 'Changement du mot de passe',
+		oauth: 'Login avec OAuth'
 	};
 
 	export let redirect_uri = '/';
@@ -38,15 +39,11 @@
 			error
 		} = await supabase.auth.getSession();
 		if (session && auth_type === AuthType.login) {
-			if (isOpenID()) {
-				const redirectUrl = buildRedirectUrlWithParams(
-					'https://lxilsopqfrtwsitzalkm.supabase.co/functions/v1/auth/authorize'
-				);
-				window.location.href = redirectUrl;
-			} else {
-				// If the user is already logged in, redirect to the specified redirect_uri
-				goto(redirect_uri);
-			}
+			// If the user is already logged in, redirect to the specified redirect_uri
+			goto(redirect_uri);
+		}
+		if (session && auth_type === AuthType.oauth) {
+			await handleOAuth();
 		}
 		if (error && auth_type === AuthType.reset) {
 			console.log(session);
@@ -78,12 +75,9 @@
 			});
 			if (error) throw error;
 			if (data) {
-				// If OpenID SSO parameters are present, redirect to the original redirect_uri with auth code
-				if (isOpenID()) {
-					const redirectUrl = buildRedirectUrlWithParams(
-						'https://lxilsopqfrtwsitzalkm.supabase.co/functions/v1/auth/authorize'
-					);
-					window.location.href = redirectUrl;
+				// If OpenID SSO parameters are present
+				if (auth_type === AuthType.oauth) {
+					await handleOAuth();
 				} else {
 					// Otherwise, just redirect to the specified redirect_uri
 					goto(redirect_uri);
@@ -121,6 +115,31 @@
 		}
 	};
 
+	async function handleOAuth() {
+		const openIdParams = getOpenIDParams();
+		// If OpenID SSO parameters are present, redirect to the original redirect_uri with auth code
+		const { data, error } = await supabase.functions.invoke('oidc-authorize', {
+			body: {
+				redirect_uri: openIdParams.redirect_uri,
+				client_id: openIdParams.client_id,
+				response_type: openIdParams.response_type,
+				state: openIdParams.state,
+				scope: openIdParams.scope,
+				code_challenge: openIdParams.code_challenge,
+				code_challenge_method: openIdParams.code_challenge_method
+			}
+		});
+		if (error) {
+			console.error('Error invoking OIDC authorize function:', error);
+			alert('Une erreur est survenue lors de la connexion avec OAuth.');
+			return;
+		}
+		if (data) {
+			// Redirect to the OpenID SSO authorization URL
+			window.location.href = data.redirect_uri;
+		}
+	}
+
 	const handleRegister = async () => {
 		try {
 			loading = true;
@@ -152,7 +171,7 @@
 	};
 
 	const handleAuth = async () => {
-		if (auth_type === AuthType.login) {
+		if (auth_type === AuthType.login || auth_type === AuthType.oauth) {
 			await handleLogin();
 		} else if (auth_type === AuthType.reset) {
 			await handleReset();
