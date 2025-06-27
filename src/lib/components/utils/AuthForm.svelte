@@ -38,7 +38,15 @@
 			error
 		} = await supabase.auth.getSession();
 		if (session && auth_type === AuthType.login) {
-			window.location.href = redirect_uri;
+			if (isOpenID()) {
+				const redirectUrl = buildRedirectUrlWithParams(
+					'https://lxilsopqfrtwsitzalkm.supabase.co/functions/v1/auth/authorize'
+				);
+				goto(redirectUrl);
+			} else {
+				// If the user is already logged in, redirect to the specified redirect_uri
+				goto(redirect_uri);
+			}
 		}
 		if (error && auth_type === AuthType.reset) {
 			console.log(session);
@@ -215,8 +223,8 @@
 		for (const [key, value] of Object.entries(openIdParams)) {
 			redirectParams.append(key, value);
 		}
-
-		return `${baseUrl}?${redirectParams.toString()}`;
+		const url = `${baseUrl}?${redirectParams.toString()}`;
+		return url;
 	}
 </script>
 
