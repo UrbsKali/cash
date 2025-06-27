@@ -70,7 +70,16 @@
 			});
 			if (error) throw error;
 			if (data) {
-				goto(redirect_uri);
+				// If OpenID SSO parameters are present, redirect to the original redirect_uri with auth code
+				if (isOpenID()) {
+					const redirectUrl = buildRedirectUrlWithParams(
+						'https://lxilsopqfrtwsitzalkm.supabase.co/functions/v1/auth/authorize'
+					);
+					goto(redirectUrl);
+				} else {
+					// Otherwise, just redirect to the specified redirect_uri
+					goto(redirect_uri);
+				}
 			}
 		} catch (error) {
 			if (error instanceof Error) {
@@ -154,6 +163,65 @@
 		} else {
 			return redirect_uri;
 		}
+	}
+
+	function isOpenID() {
+		const urlParams = new URLSearchParams(window.location.search);
+		return (
+			urlParams.has('client_id') &&
+			urlParams.has('redirect_uri') &&
+			urlParams.has('response_type') &&
+			urlParams.has('state') &&
+			urlParams.has('scope') &&
+			urlParams.has('code_challenge') &&
+			urlParams.has('code_challenge_method')
+		);
+	}
+
+	function getOpenIDParams() {
+		const urlParams = new URLSearchParams(window.location.search);
+		const openIdParams = {};
+
+		// Extract OpenID SSO parameters
+		const ssoParams = [
+			'client_id',
+			'redirect_uri',
+			'response_type',
+			'state',
+			'scope',
+			'code_challenge',
+			'code_challenge_method'
+		];
+
+		ssoParams.forEach((param) => {
+			const value = urlParams.get(param);
+			if (value) {
+				openIdParams[param] = value;
+			}
+		});
+
+		return openIdParams;
+	}
+
+	function buildRedirectUrlWithParams(baseUrl) {
+		const openIdParams = getOpenIDParams();
+
+		// If we have OpenID parameters, we need to redirect to the original redirect_uri with auth code
+		if (Object.keys(openIdParams).length > 0 && openIdParams.redirect_uri) {
+			const redirectParams = new URLSearchParams();
+
+			// Add the authorization code (this would typically come from your auth flow)
+			// For now, we'll use a placeholder - you'll need to get the actual code from Supabase
+			redirectParams.set('code', 'AUTH_CODE_PLACEHOLDER');
+
+			if (openIdParams.state) {
+				redirectParams.set('state', openIdParams.state);
+			}
+
+			return `${openIdParams.redirect_uri}?${redirectParams.toString()}`;
+		}
+
+		return baseUrl;
 	}
 </script>
 
