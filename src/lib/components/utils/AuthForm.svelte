@@ -211,10 +211,9 @@
 
 		// Add the authorization code (this would typically come from your auth flow)
 		// For now, we'll use a placeholder - you'll need to get the actual code from Supabase
-		redirectParams.set('code', 'AUTH_CODE_PLACEHOLDER');
 
-		if (openIdParams.state) {
-			redirectParams.set('state', openIdParams.state);
+		for (const [key, value] of Object.entries(openIdParams)) {
+			redirectParams.append(key, value);
 		}
 
 		return `${baseUrl}?${redirectParams.toString()}`;
