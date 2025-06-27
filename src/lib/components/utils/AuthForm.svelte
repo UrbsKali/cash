@@ -207,21 +207,17 @@
 		const openIdParams = getOpenIDParams();
 
 		// If we have OpenID parameters, we need to redirect to the original redirect_uri with auth code
-		if (Object.keys(openIdParams).length > 0 && openIdParams.redirect_uri) {
-			const redirectParams = new URLSearchParams();
+		const redirectParams = new URLSearchParams();
 
-			// Add the authorization code (this would typically come from your auth flow)
-			// For now, we'll use a placeholder - you'll need to get the actual code from Supabase
-			redirectParams.set('code', 'AUTH_CODE_PLACEHOLDER');
+		// Add the authorization code (this would typically come from your auth flow)
+		// For now, we'll use a placeholder - you'll need to get the actual code from Supabase
+		redirectParams.set('code', 'AUTH_CODE_PLACEHOLDER');
 
-			if (openIdParams.state) {
-				redirectParams.set('state', openIdParams.state);
-			}
-
-			return `${openIdParams.redirect_uri}?${redirectParams.toString()}`;
+		if (openIdParams.state) {
+			redirectParams.set('state', openIdParams.state);
 		}
 
-		return baseUrl;
+		return `${baseUrl}?${redirectParams.toString()}`;
 	}
 </script>
 
