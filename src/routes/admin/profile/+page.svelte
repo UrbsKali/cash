@@ -147,7 +147,7 @@
 
 		<div>
 			<h3 class="text-lg font-semibold text-white">
-				{user?.projectName?.join(', ')}
+				{user?.projects?.map((el) => el.name).join(', ')}
 			</h3>
 		</div>
 	</div>

@@ -16,7 +16,7 @@ export async function loadUserdata() {
         // fetch user data
         const { data, error } = await supabase
             .from('profiles')
-            .select('username,avatar_url,role, member_of(project(id, name))')
+            .select('username,avatar_url,role, member_of(project(id, name, debut))')
             .eq('id', session.user.id)
             .single();
         if (error) {
@@ -30,9 +30,22 @@ export async function loadUserdata() {
         user.name = data.username || user.email.split('@')[0];
         user.avatar = data.avatar_url || user.avatar;
         user.id = session.user.id;
-        user.projectId = [...data.member_of.map(p => p.project.id)];
-        user.projectName = [...data.member_of.map(p => p.project.name)];
+        user.projects = [];
+        data.member_of.forEach(p => {
+            user.projects.push({
+                id: p.project.id,
+                name: p.project.name,
+                debut: p.project.debut || "0000-00-00"
+            });
+        });
         user.role = data.role || user.role;
+        if (user.role === 'bureau' || user.role === 'admin') {
+            user.projects.push({
+                id: 0,
+                name: 'Association',
+                debut: '2014-09-01'
+            });
+        }
         userdata.set(user);
     }
 }

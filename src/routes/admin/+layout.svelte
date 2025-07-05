@@ -26,38 +26,9 @@
 		},
 		{
 			title: 'Gestion des projets',
+			uri: '/admin/projects',
 			icon: 'apps-outline',
-			allowed_roles: ['admin', 'bureau', 'cdp'],
-			sub: [
-				{
-					title: 'Coupe de France',
-					uri: '/admin/projects/1'
-				},
-				{
-					title: 'Travelers',
-					uri: '/admin/projects/2'
-				},
-				{
-					title: 'SmartScreen',
-					uri: '/admin/projects/10'
-				},
-				{
-					title: 'Mur Végétal',
-					uri: '/admin/projects/12'
-				},
-				{
-					title: 'BallBalancing',
-					uri: '/admin/projects/11'
-				},
-				{
-					title: 'Bureau',
-					uri: '/admin/projects/8'
-				},
-				{
-					title: 'Exaudus',
-					uri: '/admin/projects/3'
-				}
-			]
+			allowed_roles: ['admin', 'bureau', 'cdp']
 		},
 		{
 			title: 'Commandes',

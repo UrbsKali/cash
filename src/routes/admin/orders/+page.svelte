@@ -230,7 +230,7 @@
 				{
 					category: 'hidden',
 					value: 'projectId',
-					options: [{ name: 'CDP project', value: user.projectId[0], active: true }]
+					options: [{ name: 'CDP project', value: user?.projects[0].id, active: true }]
 				}
 			];
 		}
