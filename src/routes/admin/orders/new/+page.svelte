@@ -23,7 +23,7 @@
 	}
 
 	userdata.subscribe((value) => {
-		projectId = value?.projectId;
+		projectId = value?.projects?.map((p) => p.id) || [];
 		if (projectId?.length > 0) {
 			updateProjectTitle();
 		}
