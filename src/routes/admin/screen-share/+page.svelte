@@ -49,8 +49,10 @@
 			const messageText = event.data instanceof Blob ? await event.data.text() : event.data;
 			const data = JSON.parse(messageText);
 			if (data.type === 'answer') {
+				console.log('Received answer:', data);
 				await pc?.setRemoteDescription(new RTCSessionDescription(data));
 			} else if (data.candidate) {
+				console.log('Received ICE candidate:', data);
 				await pc?.addIceCandidate(new RTCIceCandidate(data));
 			} else if (data.type === 'busy_update') {
 				is_busy = data.message;
@@ -71,15 +73,19 @@
 			});
 			stream = null;
 		}
+
 		// Create new RTCPeerConnection and set up handlers
 		pc = new RTCPeerConnection();
 		pc.onicecandidate = (event) => {
 			if (event.candidate && ws) {
+				console.log('Sending ICE candidate:', event.candidate);
 				ws.send(JSON.stringify(event.candidate));
 			}
 		};
 		stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
 		stream.getTracks().forEach((track) => {
+			pc?.addTrack(track, stream!);
+
 			track.onended = () => {
 				console.log('Screen sharing stopped');
 				ws?.send(JSON.stringify({ type: 'disconnect' }));
@@ -88,7 +94,6 @@
 				sharing = false;
 				is_busy = false;
 			};
-			pc?.addTrack(track, stream!);
 		});
 		const offer = await pc!.createOffer();
 		await pc!.setLocalDescription(offer);
