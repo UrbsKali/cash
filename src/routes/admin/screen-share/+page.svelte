@@ -65,7 +65,10 @@
 			pc = null;
 		}
 		if (stream) {
-			stream.getTracks().forEach((track) => track.stop());
+			stream.getTracks().forEach((track) => {
+				track.stop();
+				console.log('Stopped track:', track);
+			});
 			stream = null;
 		}
 		// Create new RTCPeerConnection and set up handlers
@@ -78,6 +81,7 @@
 		stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
 		stream.getTracks().forEach((track) => {
 			track.onended = () => {
+				console.log('Screen sharing stopped');
 				ws?.send(JSON.stringify({ type: 'disconnect' }));
 				pc?.close();
 				pc = null;
