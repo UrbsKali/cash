@@ -51,7 +51,7 @@
 	userdata.subscribe((user) => {
 		if (user && user.allProjects) {
 			allProjects = user.allProjects.map((p) => ({ value: p.id, text: p.name }));
-			filters[0].options = allProjects.map((p) => ({ name: p.name, value: p.id })); // Update the project filter options
+			filters[0].options = user.allProjects.map((p) => ({ name: p.name, value: p.id })); // Update the project filter options
 		}
 	});
 
