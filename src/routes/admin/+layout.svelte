@@ -13,7 +13,7 @@
 
 	let menu = [
 		{
-			title: 'Accueil',
+			title: 'Mes commandes',
 			uri: '/admin',
 			icon: 'home-outline',
 			allowed_roles: ['admin', 'bureau', 'cdp', 'membre']

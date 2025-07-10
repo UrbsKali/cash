@@ -23,7 +23,7 @@
 
 	export let addNew = null;
 
-	let hash = hashCode(dbInfo);
+	let hash = hashCode(JSON.stringify(filters) + JSON.stringify(dbInfo) + searchable);
 	let can_update_settings = false;
 
 	const filtersStore = writable(filters);
