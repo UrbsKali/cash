@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { supabase, supabaseUrl } from '$lib/supabaseClient';
 	import { createClient } from '@supabase/supabase-js';
+	import { userdata } from '$lib/stores/userdata';
 
 	import Table from '$lib/components/admin/Table.svelte';
 	import CrudForm from '$lib/components/modals/CrudForm.svelte';
@@ -46,6 +47,13 @@
 			]
 		}
 	];
+
+	userdata.subscribe((user) => {
+		if (user && user.allProjects) {
+			allProjects = user.allProjects.map((p) => ({ value: p.id, text: p.name }));
+			filters[0].options = allProjects.map((p) => ({ name: p.name, value: p.id })); // Update the project filter options
+		}
+	});
 
 	function parseItems(data) {
 		let items = [];
@@ -378,17 +386,6 @@
 					persistSession: false
 				}
 			});
-		}
-
-		// get all projects for multiselect
-		const { data: projects, error: projectsError } = await supabase
-			.from('projects')
-			.select('id, name');
-		if (projectsError) {
-			console.error(projectsError);
-		} else {
-			allProjects = projects.map((p) => ({ value: p.id, text: p.name }));
-			filters[0].options = projects.map((p) => ({ name: p.name, value: p.id })); // Update the project filter options
 		}
 	});
 </script>

@@ -24,6 +24,19 @@
 			user = value;
 			selectedProjectId = user.projects.length > 0 ? user.projects[0].id : undefined;
 
+			if (user.allProjects) {
+				user.allProjects.forEach((p) => {
+					if (!user.projects.some((proj) => proj.id === p.value)) {
+						// Only add projects that are not already in the user's projects
+						user.projects.push({
+							id: p.value,
+							name: p.name,
+							debut: p.debut
+						});
+					}
+				});
+			}
+
 			if (selectedProjectId) {
 				await loadPage();
 			}

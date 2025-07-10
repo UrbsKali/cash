@@ -4,6 +4,20 @@ import md5 from 'crypto-js/md5';
 
 export async function loadUserdata() {
     let user = {};
+    const CACHE_KEY = 'userdata_cache';
+    const CACHE_DURATION = 60 * 60 * 1000; // 1 hour in ms
+
+    // Try to load from cache
+    try {
+        const cached = JSON.parse(localStorage.getItem(CACHE_KEY));
+        if (cached && cached.timestamp && (Date.now() - cached.timestamp < CACHE_DURATION)) {
+            userdata.set(cached.user);
+            return;
+        }
+    } catch (e) {
+        // Ignore cache errors
+    }
+
     const {
         data: { session },
         error
@@ -45,8 +59,22 @@ export async function loadUserdata() {
                 name: 'Association',
                 debut: '2014-09-01'
             });
+            const { data: projects, error: projectsError } = await supabase
+                .from('projects')
+                .select('id, name, debut');
+            if (projectsError) {
+                console.error(projectsError);
+            } else {
+                user.allProjects = projects.map((p) => ({ value: p.id, name: p.name, debut: p.debut }));
+            }
         }
         userdata.set(user);
+        // Save to cache
+        try {
+            localStorage.setItem(CACHE_KEY, JSON.stringify({ user, timestamp: Date.now() }));
+        } catch (e) {
+            // Ignore cache errors
+        }
     }
 }
 
