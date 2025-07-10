@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { supabase, supabaseUrl } from '$lib/supabaseClient';
 	import { createClient } from '@supabase/supabase-js';
-	import { userdata } from '$lib/stores/userdata';
+	import { userdata } from '$lib/store.js';
 
 	import Table from '$lib/components/admin/Table.svelte';
 	import CrudForm from '$lib/components/modals/CrudForm.svelte';
