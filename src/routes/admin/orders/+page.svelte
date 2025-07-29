@@ -123,10 +123,34 @@
 							type: 'selector',
 							handler: async (e) => {
 								let new_status = e.target.value;
+								let shippingCost = 0;
+								let finalPrice = price;
+								if (new_status === 'ordered') {
+									shippingCost = prompt(
+										'Veuillez entrer le montant des frais de port (en €) pour cette commande :',
+										'0'
+									);
+									if (!(shippingCost !== null && !isNaN(parseFloat(shippingCost)))) {
+										alert('Veuillez entrer un montant valide.');
+										return;
+									}
+									finalPrice = prompt(
+										'Veuillez entrer le prix final payé pour la commande (hors frais de port, en €) :',
+										price
+									);
+									if (!(finalPrice !== null && !isNaN(parseFloat(finalPrice)))) {
+										alert('Veuillez entrer un montant valide.');
+										return;
+									}
+								}
 
 								const { data, error } = await supabase
 									.from('orders')
-									.update({ status: new_status })
+									.update({
+										status: new_status,
+										shipping_cost: parseFloat(shippingCost),
+										price: parseFloat(finalPrice)
+									})
 									.eq('id', id)
 									.select();
 

@@ -139,8 +139,9 @@
 		</button>
 	</div>
 	{#if values.header.stepper}
+		{@const stepper = values.header.stepper}
 		<div class="w-full px-4 py-2 m-auto border-b border-gray-700">
-			<Stepper />
+			<Stepper steps={stepper} />
 		</div>
 	{/if}
 	<!-- Content -->
@@ -699,7 +700,7 @@
 									{/if}
 								</thead>
 								<tbody>
-									{#each value as item}
+									{#each item.value as item}
 										<tr data-utils={item.id}>
 											<td class="p-2"><a href={item.link} target="_blank">{item.name}</a></td>
 											<td>{item.quantity}</td>

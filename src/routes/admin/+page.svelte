@@ -7,6 +7,7 @@
 
 	import Table from '$lib/components/admin/Table.svelte';
 	import ReadModal from '$lib/components/modals/ReadModal.svelte';
+	import ReadDrawer from '$lib/components/drawers/ReadDrawer.svelte';
 
 	let skip = false;
 	let user;
@@ -62,7 +63,9 @@
 					console.error(error);
 					return;
 				}
-				const price = data.items.reduce((acc, item, i) => acc + item.price * item.quantity, 0);
+				const price = data.items
+					.reduce((acc, item, i) => acc + item.price * item.quantity, 0)
+					.toFixed(2);
 				const name = data.items.map((item) => item.name).join(', ');
 
 				let items = [];
@@ -75,13 +78,30 @@
 					});
 				});
 
-				new ReadModal({
+				// Stepper logic based on order status
+				const stepper = [
+					{
+						done: true,
+						icon: 'link'
+					},
+					{
+						done: ['approvedTreso', 'ordered', 'completed'].includes(data.status),
+						icon: 'shipping'
+					},
+					{
+						done: data.status === 'completed',
+						icon: 'done'
+					}
+				];
+
+				new ReadDrawer({
 					target: document.body,
 					props: {
 						values: {
 							header: {
 								title: name,
-								price: price
+								sub: price + ' €',
+								stepper
 							},
 							body: [
 								{
@@ -98,7 +118,6 @@
 								}
 							]
 						},
-						open: true,
 						actions: [
 							{
 								title: 'Supprimer',
