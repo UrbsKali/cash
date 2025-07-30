@@ -28,7 +28,7 @@
 		>
 			<span
 				class="flex items-center justify-center w-10 h-10 rounded-full lg:h-12 lg:w-12 shrink-0
-					{step.done ? 'bg-primary-500' : 'bg-gray-700'}"
+					{step.icon === 'cancel' ? 'bg-red-500' : step.done ? 'bg-primary-500' : 'bg-gray-700'}"
 			>
 				<Icon name={step.icon} size="6" fill={'gray-100'} />
 			</span>

@@ -6,6 +6,7 @@
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabaseClient';
 	import Stepper from '../admin/Stepper.svelte';
+	import { updateText } from '$lib/utils';
 
 	const current_component = get_current_component();
 
@@ -689,59 +690,95 @@
 				{#each values.body as item, i}
 					<dt class="mb-2 font-semibold leading-none text-white">{item.label}</dt>
 					{#if typeof item.value === 'object'}
-						<dd class="mb-4 ml-2 font-light text-gray-400">
-							<table class="w-full border-separate">
-								<thead class="font-bold">
-									<td>Nom</td>
-									<td>Quantité</td>
-									<td>Prix</td>
-									{#if values.body.find((el) => el.label == 'Status')?.type == 'pendingCDP'}
-										<td class="w-2.5"></td>
-									{/if}
-								</thead>
-								<tbody>
-									{#each item.value as item}
-										<tr data-utils={item.id}>
-											<td class="p-2"><a href={item.link} target="_blank">{item.name}</a></td>
-											<td>{item.quantity}</td>
-											<td>{item.price}</td>
-											{#if values.body.find((el) => el.label == 'Status')?.type == 'pendingCDP'}
-												<td>
-													<button
-														type="button"
-														class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-														on:click={async () => {
-															const { data, error } = await supabase
-																.from('items')
-																.delete()
-																.match({ id: item.id })
-																.select()
-																.single();
-															if (error || !data) return;
-															const tr = document.querySelector(`tr[data-utils="${item.id}"]`);
-															tr && tr.remove();
-														}}
-													>
-														<svg
-															aria-hidden="true"
-															class="w-5 h-5 -mx-2.5"
-															fill="currentColor"
-															viewBox="0 0 20 20"
+						{#if item.value.type == 'updates'}
+							<dd class="mb-4 font-light text-gray-400">
+								{#each item.value.list as value}
+									<span
+										class="inline-block px-2 py-1 mb-2 mr-2 text-sm rounded-lg
+											{value.type === 'comment'
+											? 'bg-white border border-gray-300 text-gray-900'
+											: [
+														'review-treso-approved',
+														'order-processed',
+														'order-received',
+														'order-completed'
+												  ].includes(value.type)
+												? 'bg-blue-700 text-white'
+												: ['order-canceled', 'review-cdp-refused', 'review-treso-refused'].includes(
+															value.type
+													  )
+													? 'bg-red-800 text-white'
+													: 'bg-gray-800 text-white'}"
+									>
+										{#if value.message}
+											<span>{value.message}</span>
+										{:else}
+											<span class="text-gray-200">{updateText[value.type] || value.type}</span>
+										{/if}
+										{#if value.user}
+											<span class="italic"> - Par {value.user}</span>
+										{/if}
+										{#if value.date}
+											<span class="ml-2 text-xs text-gray-400">({value.date})</span>
+										{/if}
+									</span>
+								{/each}
+							</dd>
+						{:else if item.value.type == 'items'}
+							<dd class="mb-4 ml-2 font-light text-gray-400">
+								<table class="w-full border-separate">
+									<thead class="font-bold">
+										<td>Nom</td>
+										<td>Quantité</td>
+										<td>Prix</td>
+										{#if values.body.find((el) => el.label == 'Status')?.type == 'pendingCDP'}
+											<td class="w-2.5"></td>
+										{/if}
+									</thead>
+									<tbody>
+										{#each item.value.list as item}
+											<tr data-utils={item.id}>
+												<td class="p-2"><a href={item.link} target="_blank">{item.name}</a></td>
+												<td>{item.quantity}</td>
+												<td>{item.price}</td>
+												{#if values.body.find((el) => el.label == 'Status')?.type == 'pendingCDP'}
+													<td>
+														<button
+															type="button"
+															class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+															on:click={async () => {
+																const { data, error } = await supabase
+																	.from('items')
+																	.delete()
+																	.match({ id: item.id })
+																	.select()
+																	.single();
+																if (error || !data) return;
+																const tr = document.querySelector(`tr[data-utils="${item.id}"]`);
+																tr && tr.remove();
+															}}
 														>
-															<path
-																fill-rule="evenodd"
-																d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-																clip-rule="evenodd"
-															></path>
-														</svg>
-													</button>
-												</td>
-											{/if}
-										</tr>
-									{/each}
-								</tbody>
-							</table>
-						</dd>
+															<svg
+																aria-hidden="true"
+																class="w-5 h-5 -mx-2.5"
+																fill="currentColor"
+																viewBox="0 0 20 20"
+															>
+																<path
+																	fill-rule="evenodd"
+																	d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+																	clip-rule="evenodd"
+																></path>
+															</svg>
+														</button>
+													</td>
+												{/if}
+											</tr>
+										{/each}
+									</tbody>
+								</table>
+							</dd>
+						{/if}
 					{:else}
 						<dd class="mb-4 font-light text-gray-400 transition-colors hover:text-gray-300">
 							{item.value}

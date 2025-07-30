@@ -92,6 +92,22 @@ export const statusText = {
     completed: 'Commande complétée'
 };
 
+export const updateText = {
+    "order-creation": 'Création de la commande',
+    "comment": 'Commentaire ajouté',
+    "update": 'Mise à jour de la commande',
+    "review-cdp-requested": 'Validation par le chef de projet demandée',
+    "review-cdp-approved": 'Validation par le chef de projet effectuée',
+    "review-cdp-refused": 'Validation par le chef de projet refusée',
+    "review-treso-requested": 'Validation par le trésorier demandée',
+    "review-treso-approved": 'Validation par le trésorier effectuée',
+    "review-treso-refused": 'Validation par le trésorier refusée',
+    "order-processed": 'Commande en cours de traitement',
+    "order-received": 'Commande reçue',
+    "order-canceled": 'Commande annulée',
+    "order-completed": 'Commande complétée'
+}
+
 export function loadSettings(key) {
     let settings_;
     try {

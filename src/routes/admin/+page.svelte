@@ -3,7 +3,7 @@
 	import { userdata } from '$lib/store';
 	import { loadUserdata } from '$lib/utils';
 	import { supabase } from '$lib/supabaseClient';
-	import { statusText } from '$lib/utils';
+	import { statusText, updateText } from '$lib/utils';
 
 	import Table from '$lib/components/admin/Table.svelte';
 	import ReadModal from '$lib/components/modals/ReadModal.svelte';
@@ -85,7 +85,15 @@
 						icon: 'link'
 					},
 					{
+						done: ['approvedCDP', 'approvedTreso', 'ordered', 'completed'].includes(data.status),
+						icon: 'checked-document'
+					},
+					{
 						done: ['approvedTreso', 'ordered', 'completed'].includes(data.status),
+						icon: 'processing'
+					},
+					{
+						done: ['ordered', 'completed'].includes(data.status),
 						icon: 'shipping'
 					},
 					{
@@ -93,6 +101,34 @@
 						icon: 'done'
 					}
 				];
+
+				if (
+					data.status === 'canceled' ||
+					data.status === 'refusedCDP' ||
+					data.status === 'refusedTreso'
+				) {
+					stepper.pop();
+					stepper.pop();
+					stepper.pop();
+					stepper[1].done = true;
+					stepper[1].icon = 'cancel';
+				}
+
+				// fetch the updates for the order
+				const updates = await supabase
+					.from('updates')
+					.select('id, message, date, author(username), type')
+					.eq('order_id', id)
+					.order('date', { ascending: false });
+
+				if (updates.error) {
+					console.error(updates.error);
+					return;
+				}
+				const updatesList = updates.data;
+				updatesList.forEach((update) => {
+					update.date = new Date(update.date).toLocaleString();
+				});
 
 				new ReadDrawer({
 					target: document.body,
@@ -106,15 +142,23 @@
 							body: [
 								{
 									label: 'Objets',
-									value: [...items]
+									value: { list: [...items], type: 'items' }
 								},
 								{
 									label: 'Détails',
 									value: data.comment ?? 'Pas de détails'
 								},
 								{
-									label: 'Status',
-									type: data.status
+									label: 'Historique',
+									value: {
+										list: updatesList.map((update) => ({
+											message: update.message,
+											date: update.date,
+											type: update.type,
+											user: update.author?.username || 'Système'
+										})),
+										type: 'updates'
+									}
 								}
 							]
 						},
