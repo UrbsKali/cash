@@ -4,7 +4,7 @@
 	import { statusText, loadUserdata } from '$lib/utils';
 	import { userdata } from '$lib/store';
 
-	import ReadModal from '$lib/components/modals/ReadModal.svelte';
+	import ReadDrawer from '$lib/components/drawers/ReadDrawer.svelte';
 	import Table from '$lib/components/admin/Table.svelte';
 
 	let user;
@@ -69,7 +69,9 @@
 					console.error(error);
 					return;
 				}
-				const price = data.items.reduce((acc, item, i) => acc + item.price * item.quantity, 0);
+				const price = data.items
+					.reduce((acc, item, i) => acc + item.price * item.quantity, 0)
+					.toFixed(2);
 				const name = data.items.map((item) => item.name).join(', ');
 
 				let items = [];
@@ -84,32 +86,44 @@
 				});
 
 				console.log(items);
-				let custom_actions = [
+
+				// Stepper logic based on order status
+				const stepper = [
 					{
-						title: 'Valider',
-						type: 'validate',
-						handler: async (e) => {
-							let new_status = 'approvedCDP';
-							if (user.role == 'bureau' || user.role == 'admin') {
-								new_status = 'approvedTreso';
-							}
-
-							const { data, error } = await supabase
-								.from('orders')
-								.update({ status: new_status })
-								.eq('id', id)
-								.select();
-
-							if (error) {
-								console.error(error);
-								return;
-							}
-							if (data) {
-								window.location.reload();
-							}
-						}
+						done: true,
+						icon: 'link'
+					},
+					{
+						done: ['approvedCDP', 'approvedTreso', 'ordered', 'completed'].includes(data.status),
+						icon: 'checked-document'
+					},
+					{
+						done: ['approvedTreso', 'ordered', 'completed'].includes(data.status),
+						icon: 'processing'
+					},
+					{
+						done: ['ordered', 'completed'].includes(data.status),
+						icon: 'shipping'
+					},
+					{
+						done: data.status === 'completed',
+						icon: 'done'
 					}
 				];
+
+				if (
+					data.status === 'canceled' ||
+					data.status === 'refusedCDP' ||
+					data.status === 'refusedTreso'
+				) {
+					stepper.pop();
+					stepper.pop();
+					stepper.pop();
+					stepper[1].done = true;
+					stepper[1].icon = 'cancel';
+				}
+
+				let custom_actions = [];
 
 				if (user.role == 'bureau' || user.role == 'admin') {
 					custom_actions = [
@@ -123,8 +137,8 @@
 							type: 'selector',
 							handler: async (e) => {
 								let new_status = e.target.value;
-								let shippingCost = 0;
-								let finalPrice = price;
+								let shippingCost = '0';
+								let finalPrice = price.toString();
 								if (new_status === 'ordered') {
 									shippingCost = prompt(
 										'Veuillez entrer le montant des frais de port (en €) pour cette commande :',
@@ -136,7 +150,7 @@
 									}
 									finalPrice = prompt(
 										'Veuillez entrer le prix final payé pour la commande (hors frais de port, en €) :',
-										price
+										price.toString()
 									);
 									if (!(finalPrice !== null && !isNaN(parseFloat(finalPrice)))) {
 										alert('Veuillez entrer un montant valide.');
@@ -164,32 +178,82 @@
 							}
 						}
 					];
+				} else {
+					custom_actions = [
+						{
+							title: 'Valider',
+							type: 'validate',
+							handler: async (e) => {
+								let new_status = 'approvedCDP';
+								if (user.role == 'bureau' || user.role == 'admin') {
+									new_status = 'approvedTreso';
+								}
+
+								const { data, error } = await supabase
+									.from('orders')
+									.update({ status: new_status })
+									.eq('id', id)
+									.select();
+
+								if (error) {
+									console.error(error);
+									return;
+								}
+								if (data) {
+									window.location.reload();
+								}
+							}
+						}
+					];
 				}
 
-				new ReadModal({
+				const updates = await supabase
+					.from('updates')
+					.select('id, message, date, author(username), type')
+					.eq('order_id', id)
+					.order('date', { ascending: false });
+
+				if (updates.error) {
+					console.error(updates.error);
+					return;
+				}
+				const updatesList = updates.data;
+				updatesList.forEach((update) => {
+					update.date = new Date(update.date).toLocaleString();
+				});
+
+				new ReadDrawer({
 					target: document.body,
 					props: {
 						values: {
 							header: {
 								title: name,
-								price: price
+								sub: price + ' €',
+								stepper
 							},
 							body: [
 								{
 									label: 'Objets',
-									value: [...items]
+									value: { list: [...items], type: 'items' }
 								},
 								{
 									label: 'Détails',
 									value: data.comment ?? 'Pas de détails'
 								},
 								{
-									label: 'Status',
-									type: data.status
+									label: 'Historique',
+									value: {
+										list: updatesList.map((update) => ({
+											message: update.message,
+											date: update.date,
+											type: update.type,
+											user: update.author?.username || 'Système'
+										})),
+										type: 'updates'
+									}
 								}
 							]
 						},
-						open: true,
 						actions: [
 							...custom_actions,
 							{
