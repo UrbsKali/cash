@@ -8,6 +8,10 @@
 	import Table from '$lib/components/admin/Table.svelte';
 
 	let user;
+	let pendingCount = 0;
+	let approvedCount = 0;
+	let orderedCount = 0;
+	let completedCount = 0;
 
 	userdata.subscribe((value) => {
 		if (value) {
@@ -307,6 +311,21 @@
 		return items;
 	}
 
+	async function updateCounts() {
+		const { data, error } = await supabase.from('orders').select('status');
+
+		if (!error && data) {
+			pendingCount = data.filter(
+				(o) => o.status === 'pendingCDP' || o.status === 'pendingTreso'
+			).length;
+			approvedCount = data.filter(
+				(o) => o.status === 'approvedCDP' || o.status === 'approvedTreso'
+			).length;
+			orderedCount = data.filter((o) => o.status === 'ordered').length;
+			completedCount = data.filter((o) => o.status === 'completed').length;
+		}
+	}
+
 	onMount(async () => {
 		if (!user) {
 			await loadUserdata();
@@ -322,11 +341,32 @@
 				}
 			];
 		}
+		await updateCounts();
 	});
 </script>
 
 <div class="w-full py-2 sm:px-8 lg:px-16">
-	<h2 class="mb-4 text-4xl font-bold tracking-tight text-white">Commandes</h2>
+	<h2 class="mb-4 text-4xl font-bold tracking-tight text-white">Gestion des Commandes</h2>
+	<p class="text-gray-400">Liste des commandes en cours</p>
+	<hr class="mt-2 border-gray-700" />
+	<div class="grid grid-cols-1 gap-4 my-6 sm:grid-cols-2 lg:grid-cols-4">
+		<div class="flex flex-col items-center p-6 bg-gray-800 rounded-lg">
+			<span class="text-3xl font-bold text-white">{pendingCount}</span>
+			<span class="mt-2 text-gray-400">En attente</span>
+		</div>
+		<div class="flex flex-col items-center p-6 bg-gray-800 rounded-lg">
+			<span class="text-3xl font-bold text-white">{approvedCount}</span>
+			<span class="mt-2 text-gray-400">Validées</span>
+		</div>
+		<div class="flex flex-col items-center p-6 bg-gray-800 rounded-lg">
+			<span class="text-3xl font-bold text-white">{orderedCount}</span>
+			<span class="mt-2 text-gray-400">Commandées</span>
+		</div>
+		<div class="flex flex-col items-center p-6 bg-gray-800 rounded-lg">
+			<span class="text-3xl font-bold text-white">{completedCount}</span>
+			<span class="mt-2 text-gray-400">Terminées</span>
+		</div>
+	</div>
 </div>
 <div class="w-full py-2 sm:px-8 lg:px-16">
 	<div class="bg-gray-800 rounded-lg">

@@ -8,6 +8,8 @@
 	import Stepper from '../admin/Stepper.svelte';
 	import { updateText } from '$lib/utils';
 
+	import Icon from '../share/Icon.svelte';
+
 	const current_component = get_current_component();
 
 	export let values = {
@@ -107,7 +109,16 @@
 </script>
 
 <!-- Backdrop -->
-<div class="fixed inset-0 z-40 bg-black bg-opacity-40 backdrop-blur-sm" on:click={__onClose}></div>
+<div
+	class="fixed inset-0 z-40 bg-black bg-opacity-40 backdrop-blur-sm"
+	role="button"
+	tabindex="0"
+	on:click={__onClose}
+	on:keydown={(e) => {
+		if (e.key === 'Enter' || e.key === ' ') __onClose(e);
+		if (e.key === 'Escape') __onClose(e);
+	}}
+></div>
 
 <!-- Drawer -->
 <div
@@ -141,7 +152,7 @@
 	</div>
 	{#if values.header.stepper}
 		{@const stepper = values.header.stepper}
-		<div class="w-full px-4 py-2 m-auto border-b border-gray-700">
+		<div class="w-full px-4 pt-2 pb-4 m-auto border-b border-gray-700">
 			<Stepper steps={stepper} />
 		</div>
 	{/if}
@@ -691,38 +702,81 @@
 					<dt class="mb-2 font-semibold leading-none text-white">{item.label}</dt>
 					{#if typeof item.value === 'object'}
 						{#if item.value.type == 'updates'}
-							<dd class="mb-4 font-light text-gray-400">
-								{#each item.value.list as value}
-									<span
-										class="inline-block px-2 py-1 mb-2 mr-2 text-sm rounded-lg
-											{value.type === 'comment'
-											? 'bg-white border border-gray-300 text-gray-900'
-											: [
-														'review-treso-approved',
-														'order-processed',
-														'order-received',
-														'order-completed'
-												  ].includes(value.type)
-												? 'bg-blue-700 text-white'
-												: ['order-canceled', 'review-cdp-refused', 'review-treso-refused'].includes(
-															value.type
-													  )
-													? 'bg-red-800 text-white'
-													: 'bg-gray-800 text-white'}"
-									>
-										{#if value.message}
-											<span>{value.message}</span>
-										{:else}
-											<span class="text-gray-200">{updateText[value.type] || value.type}</span>
-										{/if}
-										{#if value.user}
-											<span class="italic"> - Par {value.user}</span>
-										{/if}
-										{#if value.date}
-											<span class="ml-2 text-xs text-gray-400">({value.date})</span>
-										{/if}
-									</span>
-								{/each}
+							<dd class="mt-8 ml-4">
+								<ol class="relative ml-2 border-l border-gray-700">
+									{#each item.value.list as value, idx}
+										{@const isPositive = [
+											'review-treso-approved',
+											'order-processed',
+											'order-received',
+											'order-completed'
+										].includes(value.type)}
+										{@const isNegative = [
+											'order-canceled',
+											'review-cdp-refused',
+											'review-treso-refused'
+										].includes(value.type)}
+										{@const dotBg = isPositive
+											? 'primary-600'
+											: isNegative
+												? 'red-600'
+												: 'gray-600'}
+
+										<li class="mb-10 ml-6">
+											<span
+												class={'absolute -left-2.5 flex h-5 w-5 items-center justify-center rounded-full ring-8 ring-gray-700 ' +
+													dotBg}
+											>
+												<span
+													class="flex h-5 w-5 items-center justify-center rounded-full ring-2 ring-{dotBg} bg-{dotBg}"
+												>
+													<Icon
+														name={isPositive ? 'done' : isNegative ? 'cancel' : 'processing'}
+														fill="gray-100"
+														size="6"
+													/>
+												</span>
+											</span>
+											{#if value.date}
+												<span
+													class={'inline-flex items-center rounded px-2.5 py-0.5 text-xs font-medium text-gray-100 ' +
+														(isPositive
+															? 'bg-primary-800'
+															: isNegative
+																? '  bg-red-900'
+																: '  bg-gray-800')}
+												>
+													<svg
+														class="w-3 h-3 mr-1"
+														aria-hidden="true"
+														xmlns="http://www.w3.org/2000/svg"
+														width="24"
+														height="24"
+														fill="none"
+														viewBox="0 0 24 24"
+													>
+														<path
+															stroke="currentColor"
+															stroke-linecap="round"
+															stroke-linejoin="round"
+															stroke-width="2"
+															d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+														/>
+													</svg>
+													{value.date}
+												</span>
+											{/if}
+											<h3 class="mb-0.5 mt-2 text-base font-semibold text-gray-300">
+												{value.message ? value.message : updateText[value.type] || value.type}
+											</h3>
+											{#if value.user}
+												<p class="text-sm font-normal text-gray-400">
+													Par {value.user}
+												</p>
+											{/if}
+										</li>
+									{/each}
+								</ol>
 							</dd>
 						{:else if item.value.type == 'items'}
 							<dd class="mb-4 ml-2 font-light text-gray-400">
