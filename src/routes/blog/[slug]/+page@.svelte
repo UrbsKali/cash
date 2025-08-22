@@ -9,10 +9,15 @@
 	export let data;
 	const { post } = data;
 	const heroImage = post?.meta?.heroImage || '/assets/article/precoupe.jpg';
+
+	import '../../../app.css';
 </script>
 
 <svelte:head>
 	<title>{post.title}</title>
+	<meta name="keywords" content="DaVinciBot, association, robot, robotique, étudiant, esilv" />
+	<meta name="author" content={post?.meta?.author?.name || 'DaVinciBot'} />
+	<meta name="robots" content="index, follow" />
 	{#if post?.meta?.excerpt}
 		<meta name="description" content={post.meta.excerpt} />
 	{/if}
@@ -43,11 +48,25 @@
 			content={heroImage.startsWith('http') ? heroImage : `https://davincibot.fr${heroImage}`}
 		/>
 	{/if}
+
+	<!-- meta favicon -->
+	<link rel="icon" type="image/png" href="/favicon.png" />
+	<link rel="apple-touch-icon" href="/favicon.png" />
+	<link rel="mask-icon" href="/favicon.png" color="#000000" />
+	<link rel="shortcut icon" href="/favicon.png" />
+
+	<!-- font -->
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link
+		href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap"
+		rel="stylesheet"
+	/>
 </svelte:head>
 
 <Topbar />
 
-<div class="relative">
+<div class="min-h-screen antialiased bg-dark-blue text-white min-w-screen font-['Almarai']">
 	<div class="-mt-5 md:-mt-8 lg:-mt-32 2xl:-mt-64 4xl:-mt-80">
 		<img
 			class="w-full bg-gray-500 opacity-50"
@@ -95,6 +114,3 @@
 		<Footer />
 	</div>
 </div>
-
-<style>
-</style>
