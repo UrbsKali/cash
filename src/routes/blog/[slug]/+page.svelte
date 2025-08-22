@@ -11,18 +11,41 @@
 	const heroImage = post?.meta?.heroImage || '/assets/article/precoupe.jpg';
 </script>
 
+<script>
+	import { page } from '$app/stores';
+</script>
+
 <svelte:head>
 	<title>{post.title}</title>
 	{#if post?.meta?.excerpt}
 		<meta name="description" content={post.meta.excerpt} />
 	{/if}
+
+	<meta property="og:url" content={$page.url.href} />
 	<meta property="og:type" content="article" />
 	<meta property="og:title" content={post.title} />
-	{#if heroImage}
-		<meta property="og:image" content={heroImage} />
-	{/if}
 	{#if post?.meta?.excerpt}
 		<meta property="og:description" content={post.meta.excerpt} />
+	{/if}
+	{#if heroImage}
+		<meta
+			property="og:image"
+			content={heroImage.startsWith('http') ? heroImage : `${$page.url.origin}${heroImage}`}
+		/>
+	{/if}
+
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta property="twitter:domain" content={$page.url.hostname} />
+	<meta property="twitter:url" content={$page.url.href} />
+	<meta name="twitter:title" content={post.title} />
+	{#if post?.meta?.excerpt}
+		<meta name="twitter:description" content={post.meta.excerpt} />
+	{/if}
+	{#if heroImage}
+		<meta
+			name="twitter:image"
+			content={heroImage.startsWith('http') ? heroImage : `${$page.url.origin}${heroImage}`}
+		/>
 	{/if}
 </svelte:head>
 
