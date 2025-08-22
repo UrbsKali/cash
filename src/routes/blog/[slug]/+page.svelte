@@ -11,10 +11,6 @@
 	const heroImage = post?.meta?.heroImage || '/assets/article/precoupe.jpg';
 </script>
 
-<script>
-	import { page } from '$app/stores';
-</script>
-
 <svelte:head>
 	<title>{post.title}</title>
 	{#if post?.meta?.excerpt}
@@ -30,13 +26,13 @@
 	{#if heroImage}
 		<meta
 			property="og:image"
-			content={heroImage.startsWith('http') ? heroImage : `${$page.url.origin}${heroImage}`}
+			content={heroImage.startsWith('http') ? heroImage : `https://davincibot.fr${heroImage}`}
 		/>
 	{/if}
 
 	<meta name="twitter:card" content="summary_large_image" />
-	<meta property="twitter:domain" content={$page.url.hostname} />
-	<meta property="twitter:url" content={$page.url.href} />
+	<meta property="twitter:domain" content="davincibot.fr" />
+	<meta property="twitter:url" content="https://davincibot.fr/blog/{post.slug}" />
 	<meta name="twitter:title" content={post.title} />
 	{#if post?.meta?.excerpt}
 		<meta name="twitter:description" content={post.meta.excerpt} />
@@ -44,7 +40,7 @@
 	{#if heroImage}
 		<meta
 			name="twitter:image"
-			content={heroImage.startsWith('http') ? heroImage : `${$page.url.origin}${heroImage}`}
+			content={heroImage.startsWith('http') ? heroImage : `https://davincibot.fr${heroImage}`}
 		/>
 	{/if}
 </svelte:head>
