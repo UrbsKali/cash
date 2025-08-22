@@ -17,7 +17,7 @@
 		<meta name="description" content={post.meta.excerpt} />
 	{/if}
 
-	<meta property="og:url" content={$page.url.href} />
+	<meta property="og:url" content={`https://davincibot.fr/blog/${post.slug}`} />
 	<meta property="og:type" content="article" />
 	<meta property="og:title" content={post.title} />
 	{#if post?.meta?.excerpt}
