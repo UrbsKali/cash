@@ -5,6 +5,38 @@
 	import ReadModal from '$lib/components/modals/ReadModal.svelte';
 
 	import { supabase } from '$lib/supabaseClient';
+	import { onMount } from 'svelte';
+
+	// Bank accounts overview state
+	let banks = [];
+	let banksLoading = true;
+	let banksError = '';
+	let banksOpen = false; // collapsed by default
+
+	function formatEUR(value) {
+		const num = typeof value === 'number' ? value : parseFloat(value ?? 0);
+		if (Number.isNaN(num)) return '0,00 €';
+		return (
+			num.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
+		);
+	}
+
+	$: totalBanks = banks.reduce((acc, b) => acc + (parseFloat(b.current_amount ?? 0) || 0), 0);
+
+	onMount(async () => {
+		// fetch all bank accounts with their current amounts
+		const { data, error } = await supabase
+			.from('bank')
+			.select('id, name, description, current_amount, category')
+			.order('name', { ascending: true });
+		if (error) {
+			console.error(error);
+			banksError = 'Impossible de charger les comptes bancaires';
+		} else {
+			banks = data || [];
+		}
+		banksLoading = false;
+	});
 
 	async function addNew() {
 		new CrudForm({
@@ -60,7 +92,7 @@
 					let data = {};
 					for (let [key, value] of form_data.entries()) {
 						if (key.startsWith('justificatif')) {
-							const files = document.querySelector('input[name="justificatif"]').files;
+							const files = form_data.getAll('justificatif').filter((v) => v instanceof File);
 							data['justificatif'] = files;
 						} else {
 							data[key.toLowerCase()] = value;
@@ -87,7 +119,7 @@
 					}
 
 					// upload proof
-					const logoFile = data['justificatif'];
+					const logoFile = Array.isArray(data['justificatif']) ? data['justificatif'] : [];
 
 					console.log(logoFile);
 
@@ -256,10 +288,11 @@
 					let fdata = {};
 					for (let [key, value] of form_data.entries()) {
 						if (key.startsWith('author')) {
-							const uid = document.querySelector('label[for="author"]').dataset.utils;
-							fdata.author = { uid: uid };
+							const label = document.querySelector('label[for="author"]');
+							const uid = label?.getAttribute('data-utils') || '';
+							fdata.author = { uid };
 						} else if (key.startsWith('justificatif')) {
-							const files = document.querySelector('input[name="justificatif"]').files;
+							const files = form_data.getAll('justificatif').filter((v) => v instanceof File);
 							fdata['justificatif'] = files;
 						} else {
 							fdata[key.toLowerCase()] = value;
@@ -284,7 +317,7 @@
 						alert("Une erreur est survenue lors de l'édition de la dépense");
 					}
 
-					const logoFile = fdata['justificatif'];
+					const logoFile = Array.isArray(fdata['justificatif']) ? fdata['justificatif'] : [];
 					console.log(logoFile);
 
 					// upload all files
@@ -361,6 +394,7 @@
 				if (data.description === null || data.description === '') {
 					data.description = 'Aucune description';
 				}
+				let titleName = 'Dépense';
 				if (data.description.includes('Spending for order')) {
 					const { data: order, error: err } = await supabase
 						.from('orders')
@@ -372,7 +406,7 @@
 						return;
 					}
 					data.description = order.description ?? 'Aucune description';
-					data.name = order.name;
+					titleName = order.name ?? titleName;
 				}
 
 				// get the proof
@@ -391,20 +425,30 @@
 
 				let files = [...dat.map((file) => `invoices/${id}/${file.name}`)];
 
+				// compute author safely (can be array or object)
+				let authorName = 'Aucun';
+				if (Array.isArray(data.author)) {
+					authorName = data.author[0]?.username ?? 'Aucun';
+				} else if (data.author && typeof data.author === 'object') {
+					// @ts-ignore - JS runtime check
+					authorName = data.author.username ?? 'Aucun';
+				}
+
 				new ReadModal({
 					target: document.body,
 					props: {
 						values: {
 							header: {
-								title: data.name ?? 'Dépense',
-								sub: data.date.split('T')[0]
+								title: titleName,
+								sub: data.date.split('T')[0],
+								stepper: []
 							},
 							body: [
 								{
 									label: 'Valeur',
 									value: `${data.amount} €`
 								},
-								{ label: 'Auteur', value: data.author?.username ?? 'Aucun' },
+								{ label: 'Auteur', value: authorName },
 								{ label: 'Description', value: data.description }
 							]
 						},
@@ -426,8 +470,87 @@
 	];
 </script>
 
-<div>
-	<!-- Stats -->
+<div class="w-full py-2 sm:px-8 lg:px-16">
+	<h2 class="mb-4 text-4xl font-bold tracking-tight text-white">Gestion de la Trésorerie</h2>
+	<p class="text-gray-400">Overview des comptes et liste détaillées des dépenses et recettes</p>
+	<hr class="mt-2 border-gray-700" />
+	<div class="mt-4">
+		<!-- Bank accounts aggregate + collapsible details -->
+		<div class="overflow-hidden bg-gray-800 border border-gray-700 rounded-lg">
+			<button
+				class="flex items-center justify-between w-full px-4 py-4 sm:px-6 focus:outline-none hover:bg-gray-750/50"
+				aria-expanded={banksOpen}
+				on:click={() => (banksOpen = !banksOpen)}
+			>
+				<div class="text-left">
+					<div class="text-sm text-gray-400">Total comptes</div>
+					<div class="text-2xl font-semibold text-white sm:text-3xl">{formatEUR(totalBanks)}</div>
+				</div>
+				<div class="flex items-center gap-3">
+					{#if banksLoading}
+						<span class="text-sm text-gray-400">Chargement…</span>
+					{:else}
+						<span class="text-sm text-gray-400"
+							>{banks.length} compte{banks.length > 1 ? 's' : ''}</span
+						>
+					{/if}
+					<svg
+						class="w-5 h-5 text-gray-400 transition-transform duration-200 transform"
+						viewBox="0 0 20 20"
+						fill="currentColor"
+						style={`transform: rotate(${banksOpen ? 180 : 0}deg)`}
+						aria-hidden="true"
+					>
+						<path
+							fill-rule="evenodd"
+							d="M5.23 7.21a.75.75 0 011.06.02L10 11.146l3.71-3.915a.75.75 0 111.08 1.04l-4.24 4.47a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z"
+							clip-rule="evenodd"
+						/>
+					</svg>
+				</div>
+			</button>
+
+			{#if banksOpen}
+				<div class="px-4 pb-4 sm:px-6">
+					{#if banksLoading}
+						<div class="py-2 text-sm text-gray-400">Chargement des comptes…</div>
+					{:else if banksError}
+						<div class="py-2 text-sm text-red-400">{banksError}</div>
+					{:else if banks.length === 0}
+						<div class="py-2 text-sm text-gray-400">Aucun compte enregistré.</div>
+					{:else}
+						<ul class="divide-y divide-gray-700">
+							{#each banks as bank}
+								<li class="flex items-start justify-between py-3">
+									<div>
+										<div class="flex items-center gap-2">
+											<span class="font-medium text-white">{bank.name ?? 'Compte sans nom'}</span>
+											{#if bank.category}
+												<span
+													class="text-xs px-2 py-0.5 rounded-full bg-gray-700 text-gray-300 border border-gray-600"
+													>{bank.category}</span
+												>
+											{/if}
+										</div>
+										{#if bank.description}
+											<div class="mt-1 text-xs text-gray-400">{bank.description}</div>
+										{/if}
+									</div>
+									<div
+										class="text-right font-semibold {parseFloat(bank.current_amount ?? 0) < 0
+											? 'text-red-300'
+											: 'text-green-300'}"
+									>
+										{formatEUR(bank.current_amount ?? 0)}
+									</div>
+								</li>
+							{/each}
+						</ul>
+					{/if}
+				</div>
+			{/if}
+		</div>
+	</div>
 </div>
 <div class="w-full py-2 sm:px-8 lg:px-16">
 	<div class="bg-gray-800 rounded-lg">
