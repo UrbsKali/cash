@@ -11,6 +11,7 @@
 	import AlstomLogo from '$lib/components/share/Logo/Alstom.svelte';
 	import IFTLogo from '$lib/components/share/Logo/IFT.svelte';
 	import GotronicLogo from '$lib/components/share/Logo/Gotronic.svelte';
+	import AislerLogo from '$lib/components/share/Logo/Aisler.svelte';
 </script>
 
 <svelte:head>
@@ -78,6 +79,7 @@
 				<HDSLogo />
 				<RSLogo />
 				<FaulhaberLogo />
+				<AislerLogo />
 				<AlstomLogo />
 				<IFTLogo />
 				<GotronicLogo />
