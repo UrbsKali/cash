@@ -3,7 +3,7 @@
 </script>
 
 {#if pre}
-	<pre class="font-mono text-sm text-white"><slot /></pre>
+	<pre class="mb-2 font-mono text-sm text-white"><slot /></pre>
 {:else}
-	<p class="text-base text-justify text-white"><slot /></p>
+	<p class="mb-2 text-base text-justify text-white"><slot /></p>
 {/if}

@@ -9,11 +9,30 @@
 	export let data;
 	const { post } = data;
 	const heroImage = post?.meta?.heroImage || '/assets/article/precoupe.jpg';
+
+	function formatDate(v) {
+		if (!v) return null;
+		const d = new Date(v);
+		if (Number.isNaN(d.getTime())) return null;
+		return new Intl.DateTimeFormat('fr-FR', {
+			day: '2-digit',
+			month: 'long',
+			year: 'numeric'
+		}).format(d);
+	}
+
+	const publishedLabel = formatDate(post?.publishedAt);
+	const updatedLabel = formatDate(post?.updatedAt);
+	const isoPublished = post?.publishedAt ? new Date(post.publishedAt).toISOString() : null;
+	const isoUpdated = post?.updatedAt ? new Date(post.updatedAt).toISOString() : null;
 </script>
 
 <svelte:head>
 	<title>{post.title}</title>
-	<meta name="keywords" content="DaVinciBot, association, robot, robotique, étudiant, esilv" />
+	<meta
+		name="keywords"
+		content={post?.meta?.keywords || 'DaVinciBot, association, robot, robotique, étudiant, esilv'}
+	/>
 	<meta name="author" content={post?.meta?.author?.name || 'DaVinciBot'} />
 	<meta name="robots" content="index, follow" />
 	{#if post?.meta?.excerpt}
@@ -31,6 +50,12 @@
 			property="og:image"
 			content={heroImage.startsWith('http') ? heroImage : `https://davincibot.fr${heroImage}`}
 		/>
+	{/if}
+	{#if isoPublished}
+		<meta property="article:published_time" content={isoPublished} />
+	{/if}
+	{#if isoUpdated}
+		<meta property="article:modified_time" content={isoUpdated} />
 	{/if}
 
 	<meta name="twitter:card" content="summary_large_image" />
@@ -79,6 +104,17 @@
 						{/if}
 					</div>
 				{/if}
+				{#if publishedLabel || updatedLabel}
+					<div class="mt-1 text-sm text-gray-400">
+						{#if publishedLabel}
+							<time datetime={isoPublished}>Publié le {publishedLabel}</time>
+						{/if}
+						{#if updatedLabel && updatedLabel !== publishedLabel}
+							<span> • </span>
+							<time datetime={isoUpdated}>Mis à jour le {updatedLabel}</time>
+						{/if}
+					</div>
+				{/if}
 			</div>
 
 			<div class="flex justify-center gap-8 my-6">
@@ -94,5 +130,6 @@
 			</div>
 		</div>
 	</div>
+	<div class="my-12"></div>
 	<Footer />
 </div>

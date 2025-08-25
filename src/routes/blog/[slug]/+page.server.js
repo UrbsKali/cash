@@ -76,7 +76,8 @@ export async function load({ params, setHeaders }) {
             body: data.body || '',
             html,
             ast,
-            updatedAt: data.derniere_maj
+            updatedAt: data.last_update,
+            publishedAt: data.publish_date
         }
     };
 }
