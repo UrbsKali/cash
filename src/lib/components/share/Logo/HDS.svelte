@@ -3,7 +3,7 @@
 
 <a href="https://www.hauts-de-seine.fr/">
 	<svg
-		class="w-auto h-full"
+		class="w-full h-full"
 		height="50"
 		viewBox="0 0 233 48"
 		fill="none"

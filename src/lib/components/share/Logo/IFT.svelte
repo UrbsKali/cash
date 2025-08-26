@@ -1,9 +1,9 @@
 <script>
 </script>
 
-<a href="https://ift.devinci.fr/" class="w-auto h-full">
+<a href="https://ift.devinci.fr/" class="h-full aspect-square">
 	<svg
-		class="w-auto h-full"
+		class="h-full"
 		height="100"
 		viewBox="0 0 410 410"
 		fill="none"

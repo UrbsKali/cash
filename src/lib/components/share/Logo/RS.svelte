@@ -1,9 +1,9 @@
 <script>
 </script>
 
-<a href="https://fr.rs-online.com/">
+<a href="https://fr.rs-online.com/" class="h-full aspect-square">
 	<svg
-		class="w-auto h-full"
+		class="h-full aspect-square"
 		height="100"
 		viewBox="0 0 410 410"
 		fill="none"

@@ -1,9 +1,9 @@
 <script>
 </script>
 
-<a href="https://www.gotronic.fr/">
+<a href="https://www.gotronic.fr/" class="h-full">
 	<svg
-		class="w-auto h-full"
+		class="w-full h-full"
 		height="50"
 		viewBox="0 0 310 76"
 		fill="none"
