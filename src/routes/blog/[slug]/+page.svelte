@@ -8,7 +8,7 @@
 
 	export let data;
 	const { post } = data;
-	const heroImage = post?.meta?.heroImage || '/assets/article/precoupe.jpg';
+	const heroImage = post?.meta?.heroImage;
 
 	function formatDate(v) {
 		if (!v) return null;
