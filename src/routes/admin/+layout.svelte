@@ -60,6 +60,13 @@
 			icon: 'briefcase-outline',
 			allowed_roles: ['admin', 'bureau']
 		}
+		,
+		{
+			title: 'Blog',
+			uri: '/admin/blog',
+			icon: 'create-outline',
+			allowed_roles: ['admin', 'bureau', 'cdp', 'membre']
+		}
 	];
 
 	let custom_uri = [
