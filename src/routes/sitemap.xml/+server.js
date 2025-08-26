@@ -42,8 +42,8 @@ export async function GET() {
             .order('publish_date', { ascending: false, nullsFirst: false });
         if (!error && data) {
             for (const row of data) {
-                const last = row.publish_date || row.last_update || null;
-                urls.push(urlTag(canonicalFor(`/blog/${row.slug}/`), last, 'monthly', '0.8'));
+                const last = new Date(row.publish_date || row.last_update || null);
+                urls.push(urlTag(canonicalFor(`/blog/${row.slug}/`), last.toISOString(), 'monthly', '0.8'));
             }
         }
     } catch (e) {
