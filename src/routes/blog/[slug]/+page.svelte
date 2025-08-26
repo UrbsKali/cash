@@ -83,7 +83,7 @@
 	/>
 </div>
 <div
-	class="-mt-28 md:-mt-72 pt-12 md:pt-0 absolute z-10 w-full bg-gradient-to-b from-white/0 from-0% via-1% via-dark-blue/70 via-2% via-3% via-4% to-5% via-1% via-4% to-dark-blue"
+	class="-mt-28 md:-mt-72 pt-12 md:pt-0 absolute w-full bg-gradient-to-b from-white/0 from-0% via-1% via-dark-blue/70 via-2% via-3% via-4% to-5% via-1% via-4% to-dark-blue"
 >
 	<div class="flex flex-col items-center h-full gap-8 pt-5 md:pt-28 md:mx-32">
 		<div class="flex flex-col text-left max-w-[720px] mx-3">

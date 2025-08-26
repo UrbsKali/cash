@@ -13,28 +13,29 @@
 
 	let dbInfo = {
 		table: 'profiles',
-		key: 'id, username, role, avatar_url, member_of!inner(project!inner(id, name))'
+		key: 'id, username, role, avatar_url, member_of(project!inner(id, name))'
 	};
 
 	let service_key = '';
 	let admin_supabase = null;
 
-	let allProjects = [];
+	let allProjects = [
+		{ name: 'CDR', value: '1' },
+		{ name: 'Travelers', value: '2' },
+		{ name: 'Exodus', value: '3' },
+		{ name: 'Bureau', value: '8' },
+		{ name: 'SmartScreen', value: '10' },
+		{ name: 'BallBalancing', value: '11' },
+		{ name: 'Mur Végétal', value: '12' },
+		{ name: 'E-Dog', value: '13' },
+		{ name: 'CDR Nantes', value: '14' }
+	];
 
 	let filters = [
 		{
 			category: 'Projets',
 			value: 'member_of.project.id',
-			options: [
-				{ name: 'CDR', value: '1' },
-				{ name: 'Travelers', value: '2' },
-				{ name: 'Exodus', value: '3' },
-				{ name: 'Bureau', value: '8' },
-				{ name: 'SmartScreen', value: '10' },
-				{ name: 'BallBalancing', value: '11' },
-				{ name: 'Mur Végétal', value: '12' },
-				{ name: 'E-Dog', value: '13' }
-			]
+			options: allProjects
 		},
 		{
 			category: 'Rôle',
@@ -50,6 +51,7 @@
 
 	userdata.subscribe((user) => {
 		if (user && user.allProjects) {
+			console.log(user.allProjects);
 			allProjects = user.allProjects.map((p) => ({ value: p.id, text: p.name }));
 			filters[0].options = user.allProjects.map((p) => ({ name: p.name, value: p.id })); // Update the project filter options
 		}
@@ -58,7 +60,7 @@
 	function parseItems(data) {
 		let items = [];
 		data.forEach((el) => {
-			const project = el.member_of.map((el) => el.project.name).join(', ');
+			const project = el.member_of.map((el) => el.project?.name).join(', ');
 			items.push([
 				{ value: el.username, data: el.id, avatar: el.avatar_url },
 				{ value: el.role },
@@ -97,12 +99,7 @@
 						name: 'Projet',
 						id: 'project',
 						type: 'select',
-						options: [
-							{ value: '1', text: 'CDR' },
-							{ value: '2', text: 'Travelers' },
-							{ value: '3', text: 'Exaudus' },
-							{ value: '8', text: 'Bureau' }
-						],
+						options: allProjects,
 						required: true
 					},
 					{
@@ -127,8 +124,10 @@
 						email: document.querySelector('#email').value,
 						role: document.querySelector('#role').value,
 						username: document.querySelector('#nom').value,
-						project: document.querySelector('#project').value
+						project: document.querySelector('#project').value || 0
 					};
+
+					if (form.project == 'NULL') form.project = 0;
 
 					if (!form.email) {
 						alert('No email provided');
@@ -182,8 +181,6 @@
 							console.error(error);
 							alert('An error occured while adding the user to the project');
 							return;
-						} else {
-							console.log(data);
 						}
 					}
 
@@ -191,7 +188,6 @@
 						target: document.body,
 						props: {
 							message: 'Utilisateur ajouté avec succès',
-							open: true,
 							onClose: () => {
 								window.location.reload();
 							}
@@ -243,7 +239,8 @@
 					{ value: 'admin', text: 'Admin' },
 					{ value: 'bureau', text: 'Bureau' },
 					{ value: 'cdp', text: 'Chef de projet' },
-					{ value: 'membre', text: 'Membre' }
+					{ value: 'membre', text: 'Membre' },
+					{ value: 'guest', text: 'Invité' }
 				],
 				wide: true,
 				required: true
