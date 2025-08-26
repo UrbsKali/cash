@@ -13,6 +13,7 @@ const config = {
 		prerender: {
 			entries: [
 				'/',
+				'/robots.txt',
 				'/blog',
 				'/sponsors',
 				'/contact',

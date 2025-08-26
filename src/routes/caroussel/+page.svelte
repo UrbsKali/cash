@@ -44,6 +44,21 @@
 	});
 </script>
 
+<svelte:head>
+	<title>SmartShare - Instructions de partage d'écran</title>
+	<meta name="description" content="Instructions pour partager votre écran avec SmartShare" />
+	<link rel="icon" type="image/png" href="/favicon.png" />
+
+	<meta property="og:title" content="SmartShare - Instructions de partage d'écran" />
+	<meta
+		property="og:description"
+		content="Instructions pour partager votre écran avec SmartShare"
+	/>
+	<meta property="og:image" content="/og-image.png" />
+
+	<meta name="robots" content="noindex, nofollow" />
+</svelte:head>
+
 <div class="flex flex-col items-center justify-center min-h-screen p-8 text-white bg-gray-900">
 	<div class="w-full max-w-4xl">
 		<!-- Main content area -->

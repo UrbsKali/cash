@@ -25,9 +25,35 @@
 	const updatedLabel = formatDate(post?.updatedAt);
 	const isoPublished = post?.publishedAt ? new Date(post.publishedAt).toISOString() : null;
 	const isoUpdated = post?.updatedAt ? new Date(post.updatedAt).toISOString() : null;
+
+	const canonical = `https://davincibot.fr/blog/${post.slug}/`;
+	const heroAbs =
+		heroImage && (heroImage.startsWith('http') ? heroImage : `https://davincibot.fr${heroImage}`);
+	const jsonLd = {
+		'@context': 'https://schema.org',
+		'@type': 'BlogPosting',
+		headline: post.title,
+		description: post?.meta?.excerpt || undefined,
+		image: heroAbs || undefined,
+		datePublished: isoPublished || undefined,
+		dateModified: isoUpdated || undefined,
+		mainEntityOfPage: canonical,
+		author: post?.meta?.author?.name
+			? { '@type': 'Person', name: post.meta.author.name }
+			: { '@type': 'Organization', name: 'DaVinciBot' },
+		publisher: {
+			'@type': 'Organization',
+			name: 'DaVinciBot',
+			logo: {
+				'@type': 'ImageObject',
+				url: 'https://davincibot.fr/white_logo_notext.webp'
+			}
+		}
+	};
 </script>
 
 <svelte:head>
+	<link rel="canonical" href={canonical} />
 	<title>{post.title}</title>
 	<meta
 		name="keywords"
@@ -66,11 +92,13 @@
 		<meta name="twitter:description" content={post.meta.excerpt} />
 	{/if}
 	{#if heroImage}
-		<meta
-			name="twitter:image"
-			content={heroImage.startsWith('http') ? heroImage : `https://davincibot.fr${heroImage}`}
-		/>
+		<meta name="twitter:image" content={heroAbs} />
 	{/if}
+
+	<!-- JSON-LD Article -->
+	<script type="application/ld+json">
+{JSON.stringify(jsonLd)}
+	</script>
 </svelte:head>
 
 <Topbar />

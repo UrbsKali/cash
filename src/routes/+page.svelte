@@ -67,7 +67,11 @@
 			</div>
 			<img
 				src="/assets/projets/rob_shadows.png"
-				alt="Robot illustration"
+				alt="Robot dessin stylisé pour DaVinciBot"
+				width="1280"
+				height="720"
+				loading="eager"
+				fetchpriority="high"
 				class="order-1 w-full mx-auto mb-6 md:mb-0 md:order-2 scale-130"
 			/>
 		</div>

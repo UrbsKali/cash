@@ -20,6 +20,28 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Actus — DaVinciBot</title>
+	<link rel="canonical" href="https://davincibot.fr/blog/" />
+	<meta name="description" content="Dernières nouvelles, projets et coulisses de DaVinciBot." />
+	<meta name="robots" content="index,follow" />
+	<meta property="og:title" content="Actus — DaVinciBot" />
+	<meta
+		property="og:description"
+		content="Dernières nouvelles, projets et coulisses de DaVinciBot."
+	/>
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://davincibot.fr/blog/" />
+	<meta property="og:image" content="https://davincibot.fr/dvb_og_img.png" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content="Actus — DaVinciBot" />
+	<meta
+		name="twitter:description"
+		content="Dernières nouvelles, projets et coulisses de DaVinciBot."
+	/>
+	<meta name="twitter:image" content="https://davincibot.fr/dvb_og_img.png" />
+</svelte:head>
+
 <Topbar />
 
 <section class="pt-24 md:pt-28">
