@@ -1,6 +1,6 @@
 /* TEAM */
-Developer: DaVinciBot Web Team
-Twitter: https://twitter.com/DaVinciBot
+Developer: Urbain Lantrès, Cyprien Bocqueraz
+Instagram: https://instagram.com/davincibot_pulv/
 From: Pôle Léonard de Vinci, France
 
 /* SITE */
