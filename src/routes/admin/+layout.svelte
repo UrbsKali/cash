@@ -59,8 +59,7 @@
 			uri: '/admin/wip',
 			icon: 'briefcase-outline',
 			allowed_roles: ['admin', 'bureau']
-		}
-		,
+		},
 		{
 			title: 'Blog',
 			uri: '/admin/blog',
