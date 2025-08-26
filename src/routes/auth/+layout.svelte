@@ -29,3 +29,5 @@
 	<meta name="twitter:domain" content="davincibot.fr" />
 	<meta name="twitter:card" content="summary_large_image" />
 </svelte:head>
+
+<slot />
