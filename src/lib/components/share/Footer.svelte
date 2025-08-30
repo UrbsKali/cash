@@ -6,6 +6,7 @@
 	import IFTLogo from './Logo/IFT.svelte';
 	import GotronicLogo from './Logo/Gotronic.svelte';
 	import DVBLogo from './Logo/DVBLogo.svelte';
+	import AislerLogo from './Logo/Aisler.svelte';
 
 	import Carousel from '$lib/components/others/Carousel.svelte';
 	import CtaButton from '$lib/components/utils/CTAButton.svelte';
@@ -130,6 +131,7 @@
 				<HDSLogo />
 				<RSLogo />
 				<FaulhaberLogo />
+				<AislerLogo />
 				<AlstomLogo />
 				<IFTLogo />
 				<GotronicLogo />
