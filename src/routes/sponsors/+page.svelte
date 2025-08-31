@@ -50,9 +50,9 @@
 		{
 			name: 'IFT',
 			logo: '/assets/parte/IFT.svg',
-			link: 'https://www.ift.fr/',
+			link: 'https://ift.devinci.fr/',
 			blurb:
-				"Partenaire sur des initiatives de recherche, d'enseignement et de transfert de technologie."
+				"Partenaire sur des initiatives de recherche, d'enseignement et de transfert de technologie. Ils sont notre service parrain au sein de l'ESILV."
 		}
 	];
 
