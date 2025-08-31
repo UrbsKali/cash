@@ -65,6 +65,35 @@
 	);
 </script>
 
+<svelte:head>
+	<title>Partenaires — DaVinciBot</title>
+	<meta
+		name="description"
+		content="Découvrez nos partenaires et sponsors, et téléchargez notre brochure de partenariat."
+	/>
+	<link rel="canonical" href="https://davincibot.fr/sponsors" />
+	<meta
+		name="keywords"
+		content="partenaires, sponsors, collaboration, robotique, innovation, DaVinciBot, DVB"
+	/>
+	<meta name="robots" content="index, follow" />
+
+	<meta property="og:title" content={`Partenaires — DaVinciBot`} />
+	<meta
+		property="og:description"
+		content="Découvrez nos partenaires et sponsors, et téléchargez notre brochure de partenariat."
+	/>
+	<meta property="og:image" content="https://davincibot.fr/dvb_og_img.png" />
+	<meta property="og:url" content="https://davincibot.fr/sponsors" />
+	<meta property="og:type" content="website" />
+	<meta property="og:site_name" content="DaVinciBot" />
+	<meta property="og:locale" content="fr_FR" />
+
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:site" content="https://instagram.com/davincibot_pulv" />
+	<meta name="twitter:creator" content="https://instagram.com/davincibot_pulv" />
+</svelte:head>
+
 <Topbar />
 
 <!-- Hero -->
