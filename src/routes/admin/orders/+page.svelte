@@ -1,4 +1,5 @@
 <script>
+	// @ts-nocheck
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabaseClient';
 	import { statusText, loadUserdata } from '$lib/utils';
@@ -6,6 +7,7 @@
 
 	import ReadDrawer from '$lib/components/drawers/ReadDrawer.svelte';
 	import Table from '$lib/components/admin/Table.svelte';
+	import CrudForm from '$lib/components/modals/CrudForm.svelte';
 
 	let user;
 	let pendingCount = 0;
@@ -144,22 +146,104 @@
 								let shippingCost = '0';
 								let finalPrice = price.toString();
 								if (new_status === 'ordered') {
-									shippingCost = prompt(
-										'Veuillez entrer le montant des frais de port (en €) pour cette commande :',
-										'0'
-									);
-									if (!(shippingCost !== null && !isNaN(parseFloat(shippingCost)))) {
-										alert('Veuillez entrer un montant valide.');
+									// Open a form to capture shipping cost, final price and bank
+									const { data: banks, error: bankErr } = await supabase
+										.from('bank')
+										.select('id, name')
+										.order('name');
+									if (bankErr) {
+										console.error(bankErr);
+										alert('Impossible de charger la liste des banques.');
 										return;
 									}
-									finalPrice = prompt(
-										'Veuillez entrer le prix final payé pour la commande (hors frais de port, en €) :',
-										price.toString()
-									);
-									if (!(finalPrice !== null && !isNaN(parseFloat(finalPrice)))) {
-										alert('Veuillez entrer un montant valide.');
-										return;
-									}
+
+									new CrudForm({
+										target: document.body,
+										props: {
+											type: 'commande',
+											type_accord: 'une',
+											action: 'Valider',
+											title: 'Informations de commande',
+											fields: [
+												{
+													name: 'Frais de port (€)',
+													type: 'number',
+													id: 'shipping_cost',
+													required: true,
+													value: '0',
+													step: 0.01,
+													min: 0
+												},
+												{
+													name: 'Prix final hors port (€)',
+													type: 'number',
+													id: 'final_price',
+													required: true,
+													value: price.toString(),
+													step: 0.01,
+													min: 0
+												},
+												{
+													name: 'Compte',
+													type: 'select',
+													id: 'bank_id',
+													required: true,
+													options: banks.map((b) => ({
+														value: String(b.id),
+														text: b.name || `Compte ${b.id}`
+													}))
+												}
+											],
+											onSubmit: async (ev) => {
+												ev.preventDefault();
+												const form = ev.target.closest('form');
+												const fd = new FormData(form);
+												const shipping = parseFloat(String(fd.get('shipping_cost') ?? ''));
+												const finalP = parseFloat(String(fd.get('final_price') ?? ''));
+												const bankId = parseInt(String(fd.get('bank_id') ?? ''));
+												if (
+													Number.isNaN(shipping) ||
+													Number.isNaN(finalP) ||
+													Number.isNaN(bankId)
+												) {
+													alert('Veuillez remplir correctement tous les champs.');
+													return;
+												}
+
+												// 1) update order with status, shipping and price
+												const { data: upd, error: updErr } = await supabase
+													.from('orders')
+													.update({ status: new_status, shipping_cost: shipping, price: finalP })
+													.eq('id', id)
+													.select();
+												if (updErr) {
+													console.error(updErr);
+													alert('Échec de la mise à jour de la commande');
+													return;
+												}
+
+												// 2) create a spending row to reflect the payment
+												const total = shipping + finalP;
+												const { error: spendErr } = await supabase.from('spending').insert([
+													{
+														amount: total,
+														is_positive: false,
+														order_id: id,
+														bank_id: bankId
+													}
+												]);
+												if (spendErr) {
+													console.error(spendErr);
+													alert(
+														'URGENT : CONTACTER ADMIN \n Commande mise à jour mais écriture trésorerie échouée'
+													);
+												}
+
+												window.location.reload();
+											}
+										}
+									});
+									return; // stop default flow; we'll reload after submit
 								}
 
 								const { data, error } = await supabase
@@ -251,7 +335,9 @@
 											message: update.message,
 											date: update.date,
 											type: update.type,
-											user: update.author?.username || 'Système'
+											user: Array.isArray(update.author)
+												? update.author[0]?.username || 'Système'
+												: update.author?.username || 'Système'
 										})),
 										type: 'updates'
 									}

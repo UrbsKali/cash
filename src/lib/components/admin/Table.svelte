@@ -347,6 +347,21 @@
 											class="flex items-center px-4 py-3 font-medium text-white whitespace-nowrap"
 											data-utils={key.data || ''}
 										>
+											{#if key.warn}
+												<svg
+													class="w-4 h-4 mr-2 text-red-400"
+													viewBox="0 0 20 20"
+													fill="currentColor"
+													role="img"
+													aria-label="Aucun justificatif"
+												>
+													<path
+														fill-rule="evenodd"
+														d="M8.257 3.099c.765-1.36 2.721-1.36 3.486 0l6.518 11.59c.75 1.335-.213 3.011-1.742 3.011H3.48c-1.53 0-2.492-1.676-1.743-3.01L8.257 3.1zM11 14a1 1 0 10-2 0 1 1 0 002 0zm-1-2a1 1 0 01-1-1V7a1 1 0 112 0v4a1 1 0 01-1 1z"
+														clip-rule="evenodd"
+													/>
+												</svg>
+											{/if}
 											{#if key.avatar}
 												<div class="flex items-center w-8 h-8 mr-2 space-x-2">
 													<img src={key.avatar} class="w-8 h-8 rounded-full" alt="user face" />

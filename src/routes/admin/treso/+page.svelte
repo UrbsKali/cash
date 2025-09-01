@@ -39,6 +39,16 @@
 	});
 
 	async function addNew() {
+		const { data: banks, error: bankErr } = await supabase
+			.from('bank')
+			.select('id, name')
+			.order('name');
+		if (bankErr) {
+			console.error(bankErr);
+			alert('Impossible de charger la liste des banques.');
+			return;
+		}
+
 		new CrudForm({
 			target: document.body,
 			props: {
@@ -49,7 +59,17 @@
 						id: 'amount',
 						required: true,
 						placeholder: '0.00',
-						wide: true
+						wide: false
+					},
+					{
+						name: 'Compte',
+						type: 'select',
+						id: 'bank_id',
+						required: true,
+						options: banks.map((b) => ({
+							value: String(b.id),
+							text: b.name || `Compte ${b.id}`
+						}))
 					},
 					{
 						name: 'Justificatif',
@@ -107,7 +127,8 @@
 								amount: data.amount,
 								date: data.date,
 								is_positive: data.is_positive,
-								description: data.description
+								description: data.description,
+								bank_id: data.bank_id
 							}
 						])
 						.select('id')
@@ -348,20 +369,42 @@
 
 	const dbInfo = {
 		table: 'spending',
-		key: 'id, is_positive, amount, date, author(id, username, avatar_url)',
+		key: 'id, is_positive, amount, date, author(id, username, avatar_url), order_id(id, comment, requestedBy, projectId(name))',
 		ordering: 'date:desc'
 	};
 
 	const headers = ['Valeur', 'Date', 'Auteur', 'Actions'];
 
-	function parseItems(items) {
+	async function parseItems(items) {
+		// For each spending, check if at least one proof file exists; mark missing with warn flag
+		const checks = await Promise.all(
+			(items || []).map(async (it) => {
+				try {
+					const { data: files, error } = await supabase.storage
+						.from('proof')
+						.list(`invoices/${it.id}`, {
+							limit: 1,
+							offset: 0,
+							sortBy: { column: 'name', order: 'asc' }
+						});
+					const hasProof = !error && Array.isArray(files) && files.length > 0;
+					return { id: it.id, hasProof };
+				} catch (_) {
+					return { id: it.id, hasProof: false };
+				}
+			})
+		);
+		const byId = new Map(checks.map((c) => [c.id, c.hasProof]));
+
 		let parsedItems = [];
-		items.forEach((item) => {
+		(items || []).forEach((item) => {
+			const hasProof = byId.get(item.id) ?? false;
 			parsedItems.push([
 				{
 					value: `${item.is_positive ? '+' : '-'} ${item.amount} €`,
 					style: item.is_positive ? 'text-green-300' : 'text-red-300',
-					data: item.id
+					data: item.id,
+					warn: !hasProof
 				},
 				{ value: item.date.split('T')[0] },
 				{
@@ -383,7 +426,9 @@
 
 				const { data, error } = await supabase
 					.from('spending')
-					.select('id, description, author(username, id), amount, is_positive, date')
+					.select(
+						'id, description, author(username, id), amount, is_positive, date, order_id(id, comment, requestedBy(username), projectId(name), status), bank_id(name)'
+					)
 					.eq('id', id)
 					.single();
 
@@ -391,23 +436,18 @@
 					console.error(error);
 					return;
 				}
+
+				if (data.order_id?.projectId && data.order_id?.projectId?.name) {
+					if (data.description != null && data.description !== '') {
+						data.description += ` - Projet ${data.order_id.projectId.name}`;
+					} else {
+						data.description = `Projet ${data.order_id.projectId.name}`;
+					}
+				}
 				if (data.description === null || data.description === '') {
 					data.description = 'Aucune description';
 				}
-				let titleName = 'Dépense';
-				if (data.description.includes('Spending for order')) {
-					const { data: order, error: err } = await supabase
-						.from('orders')
-						.select('*')
-						.eq('id', parseInt(data.description.split(' ')[3]))
-						.single();
-					if (err) {
-						console.error(err);
-						return;
-					}
-					data.description = order.description ?? 'Aucune description';
-					titleName = order.name ?? titleName;
-				}
+				let titleName = !data.is_positive ? 'Dépense' : 'Recette';
 
 				// get the proof
 				const { data: dat, error: err } = await supabase.storage
@@ -423,7 +463,8 @@
 					console.log('No proof, skipping');
 				}
 
-				let files = [...dat.map((file) => `invoices/${id}/${file.name}`)];
+				const fileList = Array.isArray(dat) ? dat : [];
+				let files = [...fileList.map((file) => `invoices/${id}/${file.name}`)];
 
 				// compute author safely (can be array or object)
 				let authorName = 'Aucun';
@@ -433,6 +474,14 @@
 					// @ts-ignore - JS runtime check
 					authorName = data.author.username ?? 'Aucun';
 				}
+				if (data.order_id) {
+					titleName = `Dépense pour la commande #${data.order_id.id} (${data.order_id.status})`;
+					if (data.order_id?.requestedBy?.username && authorName == 'Aucun') {
+						authorName = data.order_id.requestedBy.username;
+					}
+				}
+
+				const hasProof = files.length > 0;
 
 				new ReadModal({
 					target: document.body,
@@ -440,8 +489,8 @@
 						values: {
 							header: {
 								title: titleName,
-								sub: data.date.split('T')[0],
-								stepper: []
+								sub: data.date.split('T')[0]
+								// stepper: []
 							},
 							body: [
 								{
@@ -449,7 +498,12 @@
 									value: `${data.amount} €`
 								},
 								{ label: 'Auteur', value: authorName },
-								{ label: 'Description', value: data.description }
+								{ label: 'Compte utilisé', value: data.bank_id?.name ?? 'Aucun' },
+								{ label: 'Description', value: data.description },
+								{
+									label: 'Justification',
+									value: hasProof ? `${files.length} fichier(s)` : 'Aucun justificatif'
+								}
 							]
 						},
 
