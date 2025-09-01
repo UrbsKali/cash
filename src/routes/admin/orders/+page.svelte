@@ -21,10 +21,20 @@
 		}
 	});
 
-	let headers = ['Objet', 'Date', 'Dernière MàJ', 'Prix', 'Projet', 'Membre', 'Status', 'Actions'];
+	let headers = [
+		'Objet',
+		'Date',
+		'Dernière MàJ',
+		'Prix',
+		'Projet',
+		'Membre',
+		'Tags',
+		'Status',
+		'Actions'
+	];
 	let dbInfo = {
 		table: 'orders',
-		key: 'id, creationDate, projectId(id, name), status, lastUpdate, items(*), requestedBy(*), name',
+		key: 'id, creationDate, projectId(id, name), status, lastUpdate, items(*), requestedBy(*), name, tags',
 		ordering: 'lastUpdate:desc'
 	};
 
@@ -67,7 +77,9 @@
 
 				const { data, error } = await supabase
 					.from('orders')
-					.select('id, creationDate, projectId, status, lastUpdate, items(*), comment')
+					.select(
+						'id, creationDate, projectId, status, lastUpdate, items(*), comment, tags, requestedBy(username)'
+					)
 					.eq('id', id)
 					.single();
 
@@ -329,6 +341,13 @@
 									value: data.comment ?? 'Pas de détails'
 								},
 								{
+									label: 'Tags',
+									value:
+										Array.isArray(data.tags) && data.tags.length > 0
+											? data.tags.join(' • ')
+											: 'Aucun'
+								},
+								{
 									label: 'Historique',
 									value: {
 										list: updatesList.map((update) => ({
@@ -391,6 +410,7 @@
 				{ value: price + ' €' },
 				{ value: el.projectId.name, data: el.projectId.id },
 				{ value: el.requestedBy.username, data: el.requestedBy.id },
+				{ value: Array.isArray(el.tags) && el.tags.length ? el.tags.join(', ') : '-' },
 				{ value: statusText[el.status] }
 			]);
 		});

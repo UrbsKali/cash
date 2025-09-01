@@ -369,11 +369,11 @@
 
 	const dbInfo = {
 		table: 'spending',
-		key: 'id, is_positive, amount, date, author(id, username, avatar_url), order_id(id, comment, requestedBy, projectId(name))',
+		key: 'id, is_positive, amount, date, author(id, username, avatar_url), order_id(id, comment, requestedBy, projectId(name), tags)',
 		ordering: 'date:desc'
 	};
 
-	const headers = ['Valeur', 'Date', 'Auteur', 'Actions'];
+	const headers = ['Valeur', 'Date', 'Auteur', 'Tags', 'Actions'];
 
 	async function parseItems(items) {
 		// For each spending, check if at least one proof file exists; mark missing with warn flag
@@ -399,6 +399,8 @@
 		let parsedItems = [];
 		(items || []).forEach((item) => {
 			const hasProof = byId.get(item.id) ?? false;
+			// normalize order relation for tags
+			const orderRef = Array.isArray(item.order_id) ? item.order_id[0] : item.order_id;
 			parsedItems.push([
 				{
 					value: `${item.is_positive ? '+' : '-'} ${item.amount} €`,
@@ -410,6 +412,10 @@
 				{
 					value: item.author?.username ?? 'Aucun',
 					data: `${item.author?.id}+${item.author?.avatar_url}`
+				},
+				{
+					value:
+						Array.isArray(orderRef?.tags) && orderRef.tags.length ? orderRef.tags.join(', ') : '-'
 				}
 			]);
 		});
@@ -427,7 +433,7 @@
 				const { data, error } = await supabase
 					.from('spending')
 					.select(
-						'id, description, author(username, id), amount, is_positive, date, order_id(id, comment, requestedBy(username), projectId(name), status), bank_id(name)'
+						'id, description, author(username, id), amount, is_positive, date, order_id(id, comment, requestedBy(username), projectId(name), status, tags), bank_id(name)'
 					)
 					.eq('id', id)
 					.single();
@@ -437,11 +443,18 @@
 					return;
 				}
 
-				if (data.order_id?.projectId && data.order_id?.projectId?.name) {
+				// normalize nested relations (array or object)
+				const orderRef = Array.isArray(data.order_id) ? data.order_id[0] : data.order_id;
+				const projRef = orderRef
+					? Array.isArray(orderRef.projectId)
+						? orderRef.projectId[0]
+						: orderRef.projectId
+					: null;
+				if (projRef && projRef.name) {
 					if (data.description != null && data.description !== '') {
-						data.description += ` - Projet ${data.order_id.projectId.name}`;
+						data.description += ` - Projet ${projRef.name}`;
 					} else {
-						data.description = `Projet ${data.order_id.projectId.name}`;
+						data.description = `Projet ${projRef.name}`;
 					}
 				}
 				if (data.description === null || data.description === '') {
@@ -474,14 +487,20 @@
 					// @ts-ignore - JS runtime check
 					authorName = data.author.username ?? 'Aucun';
 				}
-				if (data.order_id) {
-					titleName = `Dépense pour la commande #${data.order_id.id} (${data.order_id.status})`;
-					if (data.order_id?.requestedBy?.username && authorName == 'Aucun') {
-						authorName = data.order_id.requestedBy.username;
+				if (orderRef) {
+					titleName = `Dépense pour la commande #${orderRef.id} (${orderRef.status})`;
+					const reqRef = Array.isArray(orderRef.requestedBy)
+						? orderRef.requestedBy[0]
+						: orderRef.requestedBy;
+					if (reqRef?.username && authorName == 'Aucun') {
+						authorName = reqRef.username;
 					}
 				}
 
 				const hasProof = files.length > 0;
+
+				// normalize bank as well
+				const bankName = Array.isArray(data.bank_id) ? data.bank_id[0]?.name : data.bank_id?.name;
 
 				new ReadModal({
 					target: document.body,
@@ -489,8 +508,8 @@
 						values: {
 							header: {
 								title: titleName,
-								sub: data.date.split('T')[0]
-								// stepper: []
+								sub: data.date.split('T')[0],
+								stepper: []
 							},
 							body: [
 								{
@@ -498,8 +517,15 @@
 									value: `${data.amount} €`
 								},
 								{ label: 'Auteur', value: authorName },
-								{ label: 'Compte utilisé', value: data.bank_id?.name ?? 'Aucun' },
+								{ label: 'Compte utilisé', value: bankName ?? 'Aucun' },
 								{ label: 'Description', value: data.description },
+								{
+									label: 'Tags',
+									value:
+										Array.isArray(orderRef?.tags) && orderRef.tags.length
+											? orderRef.tags.join(' • ')
+											: 'Aucun'
+								},
 								{
 									label: 'Justification',
 									value: hasProof ? `${files.length} fichier(s)` : 'Aucun justificatif'

@@ -10,6 +10,8 @@
 	let projectTitle = {};
 
 	let name = '';
+	let selectedTags = [];
+	const TAG_OPTIONS = ['méca', 'info', 'élek'];
 
 	async function updateProjectTitle() {
 		const { data: projects, error } = await supabase.from('projects').select().in('id', projectId);
@@ -67,7 +69,8 @@
 		const order = {
 			comment: object.comment,
 			projectId: projectId.length > 1 ? object.project : projectId[0],
-			name: items.reduce((acc, item) => (acc || '') + item.nom + ', ', 0).slice(0, -2)
+			name: items.reduce((acc, item) => (acc || '') + item.nom + ', ', 0).slice(0, -2),
+			tags: Array.isArray(selectedTags) ? selectedTags : []
 		};
 
 		const { data: orders, error } = await supabase.from('orders').insert([order]).select();
@@ -213,6 +216,23 @@
 					class=" border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
 					placeholder="Commentaire"
 				></textarea>
+			</div>
+			<div class="col-span-2">
+				<label for="tags">Tags</label>
+				<select
+					id="tags"
+					multiple
+					size="3"
+					class=" border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
+					bind:value={selectedTags}
+				>
+					{#each TAG_OPTIONS as t}
+						<option value={t}>{t}</option>
+					{/each}
+				</select>
+				<p class="mt-1 text-xs text-gray-400">
+					Maintenir Ctrl (Cmd sur Mac) pour sélectionner plusieurs tags.
+				</p>
 			</div>
 			{#if projectId?.length > 1}
 				<div class="col-span-2">
