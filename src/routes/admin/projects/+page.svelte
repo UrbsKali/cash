@@ -5,17 +5,56 @@
 	import { loadUserdata } from '$lib/utils';
 	import { userdata } from '$lib/store';
 
-	import { Pie } from 'svelte-chartjs';
+	import { Pie, Bar } from 'svelte-chartjs';
 
-	import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale } from 'chart.js';
+	import {
+		Chart as ChartJS,
+		Title,
+		Tooltip,
+		Legend,
+		ArcElement,
+		CategoryScale,
+		LinearScale,
+		BarElement
+	} from 'chart.js';
 
-	ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
+	ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale, BarElement);
 
 	let selectedProjectId;
 	let project = {};
+	let stats = { websites: [], users: [], tags: [], banks: [] };
 	let skip = false;
 	let user;
 	let showDropdown = false;
+	let isLoading = false;
+	let dropdownEl;
+	let selectedYear;
+	let budgets = [];
+
+	const barOptions = {
+		responsive: true,
+		maintainAspectRatio: false,
+		plugins: { legend: { display: false } },
+		scales: {
+			x: {
+				ticks: { color: '#cbd5e1' },
+				grid: { color: 'rgba(148,163,184,0.15)' }
+			},
+			y: {
+				ticks: { color: '#cbd5e1' },
+				grid: { color: 'rgba(148,163,184,0.15)' }
+			}
+		}
+	};
+
+	function fmt(n) {
+		if (n == null) return '0';
+		try {
+			return Number(n).toLocaleString('fr-FR');
+		} catch {
+			return String(n);
+		}
+	}
 
 	let year = new Date().getFullYear();
 
@@ -67,16 +106,19 @@
 		}
 		let { data, error } = await supabase
 			.from('projects')
-			.select('id, name, debut, budget(budget, year)')
+			.select('id, name, debut, budget(budget, year, current)')
 			.eq('id', selectedProjectId)
-			.eq('budget.current', true)
 			.single();
 
 		if (error) {
 			console.error(error);
 			return;
 		}
-		data.budget = data.budget[0];
+		budgets = (data.budget || []).sort((a, b) => String(b.year).localeCompare(String(a.year)));
+		const current = budgets.find((b) => b.current);
+		selectedYear = selectedYear ?? current?.year ?? budgets[0]?.year ?? String(year);
+		data.budget = budgets.find((b) => b.year === selectedYear) ||
+			budgets[0] || { budget: 0, year: selectedYear };
 		return data;
 	}
 
@@ -88,35 +130,76 @@
 	});
 
 	async function loadPage() {
+		isLoading = true;
 		project = await fetchProject();
 		if (selectedProjectId == 0) {
 			project.budget = { budget: 0, year: year, cost: 0 };
 		}
-		const { data, error } = await supabase.rpc('get_project_cost', {
+		const { data: costData, error: costErr } = await supabase.rpc('get_project_cost', {
 			projectid: selectedProjectId,
-			year: project?.budget?.year
+			year: selectedYear || project?.budget?.year
 		});
-		if (error) {
-			console.error(error);
+		if (costErr) {
+			console.error(costErr);
+			isLoading = false;
 			return;
 		}
-		project.budget.cost = data;
+		project.budget.cost = costData;
+
+		// Fetch aggregated stats in one call (try with year, fallback without)
+		let statsData, statsErr;
+		({ data: statsData, error: statsErr } = await supabase.rpc('get_project_stats', {
+			projectid: selectedProjectId,
+			year: selectedYear || project?.budget?.year
+		}));
+		if (statsErr) {
+			console.warn(
+				'get_project_stats with year failed, retrying without year',
+				statsErr?.message || statsErr
+			);
+			({ data: statsData, error: statsErr } = await supabase.rpc('get_project_stats', {
+				projectid: selectedProjectId
+			}));
+		}
+		if (statsErr) {
+			console.error(statsErr);
+		} else {
+			stats = statsData ?? { websites: [], users: [], tags: [], banks: [] };
+		}
+		isLoading = false;
 	}
 	async function handleSelect(event) {
 		selectedProjectId = event.target.value;
+		selectedYear = undefined; // reset to current/default for new project
 		await loadPage();
+	}
+
+	async function handleYearChange(e) {
+		selectedYear = e.target.value;
+		// update displayed budget object to match selected year
+		if (budgets?.length) {
+			project.budget = budgets.find((b) => b.year === selectedYear) || project.budget;
+		}
+		await loadPage();
+	}
+
+	function handleWindowClick(e) {
+		if (!showDropdown) return;
+		if (dropdownEl && !dropdownEl.contains(e.target)) {
+			showDropdown = false;
+		}
 	}
 </script>
 
-<div class="flex flex-col items-start justify-center w-full gap-4 px-4 py-8">
+<svelte:window on:click={handleWindowClick} />
+
+<div class="flex flex-col items-start justify-center w-full gap-6 px-4 py-8 mx-auto max-w-7xl">
 	<div class="flex items-center justify-between w-full">
-		<h2
-			class="self-center w-full mb-4 text-4xl font-bold tracking-tight text-center text-white align-middle"
-		>
+		<h2 class="self-center w-full mb-4 text-3xl font-bold tracking-tight text-white align-middle">
 			{#if user?.projects?.length > 1}
-				<div class="relative inline-block min-w-96">
+				<div class="relative inline-block min-w-72" bind:this={dropdownEl}>
 					<button
-						class="flex items-center justify-between w-full p-2 text-4xl font-bold text-white bg-gray-900 rounded-md"
+						class="flex items-center justify-between w-full px-3 py-2 text-2xl font-bold text-white bg-gray-900 border border-gray-800 rounded-md hover:bg-gray-800"
 						on:click={() => (showDropdown = !showDropdown)}
 						type="button"
 					>
@@ -132,11 +215,13 @@
 						</svg>
 					</button>
 					{#if showDropdown}
-						<ul class="absolute z-10 w-full mt-1 bg-gray-800 shadow-lg rounded-xl">
+						<ul
+							class="absolute z-20 w-full mt-1 overflow-hidden bg-gray-800 border border-gray-700 shadow-xl rounded-xl"
+						>
 							{#each user.projects as p}
 								<li>
 									<button
-										class="w-full px-4 py-2 text-xl text-left text-white hover:bg-gray-700"
+										class="w-full px-4 py-2 text-left text-white hover:bg-gray-700"
 										on:click={() => {
 											selectedProjectId = p.id;
 											showDropdown = false;
@@ -150,48 +235,162 @@
 						</ul>
 					{/if}
 				</div>
-				<script>
-					let showDropdown = false;
-					// Optional: close dropdown on outside click
-					function handleClickOutside(event) {
-						if (!event.target.closest('.relative')) showDropdown = false;
-					}
-					$: {
-						if (showDropdown) {
-							window.addEventListener('click', handleClickOutside);
-						} else {
-							window.removeEventListener('click', handleClickOutside);
-						}
-					}
-				</script>
 			{:else}
 				{project.name}
 				<span class="text-xl italic text-gray-400">({project.debut?.split('-')[0]})</span>
 			{/if}
 		</h2>
+		<div class="flex items-center gap-2">
+			<label for="year" class="text-white/80">Année</label>
+			<select
+				id="year"
+				class="px-3 py-2 text-white bg-gray-900 border border-gray-800 rounded-md"
+				on:change={handleYearChange}
+				bind:value={selectedYear}
+				aria-label="Sélection de l'année du budget"
+			>
+				{#if budgets?.length}
+					{#each budgets as b}
+						<option value={b.year}>{b.year}</option>
+					{/each}
+				{:else}
+					<option value={project.budget?.year}>{project.budget?.year}</option>
+				{/if}
+			</select>
+		</div>
 	</div>
-	<div class="flex flex-col items-center justify-center w-full gap-2 sm:w-80">
-		<div class="flex items-center justify-around w-full">
-			<h3 class="text-2xl font-bold tracking-tight text-white">Budget</h3>
-			<div class="flex items-center space-x-2">
-				<span class="text-xl font-bold tracking-tight text-white"
-					>{project.budget?.budget ?? 0} €</span
-				>
-				<span class="text-xl font-bold tracking-tight text-white"
-					>({project.budget?.year ?? 0})</span
-				>
+
+	<!-- Top summary and budget card -->
+	<div class="grid w-full gap-6 md:grid-cols-2">
+		<div class="p-5 bg-gray-900 border border-gray-800 rounded-xl">
+			<div class="flex items-center justify-between">
+				<h3 class="text-2xl font-bold tracking-tight text-white">Budget</h3>
+				<div class="flex items-center space-x-3 text-white/80">
+					<span class="text-lg font-semibold">{fmt(project.budget?.budget ?? 0)} €</span>
+					<span class="px-2 py-0.5 text-sm rounded bg-gray-800 border border-gray-700"
+						>{project.budget?.year ?? 0}</span
+					>
+				</div>
+			</div>
+			<div class="grid items-center gap-4 mt-4 sm:grid-cols-2">
+				<div class="h-56">
+					<Pie {data} options={{ responsive: true, maintainAspectRatio: false }} />
+				</div>
+				<div class="space-y-2 text-white">
+					<div class="flex items-center justify-between">
+						<span class="text-white/70">Dépenses</span>
+						<span class="font-semibold">{fmt(project.budget?.cost ?? 0)} €</span>
+					</div>
+					<div class="flex items-center justify-between">
+						<span class="text-white/70">Restant</span>
+						<span class="font-semibold"
+							>{fmt(Math.max((project.budget?.budget ?? 0) - (project.budget?.cost ?? 0), 0))} €</span
+						>
+					</div>
+					{#if project.budget?.budget - project.budget?.cost < 0}
+						<p class="text-sm font-semibold text-red-400">Dépassement de budget !</p>
+					{/if}
+				</div>
 			</div>
 		</div>
-		{#if project.budget?.cost}
-			<p class="text-xl font-bold tracking-tight text-white">
-				Dépenses : {project.budget.cost} €
-			</p>
-		{/if}
-		{#if project.budget?.budget - project.budget?.cost < 0}
-			<p class="text-xl font-bold tracking-tight text-red-500">Dépassement de budget !</p>
-		{/if}
-		<div class="w-80">
-			<Pie {data} options={{ responsive: true }} />
+
+		<!-- Quick facts card -->
+		<div class="grid grid-cols-2 gap-4">
+			<div class="p-5 bg-gray-900 border border-gray-800 rounded-xl">
+				<p class="text-sm text-white/70">Nombre de sites</p>
+				<p class="mt-1 text-2xl font-bold text-white">{stats.websites.length}</p>
+			</div>
+			<div class="p-5 bg-gray-900 border border-gray-800 rounded-xl">
+				<p class="text-sm text-white/70">Tags</p>
+				<p class="mt-1 text-2xl font-bold text-white">{stats.tags.length}</p>
+			</div>
+			<div class="p-5 bg-gray-900 border border-gray-800 rounded-xl">
+				<p class="text-sm text-white/70">Utilisateurs</p>
+				<p class="mt-1 text-2xl font-bold text-white">{stats.users.length}</p>
+			</div>
+			<div class="p-5 bg-gray-900 border border-gray-800 rounded-xl">
+				<p class="text-sm text-white/70">Banques</p>
+				<p class="mt-1 text-2xl font-bold text-white">{stats.banks.length}</p>
+			</div>
+		</div>
+	</div>
+
+	<!-- Aggregated charts -->
+	<div class="grid w-full gap-6 mt-4 md:grid-cols-2">
+		<div class="p-5 bg-gray-900 border border-gray-800 rounded-xl">
+			<h3 class="mb-2 text-xl font-bold text-white">Sites les plus utilisés</h3>
+			<div class="h-72">
+				<Bar
+					data={{
+						labels: stats.websites.map((d) => d.label).slice(0, 10),
+						datasets: [
+							{
+								label: 'Montant',
+								data: stats.websites.map((d) => Number(d.value)).slice(0, 10),
+								backgroundColor: '#36A2EB'
+							}
+						]
+					}}
+					options={barOptions}
+				/>
+			</div>
+		</div>
+
+		<div class="p-5 bg-gray-900 border border-gray-800 rounded-xl">
+			<h3 class="mb-2 text-xl font-bold text-white">Plus gros utilisateurs</h3>
+			<div class="h-72">
+				<Bar
+					data={{
+						labels: stats.users.map((d) => d.label).slice(0, 10),
+						datasets: [
+							{
+								label: 'Montant',
+								data: stats.users.map((d) => Number(d.value)).slice(0, 10),
+								backgroundColor: '#FF6384'
+							}
+						]
+					}}
+					options={barOptions}
+				/>
+			</div>
+		</div>
+
+		<div class="p-5 bg-gray-900 border border-gray-800 rounded-xl">
+			<h3 class="mb-2 text-xl font-bold text-white">Tags les plus utilisés</h3>
+			<div class="h-72">
+				<Bar
+					data={{
+						labels: stats.tags.map((d) => d.label).slice(0, 10),
+						datasets: [
+							{
+								label: 'Nombre',
+								data: stats.tags.map((d) => Number(d.value)).slice(0, 10),
+								backgroundColor: '#4BC0C0'
+							}
+						]
+					}}
+					options={barOptions}
+				/>
+			</div>
+		</div>
+
+		<div class="p-5 bg-gray-900 border border-gray-800 rounded-xl">
+			<h3 class="mb-2 text-xl font-bold text-white">Banques les plus utilisées</h3>
+			<div class="h-72">
+				<Bar
+					data={{
+						labels: stats.banks.map((d) => d.label).slice(0, 10),
+						datasets: [
+							{
+								label: 'Dépenses',
+								data: stats.banks.map((d) => Number(d.value)).slice(0, 10),
+								backgroundColor: '#9966FF'
+							}
+						]
+					}}
+					options={barOptions}
+				/>
+			</div>
 		</div>
 	</div>
 </div>
