@@ -194,12 +194,12 @@
 <svelte:window on:click={handleWindowClick} />
 
 <div class="flex flex-col items-start justify-center w-full gap-6 px-4 py-8 mx-auto max-w-7xl">
-	<div class="flex items-center justify-between w-full">
-		<h2 class="self-center w-full mb-4 text-3xl font-bold tracking-tight text-white align-middle">
+	<div class="flex items-center justify-between w-full h-14">
+		<h2 class="self-center w-full h-full text-3xl font-bold tracking-tight text-white align-middle">
 			{#if user?.projects?.length > 1}
-				<div class="relative inline-block min-w-72" bind:this={dropdownEl}>
+				<div class="relative inline-block h-full min-w-64 md:min-w-72" bind:this={dropdownEl}>
 					<button
-						class="flex items-center justify-between w-full px-3 py-2 text-2xl font-bold text-white bg-gray-900 border border-gray-800 rounded-md hover:bg-gray-800"
+						class="flex items-center justify-between w-full h-full px-6 py-2 text-2xl font-bold text-white bg-gray-900 border border-gray-800 rounded-md hover:bg-gray-800"
 						on:click={() => (showDropdown = !showDropdown)}
 						type="button"
 					>
@@ -240,11 +240,10 @@
 				<span class="text-xl italic text-gray-400">({project.debut?.split('-')[0]})</span>
 			{/if}
 		</h2>
-		<div class="flex items-center gap-2">
-			<label for="year" class="text-white/80">Année</label>
+		<div class="flex items-center h-full gap-2">
 			<select
 				id="year"
-				class="px-3 py-2 text-white bg-gray-900 border border-gray-800 rounded-md"
+				class="h-full px-3 py-2 text-white bg-gray-900 border border-gray-800 rounded-md"
 				on:change={handleYearChange}
 				bind:value={selectedYear}
 				aria-label="Sélection de l'année du budget"
