@@ -2,6 +2,7 @@
 	import { supabase } from '$lib/supabaseClient';
 	import { userdata } from '$lib/store';
 	import { onMount } from 'svelte';
+	import { loadUserdata } from '$lib/utils';
 
 	export let user = {
 		name: 'Urbain',
@@ -20,6 +21,27 @@
 		supabase.auth.signOut().then(() => {
 			window.location.href = `${window.location.origin}/auth/login`;
 		});
+	}
+
+	async function clearUserdataCache() {
+		try {
+			// collect keys to remove: userdata cache + all table settings (settings_*)
+			const keysToRemove = [];
+			for (let i = 0; i < localStorage.length; i++) {
+				const key = localStorage.key(i);
+				if (!key) continue;
+				if (key === 'userdata_cache' || key.startsWith('settings_')) {
+					keysToRemove.push(key);
+				}
+			}
+			keysToRemove.forEach((k) => localStorage.removeItem(k));
+
+			await loadUserdata();
+			alert('Cache utilisateur et paramètres des tableaux vidés.');
+		} catch (e) {
+			console.error(e);
+			alert('Impossible de vider le cache utilisateur');
+		}
 	}
 	async function handleImage(e) {
 		const avatarFile = e.target.files[0];
@@ -43,7 +65,7 @@
 				.from('avatars')
 				.getPublicUrl(`${user.id}/avatar.${extension}`);
 			user.avatar = data.publicUrl;
-			userdata.set(user.publicUrl);
+			userdata.set(user);
 
 			const { data: data2, error: error2 } = await supabase
 				.from('profiles')
@@ -175,6 +197,14 @@
 			>
 			<hr />
 			<button
+				type="button"
+				class="w-full px-4 py-2 mb-2 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-gray-700"
+				on:click={clearUserdataCache}
+			>
+				Vider le cache utilisateur
+			</button>
+			<button
+				type="button"
 				class="w-full px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-red-700"
 				on:click={LogOut}
 			>

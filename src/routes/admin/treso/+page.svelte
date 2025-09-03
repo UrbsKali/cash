@@ -314,6 +314,9 @@
 							fdata.author = { uid };
 						} else if (key.startsWith('justificatif')) {
 							const files = form_data.getAll('justificatif').filter((v) => v instanceof File);
+							if (files[0]?.name == '') {
+								files.pop();
+							}
 							fdata['justificatif'] = files;
 						} else {
 							fdata[key.toLowerCase()] = value;
@@ -349,9 +352,9 @@
 								cacheControl: '3600',
 								upsert: true
 							});
-						if (err) {
-							console.error(err);
-							alert("Une erreur est survenue lors de l'envoi du logo");
+						if (error) {
+							console.error(error);
+							alert("Une erreur est survenue lors de l'envoi des justificatifs");
 							return;
 						}
 					}
@@ -369,11 +372,11 @@
 
 	const dbInfo = {
 		table: 'spending',
-		key: 'id, is_positive, amount, date, author(id, username, avatar_url), order_id(id, comment, requestedBy, projectId(name), tags)',
+		key: 'id, is_positive, amount, date, description, author(id, username, avatar_url), order_id(id, comment, requestedBy, projectId(name), tags)',
 		ordering: 'date:desc'
 	};
 
-	const headers = ['Valeur', 'Date', 'Auteur', 'Tags', 'Actions'];
+	const headers = ['Valeur', 'Date', 'Auteur', 'Description', 'Tags', 'Actions'];
 
 	async function parseItems(items) {
 		// For each spending, check if at least one proof file exists; mark missing with warn flag
@@ -413,6 +416,7 @@
 					value: item.author?.username ?? 'Aucun',
 					data: `${item.author?.id}+${item.author?.avatar_url}`
 				},
+				{ value: item.description && item.description.length ? item.description : '-' },
 				{
 					value:
 						Array.isArray(orderRef?.tags) && orderRef.tags.length ? orderRef.tags.join(', ') : '-'
@@ -508,8 +512,8 @@
 						values: {
 							header: {
 								title: titleName,
-								sub: data.date.split('T')[0],
-								stepper: []
+								sub: data.date.split('T')[0]
+								// stepper: []
 							},
 							body: [
 								{
@@ -634,6 +638,15 @@
 </div>
 <div class="w-full py-2 sm:px-8 lg:px-16">
 	<div class="bg-gray-800 rounded-lg">
-		<Table {addNew} {parseItems} {dbInfo} {headers} {actions} type="ligne" type_accord="une" />
+		<Table
+			{addNew}
+			{parseItems}
+			{dbInfo}
+			{headers}
+			{actions}
+			type="ligne"
+			type_accord="une"
+			searchable="description"
+		/>
 	</div>
 </div>
