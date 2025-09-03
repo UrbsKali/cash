@@ -187,19 +187,6 @@
 		if (data.description === null || data.description === '') {
 			data.description = 'Aucune description';
 		}
-		if (data.description.includes('Spending for order')) {
-			const { data: order, error: err } = await supabase
-				.from('orders')
-				.select('*')
-				.eq('id', parseInt(data.description.split(' ')[3]))
-				.single();
-			if (err) {
-				console.error(err);
-				return;
-			}
-			data.description = order.description ?? 'Aucune description';
-			data.name = order.name;
-		}
 		// get files names
 		const { data: file_data, error: err } = await supabase.storage
 			.from('proof')
@@ -346,9 +333,11 @@
 
 					// upload all files
 					for (let i = 0; i < logoFile.length; i++) {
+						// remove all special char and space
+						const fileName = logoFile[i].name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 						const { data: _, error: err } = await supabase.storage
 							.from('proof')
-							.upload(`invoices/${row.id}/${logoFile[i].name}`, logoFile[i], {
+							.upload(`invoices/${row.id}/${fileName}`, logoFile[i], {
 								cacheControl: '3600',
 								upsert: true
 							});
