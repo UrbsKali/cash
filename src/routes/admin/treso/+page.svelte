@@ -162,7 +162,10 @@
 					new SucessModal({
 						target: document.body,
 						props: {
-							message: 'La dépense a bien été ajoutée'
+							message: 'La dépense a bien été ajoutée',
+							onClose: () => {
+								console.log('soft reloading');
+							}
 						}
 					});
 				}
@@ -351,7 +354,10 @@
 					new SucessModal({
 						target: document.body,
 						props: {
-							message: 'La dépense a bien été ajoutée'
+							message: 'La dépense a bien été ajoutée',
+							onClose: () => {
+								console.log('soft reloading');
+							}
 						}
 					});
 				}
@@ -493,7 +499,14 @@
 				const hasProof = files.length > 0;
 
 				// normalize bank as well
-				const bankName = Array.isArray(data.bank_id) ? data.bank_id[0]?.name : data.bank_id?.name;
+				// normalize bank relation (can be array or object or null)
+				let bankName = 'Aucun';
+				if (Array.isArray(data.bank_id)) {
+					bankName = data.bank_id[0]?.name ?? 'Aucun';
+				} else if (data.bank_id && typeof data.bank_id === 'object') {
+					// @ts-ignore
+					bankName = data.bank_id.name ?? 'Aucun';
+				}
 
 				new ReadModal({
 					target: document.body,
@@ -501,8 +514,8 @@
 						values: {
 							header: {
 								title: titleName,
-								sub: data.date.split('T')[0]
-								// stepper: []
+								sub: data.date.split('T')[0],
+								stepper: []
 							},
 							body: [
 								{
