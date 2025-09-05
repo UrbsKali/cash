@@ -12,6 +12,10 @@
 	import IFTLogo from '$lib/components/share/Logo/IFT.svelte';
 	import GotronicLogo from '$lib/components/share/Logo/Gotronic.svelte';
 	import AislerLogo from '$lib/components/share/Logo/Aisler.svelte';
+
+	// SSR data from +page.server.js
+	export let data;
+	const posts = data?.posts ?? [];
 </script>
 
 <svelte:head>
@@ -101,28 +105,27 @@
 			</p>
 		</div>
 		<div class="max-w-full my-10">
-			<Carousel time={90}>
-				<Card
-					title="DaVinciBot l’association étudiante de robotique."
-					description="Notre équipe a été invitée à participer au lancement de la coupe de france de robotique 2025 à EPITA pour l'annonce du nouveau theme de l'année."
-					image="/assets/article/precoupe.jpg"
-				/>
-				<Card
-					title="DaVinciBot l’association étudiante de robotique."
-					description="Notre équipe a été invitée à participer au lancement de la coupe de france de robotique 2025 à EPITA pour l'annonce du nouveau theme de l'année."
-					image="/assets/article/precoupe.jpg"
-				/>
-				<Card
-					title="DaVinciBot l’association étudiante de robotique."
-					description="Notre équipe a été invitée à participer au lancement de la coupe de france de robotique 2025 à EPITA pour l'annonce du nouveau theme de l'année."
-					image="/assets/article/precoupe.jpg"
-				/>
-				<Card
-					title="DaVinciBot l’association étudiante de robotique."
-					description="Notre équipe a été invitée à participer au lancement de la coupe de france de robotique 2025 à EPITA pour l'annonce du nouveau theme de l'année."
-					image="/assets/article/precoupe.jpg"
-				/>
-			</Carousel>
+			{#if posts.length}
+				<Carousel time={90}>
+					{#each posts as p}
+						<Card
+							title={p.title}
+							description={p.description}
+							image={p.cover}
+							link={`/blog/${p.slug}`}
+						/>
+					{/each}
+				</Carousel>
+			{:else}
+				<Carousel time={90}>
+					<Card
+						title="Bientôt sur le blog"
+						description="Nos dernières actus s'afficheront ici."
+						image="/assets/article/precoupe.jpg"
+						link="/blog/"
+					/>
+				</Carousel>
+			{/if}
 		</div>
 	</div>
 </div>
