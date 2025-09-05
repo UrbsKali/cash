@@ -1,8 +1,8 @@
 <script>
 	// @ts-nocheck
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { writable } from 'svelte/store';
-	import { hashCode, saveSettings, loadSettings } from '$lib/utils';
+	import { hashCode, saveSettings, loadSettings, hideOnClickOutside } from '$lib/utils';
 	import { supabase } from '$lib/supabaseClient';
 
 	// Props
@@ -34,7 +34,7 @@
 	$: showingTo = current_page * size + items.length;
 
 	// persistable filter state
-	const hash = hashCode(JSON.stringify(filters) + JSON.stringify(dbInfo) + searchable);
+	const hash = Math.abs(hashCode(JSON.stringify(filters) + JSON.stringify(dbInfo) + searchable));
 	let can_update_settings = false;
 	const filtersStore = writable(filters);
 
@@ -103,6 +103,38 @@
 		const saved = loadSettings(hash);
 		if (saved.length > 0) filters = saved;
 		await reload({ resetPage: true });
+
+		const dropdown = document.querySelector('#filterDropdown-' + hash);
+		setupDropdown();
+		document.body.appendChild(dropdown);
+
+		onresize = () => {
+			setupDropdown();
+		};
+	});
+
+	function setupDropdown() {
+		// set position of the popup just below the button
+		const dropdown = document.querySelector('#filterDropdown-' + hash);
+		const width = dropdown.offsetWidth;
+		const rect = document.getElementById('filterDropdownButton').getBoundingClientRect();
+		dropdown.style.top = 'calc(' + rect.bottom + 'px + 0.5rem)';
+		if (window.innerWidth < 768) {
+			dropdown.style.left = rect.left - width + 'px';
+			dropdown.style.width = rect.width + 'px';
+		} else {
+			dropdown.style.left = 'calc(' + rect.left + 'px - 1.5rem)';
+		}
+	}
+
+	onDestroy(() => {
+		try {
+			document.body.removeChild(document.querySelector('#filterDropdown-' + hash));
+		} catch (e) {
+			if (!(e instanceof ReferenceError)) {
+				console.error(e);
+			} // else the el is prerenred
+		}
 	});
 </script>
 
@@ -165,10 +197,86 @@
 									d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
 								/>
 							</svg>
+
 							Ajouter {type_accord}
 							{type}
 						</button>
 					{/if}
+
+					<button
+						id="filterDropdownButton"
+						type="button"
+						class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-400 bg-gray-800 border border-gray-600 rounded-lg md:w-auto focus:outline-none focus:z-10 focus:ring-4 focus:ring-gray-700 hover:text-white hover:bg-gray-700"
+						on:click={(e) => {
+							const el = document.getElementById('filterDropdown-' + hash);
+							el?.classList.toggle('hidden');
+							e.stopPropagation();
+							if (el) hideOnClickOutside(el);
+						}}
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							aria-hidden="true"
+							class="w-4 h-4 mr-2 text-gray-400"
+							viewBox="0 0 20 20"
+							fill="currentColor"
+						>
+							<path
+								fill-rule="evenodd"
+								d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"
+								clip-rule="evenodd"
+							/>
+						</svg>
+						Filtres
+						<svg
+							class="-mr-1 ml-1.5 w-5 h-5"
+							fill="currentColor"
+							viewBox="0 0 20 20"
+							xmlns="http://www.w3.org/2000/svg"
+							aria-hidden="true"
+						>
+							<path
+								clip-rule="evenodd"
+								d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+							/>
+						</svg>
+					</button>
+
+					<div
+						id={'filterDropdown-' + hash}
+						class="absolute z-10 hidden p-3 bg-gray-700 rounded-lg shadow md:w-36 w-72"
+					>
+						{#each filters as filter, i}
+							{#if filter.category != 'hidden'}
+								{#if i > 0}
+									<hr class="my-3 border-gray-600" />
+								{/if}
+								<h6 class="mb-3 text-sm font-medium text-white">{filter.category}</h6>
+								<ul class="space-y-2 text-sm" aria-labelledby="filterDropdownButton">
+									{#each filter.options as option}
+										<li class="flex items-center">
+											<input
+												id={option.name}
+												type="checkbox"
+												value={option.value}
+												checked={option.active}
+												class="w-4 h-4 bg-gray-600 border-gray-500 rounded focus:ring-primary-600 ring-offset-gray-700 focus:ring-2"
+												on:change={(e) => {
+													e.preventDefault();
+													can_update_settings = true;
+													option.active = e.target.checked;
+													filtersStore.set(filters);
+												}}
+											/>
+											<label for={option.name} class="ml-2 text-sm font-medium text-gray-100"
+												>{option.name}</label
+											>
+										</li>
+									{/each}
+								</ul>
+							{/if}
+						{/each}
+					</div>
 
 					<button
 						type="button"
