@@ -4,6 +4,7 @@
 	import { writable } from 'svelte/store';
 	import { hashCode, saveSettings, loadSettings, hideOnClickOutside } from '$lib/utils';
 	import { supabase } from '$lib/supabaseClient';
+	import { tableRefresh } from '$lib/store';
 
 	// Props
 	export let actions = [];
@@ -20,6 +21,8 @@
 	export let can_load = true;
 	export let clickable = false;
 	export let addNew = null;
+	// Optional topic name; when an app-wide event with this topic fires, the table reloads
+	export let refreshTopic = undefined;
 
 	// State
 	let search = '';
@@ -98,6 +101,8 @@
 		filtersStore.set(filters);
 	}
 
+	let unsub = null;
+
 	onMount(async () => {
 		mounted = true;
 		const saved = loadSettings(hash);
@@ -111,6 +116,18 @@
 		onresize = () => {
 			setupDropdown();
 		};
+
+		// Subscribe to global refresh events
+		if (refreshTopic) {
+			unsub = tableRefresh.subscribe(async (evt) => {
+				if (!evt || !evt.topic) return;
+				if (evt.topic === refreshTopic) {
+					// If payload asks for reset, honor it
+					const resetPage = evt?.payload?.resetPage === true;
+					await reload({ resetPage });
+				}
+			});
+		}
 	});
 
 	function setupDropdown() {
@@ -135,6 +152,7 @@
 				console.error(e);
 			} // else the el is prerenred
 		}
+		if (typeof unsub === 'function') unsub();
 	});
 </script>
 

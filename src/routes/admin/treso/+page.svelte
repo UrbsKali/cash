@@ -6,6 +6,7 @@
 
 	import { supabase } from '$lib/supabaseClient';
 	import { onMount } from 'svelte';
+	import { triggerTableRefresh } from '$lib/store';
 
 	// Bank accounts overview state
 	let banks = [];
@@ -23,7 +24,7 @@
 
 	$: totalBanks = banks.reduce((acc, b) => acc + (parseFloat(b.current_amount ?? 0) || 0), 0);
 
-	onMount(async () => {
+	async function loadBanks() {
 		// fetch all bank accounts with their current amounts
 		const { data, error } = await supabase
 			.from('bank')
@@ -36,7 +37,9 @@
 			banks = data || [];
 		}
 		banksLoading = false;
-	});
+	}
+
+	onMount(loadBanks);
 
 	async function addNew() {
 		const { data: banks, error: bankErr } = await supabase
@@ -49,7 +52,7 @@
 			return;
 		}
 
-		new CrudForm({
+		const crud = new CrudForm({
 			target: document.body,
 			props: {
 				fields: [
@@ -164,7 +167,13 @@
 						props: {
 							message: 'La dépense a bien été ajoutée',
 							onClose: () => {
-								console.log('soft reloading');
+								// Ask any listening table to refresh and update banks overview
+								triggerTableRefresh('spending', { resetPage: true });
+								loadBanks();
+								// Close the creation form modal
+								try {
+									crud.$destroy();
+								} catch {}
 							}
 						}
 					});
@@ -203,7 +212,7 @@
 			console.log('No proof, skipping');
 		}
 
-		new CrudForm({
+		const crud = new CrudForm({
 			target: document.body,
 			props: {
 				fields: [
@@ -356,7 +365,12 @@
 						props: {
 							message: 'La dépense a bien été ajoutée',
 							onClose: () => {
-								console.log('soft reloading');
+								triggerTableRefresh('spending');
+								loadBanks();
+								// Close the edit form modal
+								try {
+									crud.$destroy();
+								} catch {}
 							}
 						}
 					});
@@ -646,6 +660,7 @@
 			{dbInfo}
 			{headers}
 			{actions}
+			refreshTopic="spending"
 			type="ligne"
 			type_accord="une"
 			searchable="description"
