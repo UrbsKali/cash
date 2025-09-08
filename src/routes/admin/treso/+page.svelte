@@ -528,8 +528,8 @@
 						values: {
 							header: {
 								title: titleName,
-								sub: data.date.split('T')[0],
-								stepper: []
+								sub: data.date.split('T')[0]
+								// stepper: [] DO NOT ADD A STEPPER HERE
 							},
 							body: [
 								{

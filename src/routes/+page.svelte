@@ -12,6 +12,7 @@
 	import IFTLogo from '$lib/components/share/Logo/IFT.svelte';
 	import GotronicLogo from '$lib/components/share/Logo/Gotronic.svelte';
 	import AislerLogo from '$lib/components/share/Logo/Aisler.svelte';
+	import IgusLogo from '$lib/components/share/Logo/Igus.svelte';
 
 	// SSR data from +page.server.js
 	export let data;
@@ -91,6 +92,7 @@
 				<AlstomLogo />
 				<IFTLogo />
 				<GotronicLogo />
+				<IgusLogo />
 			</Carousel>
 		</div>
 	</div>
