@@ -138,7 +138,9 @@
 						>
 							<ul class="py-2 text-sm text-gray-400" aria-labelledby="dropdownLargeButton">
 								<li>
-									<a href="#" class="block px-4 py-2 hover:bg-gray-600 hover:text-white">La CDR</a>
+									<a href="/project/cdr" class="block px-4 py-2 hover:bg-gray-600 hover:text-white"
+										>La CDR</a
+									>
 								</li>
 								<li>
 									<a href="#" class="block px-4 py-2 hover:bg-gray-600 hover:text-white">Exodus</a>
