@@ -93,12 +93,26 @@
 			</Carousel>
 		</div>
 	</div>
+	<div class="flex flex-row items-center justify-between p-4">
+		<div class="w-1/3 p-4 m-2 md:text-center md:w-6/12">
+			<h2 class="text-6xl font-extrabold tracking-[4.10px]">8</h2>
+			<p class="self-stretch text-xl tracking-wider text-dark-blue-gray">Robots</p>
+		</div>
+		<div class="w-1/3 p-4 m-2 md:text-center md:w-6/12">
+			<h2 class="text-6xl font-extrabold tracking-[4.10px] pl-6">2000 €</h2>
+			<p class="self-stretch text-xl tracking-wider text-dark-blue-gray pr-3">Budget</p>
+		</div>
+		<div class="w-1/3 p-4 m-2 md:text-center md:w-6/12">
+			<h2 class="text-6xl font-extrabold tracking-[4.10px]">12</h2>
+			<p class="self-stretch text-xl tracking-wider text-dark-blue-gray">Membres</p>
+		</div>
+	</div>
 	<div class="flex flex-col items-center justify-center mt-12">
-		<div class="flex flex-col gap-12 text-left md:text-center md:w-6/12">
-			<h1 class="text-6xl font-extrabold tracking-[4.10px] pr-5">Nos actualités</h1>
-			<p class="self-stretch text-xl tracking-wider text-dark-blue-gray">
+		<div class="relative max-w-xl m-auto text-center">
+			<h1 class="text-4xl font-extrabold tracking-wide sm:text-5xl md:text-6xl">Nos classements</h1>
+			<p class="mt-5 text-base sm:text-lg text-dark-blue-gray">
 				DaVinciBot organise et participe à des événements de robotique, offrant à ses membres des
-				occasions de se perfectionner et de relever des défis concrets. <br /><br />
+				occasions de se perfectionner et de relever des défis concrets. <br /> <br />
 				L'association propose des compétitions internes et externes, ainsi que des ateliers, permettant
 				aux étudiants d'appliquer leurs connaissances et d'innover en robotique.
 			</p>
