@@ -1,6 +1,6 @@
 <script>
 	import Carousel from '$lib/components/others/Carousel.svelte';
-	import Card from '$lib/components/share/Card.svelte';
+	import ResultCard from '$lib/components/share/ResultCard.svelte';
 	import Footer from '$lib/components/share/Footer.svelte';
 	import Topbar from '$lib/components/share/Topbar.svelte';
 	import CtaButton from '$lib/components/utils/CTAButton.svelte';
@@ -108,8 +108,8 @@
 		</div>
 	</div>
 	<div class="flex flex-col items-center justify-center mt-12">
-		<div class="relative max-w-xl m-auto text-center">
-			<h1 class="text-4xl font-extrabold tracking-wide sm:text-5xl md:text-6xl">Nos classements</h1>
+		<div class="relative max-w-[500px] m-auto text-center">
+			<h1 class="text-4xl font-extrabold tracking-wide sm:text-3xl md:text-5xl">Nos classements</h1>
 			<p class="mt-5 text-base sm:text-lg text-dark-blue-gray">
 				DaVinciBot organise et participe à des événements de robotique, offrant à ses membres des
 				occasions de se perfectionner et de relever des défis concrets. <br /> <br />
@@ -121,21 +121,19 @@
 			{#if posts.length}
 				<Carousel time={90}>
 					{#each posts as p}
-						<Card
-							title={p.title}
-							description={p.description}
+						<ResultCard
+							title={'XXXX - Theme of the competition'}
+							rank_and_points={'XXe/XXX - XXX pts'}
 							image={p.cover}
-							link={`/blog/${p.slug}`}
 						/>
 					{/each}
 				</Carousel>
 			{:else}
 				<Carousel time={90}>
-					<Card
+					<ResultCard
 						title="Bientôt sur le blog"
-						description="Nos dernières actus s'afficheront ici."
+						rank_and_points="Nos dernières actus s'afficheront ici."
 						image="/assets/article/precoupe.jpg"
-						link="/blog/"
 					/>
 				</Carousel>
 			{/if}
